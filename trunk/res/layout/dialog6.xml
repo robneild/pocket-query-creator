@@ -1,0 +1,21 @@
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/linearLayout1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical">
+
+        <TextView android:layout_weight="1"  android:id="@+id/padding1" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+           
+          
+<WebView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/webview1"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+ </WebView>        
+
+        <TextView android:layout_weight="1" android:id="@+id/padding2" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+           
+            <LinearLayout android:background="@layout/gradientbg" android:layout_height="wrap_content" android:id="@+id/linearLayout2" android:layout_width="fill_parent" android:gravity="right">
+        	<Button android:layout_height="wrap_content" android:id="@+id/button_ok" android:text="OK" android:layout_width="150dp" android:layout_margin="5dp"></Button>
+    	</LinearLayout>
+
+        
+    </LinearLayout>

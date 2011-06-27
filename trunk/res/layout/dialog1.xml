@@ -1,0 +1,13 @@
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/linearLayout1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical">
+    
+        <TextView android:textColor="#ffffff" android:textSize="20sp" android:text="@string/dialog1" android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+        <TextView  android:layout_weight="1" android:textSize="15sp" android:lineSpacingExtra="2mm" android:text="@string/dialog2" android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+        
+        
+        <LinearLayout android:background="@layout/gradientbg" android:layout_height="wrap_content" android:id="@+id/linearLayout2" android:layout_width="fill_parent" android:gravity="right">
+           <Button android:layout_height="wrap_content" android:id="@+id/button_create" android:text="@string/next" android:drawableRight="@drawable/right_arrow" android:layout_width="150dp" android:layout_margin="5dp"></Button>
+        </LinearLayout>
+
+    
+    </LinearLayout>

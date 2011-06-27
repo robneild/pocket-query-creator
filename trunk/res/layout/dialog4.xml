@@ -1,0 +1,42 @@
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/linearLayout1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical">
+      
+
+
+      <TextView android:paddingTop="10dp" android:textAppearance="@style/MyFont" android:text="Current GPS location" android:id="@+id/textView_location" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+        
+
+      <TextView android:text=" " android:id="@+id/textView_address" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+        
+        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout3">
+                <TextView android:text="Latitude: " android:id="@+id/textView2" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+                <TextView android:text="no fix yet" android:id="@+id/textView_lat" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+      </LinearLayout>
+
+        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout3">
+                <TextView android:text="Longitude: " android:id="@+id/textView4" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+                <TextView android:text="no fix yet" android:id="@+id/textView_lon" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+      </LinearLayout>
+
+        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout4">
+            <TextView android:textSize="17dp" android:textStyle="bold" android:text="" android:id="@+id/textView_accuracy" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+      </LinearLayout>
+      
+
+		<Button  android:layout_marginTop="20dp" android:text="Choose point from map instead" android:id="@+id/button_map" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+      
+      
+      <TextView android:layout_weight="1" android:text="" android:id="@+id/fillspace" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+        
+        
+        <LinearLayout android:background="@layout/gradientbg" android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:layout_width="fill_parent">
+        
+                <Button android:layout_height="wrap_content" android:id="@+id/button_cancel" android:layout_width="150dp" android:text="@string/cancel" android:layout_margin="5dp"></Button>
+      
+      			<TextView android:layout_weight="1" android:text="" android:id="@+id/fillspace2" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+        
+                <Button android:layout_height="wrap_content" android:id="@+id/button_next" android:text="@string/next" android:drawableRight="@drawable/right_arrow" android:layout_width="150dp" android:layout_margin="5dp"></Button>
+        
+        </LinearLayout>
+    
+    </LinearLayout>
