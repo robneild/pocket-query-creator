@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MyFont" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#ffffff</item>
+    </style>
+    <style name="RedFont" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#ff3333</item>
+    </style>
+    
+</resources>
