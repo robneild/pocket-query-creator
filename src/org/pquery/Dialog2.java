@@ -47,342 +47,341 @@ import android.widget.TextView;
  */
 public class Dialog2 extends Activity implements LocationListener {
 
-	private LocationManager locationManager;
+    private LocationManager locationManager;
 
-	private LoginAsync task;
+    private LoginAsync task;
 
-	/**
-	 * Show login progress
-	 */
-	private ProgressBar bar;
-	private ProgressBar progressSpinner;
+    /**
+     * Show login progress
+     */
+    private ProgressBar bar;
+    private ProgressBar progressSpinner;
 
-	/**
-	 * Show result of login attempt
-	 */
-	private TextView resultsTextView;
+    /**
+     * Show result of login attempt
+     */
+    private TextView resultsTextView;
 
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dialog2);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.dialog2);
 
-		// Setup GPS
-
-		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-		// Store references to controls
-
-		bar = (ProgressBar) findViewById(R.id.progress_bar);
-		progressSpinner = (ProgressBar) findViewById(R.id.progress_spinner);
-		resultsTextView = (TextView) findViewById(R.id.results);
-		Button cancelButton = (Button) findViewById(R.id.button_cancel);
-
-		// Handle cancel button
-
-		cancelButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View view) {
-				finish();
-			}
-		});
-
-		// Get preferences
-
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        // Setup GPS
 
-		final String username = prefs.getString("username_preference", "");
-		final String password = prefs.getString("password_preference", "");
-
-		// Manage Login Thread
-		//
-		// It will continue to run over screen rotations &
-		// activity destruction/creation
-
-		task = (LoginAsync) getLastNonConfigurationInstance();
-
-		if (task==null) {
-			// No existing task so start one
-
-			task=new LoginAsync(this, username, password);
-			task.execute();
-		}
-		else {
-			// Existing task, send it our new 'Activity' reference
-
-			// Whilst Activity was being destroyed/created the task thread would have continued
-			// Update UI for any missed events and check if task completed
-
-			task.attach(this);
-			updateProgress(task.getProgress());
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-			if (task.getProgress()>=100) {
-				onTaskFinished(task.getResult(), task.getCookies());
-			}
-		}
-
-	}
-	
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		task.detach();
-		return task;
-	}
+        // Store references to controls
 
-	private void onTaskFinished(String result, Map<String,String> cookies) {
+        bar = (ProgressBar) findViewById(R.id.progress_bar);
+        progressSpinner = (ProgressBar) findViewById(R.id.progress_spinner);
+        resultsTextView = (TextView) findViewById(R.id.results);
+        Button cancelButton = (Button) findViewById(R.id.button_cancel);
 
-		// Login attempt finished
+        // Handle cancel button
 
-		if (isFinishing()) // detect if activity has been closed behind us (back or cancel button)
-			return;
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
-		bar.setProgress(100);
-		bar.setVisibility(View.INVISIBLE);
-		progressSpinner.setVisibility(View.INVISIBLE);
+        // Get preferences
 
-		if (result == null) {				// no result text means success
-			// Automatically move onto next page
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-			Assert.assertNotNull(cookies);
-			
-			Bundle bundle = new Bundle();
-			QueryStore qs = new QueryStore();
-			
-			qs.cookies = cookies;
-			qs.saveToBundle(bundle);
-			
-			Intent myIntent = new Intent(getApplicationContext(), Dialog3.class);
-			myIntent.putExtra("QueryStore", bundle);
-			
-			startActivity(myIntent);
-			finish();
-		} else
-			resultsTextView.setText(result);
-	}
+        final String username = prefs.getString("username_preference", "");
+        final String password = prefs.getString("password_preference", "");
 
-	/**
-	 * Update UI
-	 */
-	void updateProgress(int progress) {
-		bar.setProgress(progress);
-	}
+        // Manage Login Thread
+        //
+        // It will continue to run over screen rotations &
+        // activity destruction/creation
 
-	/**
-	 * A task running on a thread
-	 * 
-	 * Updates UI progress bar as thread executes but needs to manage surrounding 
-	 * Activity being destroyed & recreated (i.e screen rotate)
-	 */
-	static class LoginAsync extends AsyncTask<Void, Integer, String> {
-		private Dialog2 activity;
+        task = (LoginAsync) getLastNonConfigurationInstance();
 
-		// Parameters
+        if (task==null) {
+            // No existing task so start one
 
-		private String user;
-		private String pass;
+            task=new LoginAsync(this, username, password);
+            task.execute();
+        }
+        else {
+            // Existing task, send it our new 'Activity' reference
 
-		// Results
+            // Whilst Activity was being destroyed/created the task thread would have continued
+            // Update UI for any missed events and check if task completed
 
-		private int progress;
-		private String result;
-		private Map <String,String> cookies;
+            task.attach(this);
+            updateProgress(task.getProgress());
 
-		LoginAsync(Dialog2 activity, String user, String pass) {
-			attach(activity);
+            if (task.getProgress()>=100) {
+                onTaskFinished(task.getResult(), task.getCookies());
+            }
+        }
 
-			this.user = user;
-			this.pass = pass;
-		}
+    }
 
-		/**
-		 * Login to geocaching.com
-		 * 
-		 * Get the login page, then posts a response
-		 * 
-		 * Returns null on success else some error text
-		 */
-		@Override
-		protected String doInBackground(Void... unused) {
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        task.detach();
+        return task;
+    }
 
-			publishProgress(0);
+    private void onTaskFinished(String result, Map<String,String> cookies) {
 
-			// Get the login screen
+        // Login attempt finished
 
-			Connection loginConnection = Jsoup.connect("https://www.geocaching.com/login/");
-			loginConnection.timeout(10000);
-			//loginConnection.request().headers().remove("Accept-Encoding"); 		// don't accept g-zip
+        if (isFinishing()) // detect if activity has been closed behind us (back or cancel button)
+            return;
 
-			// Do the actual request (HTTP GET)
+        bar.setProgress(100);
+        bar.setVisibility(View.INVISIBLE);
+        progressSpinner.setVisibility(View.INVISIBLE);
 
-			Response loginResponse = null;
-			try {
-				loginConnection.method(Method.GET);
-				loginResponse = loginConnection.execute();
+        if (result == null) {				// no result text means success
+            // Automatically move onto next page
 
-			} catch (IOException e) {
-				return ("Unable to retrieve Geocaching.com login page. Verify you have network access");
-			}
+            Assert.assertNotNull(cookies);
 
-			// Do some parsing of the response
+            Bundle bundle = new Bundle();
+            QueryStore qs = new QueryStore();
 
-			String loginHtml = loginResponse.body();
+            qs.cookies = cookies;
+            qs.saveToBundle(bundle);
 
-			publishProgress(40);
+            Intent myIntent = new Intent(getApplicationContext(), Dialog3.class);
+            myIntent.putExtra("QueryStore", bundle);
 
-			// Retrieve and store cookies in reply
+            startActivity(myIntent);
+            finish();
+        } else
+            resultsTextView.setText(result);
+    }
 
-			cookies = loginResponse.cookies();
+    /**
+     * Update UI
+     */
+    void updateProgress(int progress) {
+        bar.setProgress(progress);
+    }
 
-			// Check if the login page is there
+    /**
+     * A task running on a thread
+     * 
+     * Updates UI progress bar as thread executes but needs to manage surrounding 
+     * Activity being destroyed & recreated (i.e screen rotate)
+     */
+    static class LoginAsync extends AsyncTask<Void, Integer, String> {
+        private Dialog2 activity;
 
-			if (loginHtml.indexOf("LoginForm") == -1)
-				return("Couldn't find expected form on Geocaching.com login");
+        // Parameters
 
+        private String user;
+        private String pass;
 
-			// Extract the viewState hidden form value
+        // Results
 
-			String viewState = null;
+        private int progress;
+        private String result;
+        private Map <String,String> cookies;
 
-			try {
-				String VIEWSTATE = "name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"";
+        LoginAsync(Dialog2 activity, String user, String pass) {
+            attach(activity);
 
-				int start = loginHtml.indexOf(VIEWSTATE);
-				int end = loginHtml.indexOf("\"", start + VIEWSTATE.length());
+            this.user = user;
+            this.pass = pass;
+        }
 
-				viewState = loginHtml.substring(start + VIEWSTATE.length(), end);
+        /**
+         * Login to geocaching.com
+         * 
+         * Get the login page, then posts a response
+         * 
+         * Returns null on success else some error text
+         */
+        @Override
+        protected String doInBackground(Void... unused) {
 
-			} catch (Exception e) {
-				return("The Geocaching.com login page was mising some expected contents");
-			}
+            publishProgress(0);
 
+            // Get the login screen
 
+            Connection loginConnection = Jsoup.connect("https://www.geocaching.com/login/");
+            loginConnection.timeout(10000);
+            //loginConnection.request().headers().remove("Accept-Encoding"); 		// don't accept g-zip
 
+            // Do the actual request (HTTP GET)
 
+            Response loginResponse = null;
+            try {
+                loginConnection.method(Method.GET);
+                loginResponse = loginConnection.execute();
 
+            } catch (IOException e) {
+                return ("Unable to retrieve Geocaching.com login page. Verify you have network access");
+            }
 
-			// Start Login POST
+            // Do some parsing of the response
 
-			Connection loginPostConnection = Jsoup.connect("https://www.geocaching.com/login/");
-			loginPostConnection.timeout(10000);
-			//loginPostConnection.request().headers().remove("Accept-Encoding"); 		// stop g-zip
+            String loginHtml = loginResponse.body();
 
-			// Copy cookies returned from first response
+            publishProgress(40);
 
-			for (String key : cookies.keySet()) {
-				String value = cookies.get(key);
-				loginPostConnection.cookie(key, value);
-			}
+            // Retrieve and store cookies in reply
 
+            cookies = loginResponse.cookies();
 
-			// Fill in the form values
+            // Check if the login page is there
 
-			loginPostConnection.data("__EVENTTARGET","");
-			loginPostConnection.data("__EVENTARGUMENT","");
-			loginPostConnection.data("__VIEWSTATE", viewState);
-			loginPostConnection.data("ctl00$SiteContent$tbUsername", user);
-			loginPostConnection.data("ctl00$SiteContent$tbPassword", pass);
-			loginPostConnection.data("ctl00$SiteContent$cbRememberMe","on");
-			loginPostConnection.data("ctl00$SiteContent$btnSignIn","on");
+            if (loginHtml.indexOf("LoginForm") == -1)
+                return("Couldn't find expected form on Geocaching.com login");
 
-			publishProgress(50);
 
-			// Do the actual request here (HTTP POST)
+            // Extract the viewState hidden form value
 
-			Response postResponse;
-			try {
-				loginPostConnection.method(Method.POST);
-				postResponse = loginPostConnection.execute();
+            String viewState = null;
 
+            try {
+                String VIEWSTATE = "name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"";
 
-			} catch (IOException e) {
-				return("Exception doing post " +e);
-			}
+                int start = loginHtml.indexOf(VIEWSTATE);
+                int end = loginHtml.indexOf("\"", start + VIEWSTATE.length());
 
-			publishProgress(90);
+                viewState = loginHtml.substring(start + VIEWSTATE.length(), end);
 
-			loginHtml = postResponse.body();
+            } catch (Exception e) {
+                return("The Geocaching.com login page was mising some expected contents");
+            }
 
-			// Check we are now logged in
 
-			if (loginHtml.indexOf("ctl00_SiteContent_lbMessageText") == -1)
-				return("Login to Geocaching.com failed. Verify your credentials are correct");
 
 
-			publishProgress(100);
-			return null;
-		}
 
 
-		@Override
-		protected void onProgressUpdate(Integer... progress) {
+            // Start Login POST
 
-			this.progress = progress[0];
+            Connection loginPostConnection = Jsoup.connect("https://www.geocaching.com/login/");
+            loginPostConnection.timeout(10000);
+            //loginPostConnection.request().headers().remove("Accept-Encoding"); 		// stop g-zip
 
-			if (activity==null) {
-				// Skip UI update as no activity
-			}
-			else {
-				activity.updateProgress(progress[0]);
-			}
-		}
+            // Copy cookies returned from first response
 
-		@Override
-		protected void onPostExecute(String result) {
+            for (String key : cookies.keySet()) {
+                String value = cookies.get(key);
+                loginPostConnection.cookie(key, value);
+            }
 
-			this.progress = 100;
-			this.result = result;
 
-			if (activity==null) {
-				// skip UI update as no attached Activity
-			}	
-			else {
-				activity.onTaskFinished(result, cookies);
-			}
-		}
+            // Fill in the form values
 
-		void detach() {
-			activity=null;
-		}
+            loginPostConnection.data("__EVENTTARGET","");
+            loginPostConnection.data("__EVENTARGUMENT","");
+            loginPostConnection.data("__VIEWSTATE", viewState);
+            loginPostConnection.data("ctl00$SiteContent$tbUsername", user);
+            loginPostConnection.data("ctl00$SiteContent$tbPassword", pass);
+            loginPostConnection.data("ctl00$SiteContent$cbRememberMe","on");
+            loginPostConnection.data("ctl00$SiteContent$btnSignIn","on");
 
-		void attach(Dialog2 activity) {
-			this.activity=activity;
-		}
+            publishProgress(50);
 
+            // Do the actual request here (HTTP POST)
 
-		int getProgress() {
-			return progress;
-		}
+            Response postResponse;
+            try {
+                loginPostConnection.method(Method.POST);
+                postResponse = loginPostConnection.execute();
 
-		String getResult() {
-			return result;
-		}
 
-		Map<String, String> getCookies() {
-			return cookies;
-		}
-	}
+            } catch (IOException e) {
+                return("Exception doing post " +e);
+            }
 
+            publishProgress(90);
 
+            loginHtml = postResponse.body();
 
+            // Check we are now logged in
 
+            if (loginHtml.indexOf("ctl00_SiteContent_lbMessageText") == -1)
+                return("Login to Geocaching.com failed. Verify your credentials are correct");
 
-	// Handle GPS
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000L, 200.0f, this);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 200.0f, this);
-	}
+            publishProgress(100);
+            return null;
+        }
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		locationManager.removeUpdates(this);
-	}
 
-	public void onLocationChanged(Location arg0) {}
-	public void onProviderDisabled(String arg0) {}
-	public void onProviderEnabled(String arg0) {}
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+
+            this.progress = progress[0];
+
+            if (activity==null) {
+                // Skip UI update as no activity
+            }
+            else {
+                activity.updateProgress(progress[0]);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            this.progress = 100;
+            this.result = result;
+
+            if (activity==null) {
+                // skip UI update as no attached Activity
+            }	
+            else {
+                activity.onTaskFinished(result, cookies);
+            }
+        }
+
+        void detach() {
+            activity=null;
+        }
+
+        void attach(Dialog2 activity) {
+            this.activity=activity;
+        }
+
+
+        int getProgress() {
+            return progress;
+        }
+
+        String getResult() {
+            return result;
+        }
+
+        Map<String, String> getCookies() {
+            return cookies;
+        }
+    }
+
+
+
+
+
+    // Handle GPS
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GPS.requestLocationUpdates(locationManager, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
+    }
+
+    public void onLocationChanged(Location arg0) {}
+    public void onProviderDisabled(String arg0) {}
+    public void onProviderEnabled(String arg0) {}
+    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
 }

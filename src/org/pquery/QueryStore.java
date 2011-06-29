@@ -25,42 +25,42 @@ import android.os.Bundle;
 
 public class QueryStore {
 
-	public String name;
-	public int radius;
-	public double lat;
-	public double lon;
-	
-	public Map <String,String> cookies;
-	
-	public QueryStore() {
-	}
-	
-	public QueryStore(Bundle bundle) {
-		name = bundle.getString("QueryStore_name");
-		radius = bundle.getInt("QueryStore_radius");
-		lat = bundle.getDouble("QueryStore_lat");
-		lon = bundle.getDouble("QueryStore_lon");
-		
-		cookies = new HashMap<String,String>();
-		
-		String[] keys = bundle.getStringArray("QueryStore_cookie_keys");
-		String[] values = bundle.getStringArray("QueryStore_cookie_values");
-		
-		for (int i=0; i<keys.length; i++) {
-			cookies.put(keys[i], values[i]);
-		}
-	}
+    public String name;
+    public int radius;
+    public double lat;
+    public double lon;
 
-	
-	public void saveToBundle(Bundle bundle) {
-		bundle.putString("QueryStore_name", name);
-		bundle.putInt("QueryStore_radius", radius);
-		bundle.putDouble("QueryStore_lat", lat);
-		bundle.putDouble("QueryStore_lon", lon);
-		
-		bundle.putStringArray("QueryStore_cookie_keys", cookies.keySet().toArray(new String[0]));
-		bundle.putStringArray("QueryStore_cookie_values", cookies.values().toArray(new String[0]));
-		
-	}
-	
+    public Map <String,String> cookies;
+
+    public QueryStore() {
+    }
+
+    public QueryStore(Bundle bundle) {
+        name = bundle.getString("QueryStore_name");
+        radius = bundle.getInt("QueryStore_radius");
+        lat = bundle.getDouble("QueryStore_lat");
+        lon = bundle.getDouble("QueryStore_lon");
+
+        cookies = new HashMap<String,String>();
+
+        String[] keys = bundle.getStringArray("QueryStore_cookie_keys");
+        String[] values = bundle.getStringArray("QueryStore_cookie_values");
+
+        for (int i=0; i<keys.length; i++) {
+            cookies.put(keys[i], values[i]);
+        }
+    }
+
+
+    public void saveToBundle(Bundle bundle) {
+        bundle.putString("QueryStore_name", name);
+        bundle.putInt("QueryStore_radius", radius);
+        bundle.putDouble("QueryStore_lat", lat);
+        bundle.putDouble("QueryStore_lon", lon);
+
+        bundle.putStringArray("QueryStore_cookie_keys", cookies.keySet().toArray(new String[0]));
+        bundle.putStringArray("QueryStore_cookie_values", cookies.values().toArray(new String[0]));
+
+    }
+
 }

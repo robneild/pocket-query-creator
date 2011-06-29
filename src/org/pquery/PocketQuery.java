@@ -39,104 +39,102 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class PocketQuery extends ListActivity {
 
-	private LocationManager locationManager;
-	
-	static final String[] OPTIONS = new String[] {"Create New Pocket Query", "Settings", "About"};
+    static final String[] OPTIONS = new String[] {"Create New Pocket Query", "Settings", "About"};
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		// Show list
-		setListAdapter(new MyListAdapter(this)); // new ArrayAdapter<String>(this, R.layout.list_item, OPTIONS));
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		ListView lv = getListView();
-		lv.setTextFilterEnabled(true);
+        // Show list
+        setListAdapter(new MyListAdapter(this)); // new ArrayAdapter<String>(this, R.layout.list_item, OPTIONS));
 
-		// List listener
+        ListView lv = getListView();
+        lv.setTextFilterEnabled(true);
 
-		lv.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // List listener
 
-				if (position == 0) {
-					
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-					String username = prefs.getString("username_preference", "");
-					String password = prefs.getString("password_preference","");
-				
-					if (username!=null && username.length()>0 &&
-						password!=null && password.length()>0) {
-							
-					
-					Intent myIntent = new Intent(view.getContext(), Dialog1.class);
-					startActivity(myIntent);
-						} else {
-							Toast.makeText(getApplicationContext(), "Enter your credentials on the settings page", Toast.LENGTH_LONG).show();
-						}
-				}
+        lv.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-				if (position == 1) {
-					Intent myIntent = new Intent(getApplicationContext(), PreferencesFromXml.class);
-					startActivity(myIntent);
-				}
+                if (position == 0) {
 
-				if (position == 2) {
-					Intent myIntent = new Intent(getApplicationContext(), About.class);
-					startActivity(myIntent);
-				}
-				
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    String username = prefs.getString("username_preference", "");
+                    String password = prefs.getString("password_preference","");
+
+                    if (username!=null && username.length()>0 &&
+                            password!=null && password.length()>0) {
+
+
+                        Intent myIntent = new Intent(view.getContext(), Dialog1.class);
+                        startActivity(myIntent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Enter your credentials on the settings page", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                if (position == 1) {
+                    Intent myIntent = new Intent(getApplicationContext(), PreferencesFromXml.class);
+                    startActivity(myIntent);
+                }
+
+                if (position == 2) {
+                    Intent myIntent = new Intent(getApplicationContext(), About.class);
+                    startActivity(myIntent);
+                }
 
 
 
-			}
-		});
-	}
 
-	
-	
+            }
+        });
+    }
 
 
-	class MyListAdapter extends BaseAdapter {
-		public MyListAdapter(Context context) {
-			mContext = context;
-		}
 
-		
-		public int getCount() {
-			return OPTIONS.length;
-		}
 
-		@Override
-		public boolean areAllItemsEnabled() {
-			return false;
-		}
 
-		@Override
-		public boolean isEnabled(int position) {
-			return true;
-		}
+    class MyListAdapter extends BaseAdapter {
+        public MyListAdapter(Context context) {
+            mContext = context;
+        }
 
-		public Object getItem(int position) {
-			return position;
-		}
 
-		public long getItemId(int position) {
-			return position;
-		}
+        public int getCount() {
+            return OPTIONS.length;
+        }
 
-		public View getView(int position, View convertView, ViewGroup parent) {
-			TextView tv;
-			if (convertView == null) {
-				tv = (TextView) LayoutInflater.from(mContext).inflate(android.R.layout.simple_expandable_list_item_1, parent, false);
-			} else {
-				tv = (TextView) convertView;
-			}
-			tv.setText(OPTIONS[position]);
-			return tv;
-		}
+        @Override
+        public boolean areAllItemsEnabled() {
+            return false;
+        }
 
-		private Context mContext;
-	}
+        @Override
+        public boolean isEnabled(int position) {
+            return true;
+        }
+
+        public Object getItem(int position) {
+            return position;
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView tv;
+            if (convertView == null) {
+                tv = (TextView) LayoutInflater.from(mContext).inflate(android.R.layout.simple_expandable_list_item_1, parent, false);
+            } else {
+                tv = (TextView) convertView;
+            }
+            tv.setText(OPTIONS[position]);
+            return tv;
+        }
+
+        private Context mContext;
+    }
 
 
 
