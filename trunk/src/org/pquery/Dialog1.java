@@ -51,48 +51,47 @@ import android.widget.Button;
  * Just displays some info
  */
 public class Dialog1 extends Activity implements LocationListener {
-	
-	private LocationManager locationManager;
-	
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dialog1);
-			
-		// Setup GPS
-		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		
-		
-		Button next = (Button) findViewById(R.id.button_create);
-		
-		// Next button goes to dialog2
-		
-		next.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View view) {
-				Intent myIntent = new Intent(view.getContext(), Dialog2.class);
-				startActivity(myIntent);
-				finish();
-			}
-		});
-	}
 
-	
-	
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000L, 200.0f, this);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 200.0f, this);
-	}
+    private LocationManager locationManager;
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		locationManager.removeUpdates(this);
-	}
-	
-	public void onLocationChanged(Location arg0) {}
-	public void onProviderDisabled(String arg0) {}
-	public void onProviderEnabled(String arg0) {}
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.dialog1);
+
+        // Setup GPS
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+
+        Button next = (Button) findViewById(R.id.button_create);
+
+        // Next button goes to dialog2
+
+        next.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent myIntent = new Intent(view.getContext(), Dialog2.class);
+                startActivity(myIntent);
+                finish();
+            }
+        });
+    }
+
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GPS.requestLocationUpdates(locationManager, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
+    }
+
+    public void onLocationChanged(Location arg0) {}
+    public void onProviderDisabled(String arg0) {}
+    public void onProviderEnabled(String arg0) {}
+    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
 }

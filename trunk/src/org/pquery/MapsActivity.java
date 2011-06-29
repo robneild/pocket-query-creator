@@ -42,175 +42,175 @@ import android.view.GestureDetector;
 
 public class MapsActivity extends MapActivity
 {    
-	MapView mapView; 
-	MapController mc;
+    MapView mapView; 
+    MapController mc;
 
-	/**
-	 * Stores user selected location
-	 */
-	private GeoPoint point;
+    /**
+     * Stores user selected location
+     */
+    private GeoPoint point;
 
-	class MapOverlay extends com.google.android.maps.Overlay implements GestureDetector.OnGestureListener, OnDoubleTapListener {
+    class MapOverlay extends com.google.android.maps.Overlay implements GestureDetector.OnGestureListener, OnDoubleTapListener {
 
         private GestureDetector gesturedetector;
 
-		public MapOverlay() {
-	        gesturedetector = new GestureDetector(MapsActivity.this, this);
-	        gesturedetector.setOnDoubleTapListener(this);
-		}
-		
-		/**
-		 * Detects a clean touch (not a drag) and moves location
-		 */
-		@Override
-		public boolean onTouchEvent(MotionEvent event, MapView mapView) 
-		{   
-			return gesturedetector.onTouchEvent(event);
+        public MapOverlay() {
+            gesturedetector = new GestureDetector(MapsActivity.this, this);
+            gesturedetector.setOnDoubleTapListener(this);
+        }
 
-//			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//				touchEventInProgress = true;
-//			}
-//
-//			if (event.getAction() == MotionEvent.ACTION_MOVE) {
-//				touchEventInProgress = false;  // user is dragging so cancel detecting location on up
-//			}
-//
-//			if (event.getAction() == MotionEvent.ACTION_UP) {
-//
-//				if (touchEventInProgress) {
-//					// store location
-//
-//					point = mapView.getProjection().fromPixels((int) event.getX(), (int) event.getY());
-//
-//					//                Toast.makeText(getBaseContext(), 
-//					//                        p.getLatitudeE6() / 1E6 + "," + 
-//					//                        p.getLongitudeE6() /1E6 , 
-//					//                        Toast.LENGTH_SHORT).show();
-//
-//					Toast.makeText(getBaseContext(), "Location stored", Toast.LENGTH_SHORT);
-//
-//					Intent data = new Intent();
-//
-//					data.putExtra("lat", point.getLatitudeE6() / 1E6);
-//					data.putExtra("lon", point.getLongitudeE6() /1E6);
-//
-//					setResult(RESULT_OK, data) ;
-//
-//				}
-//
-//				touchEventInProgress = false;
-//			}         
-//
-//			return false;
-		}        
+        /**
+         * Detects a clean touch (not a drag) and moves location
+         */
+        @Override
+        public boolean onTouchEvent(MotionEvent event, MapView mapView) 
+        {   
+            return gesturedetector.onTouchEvent(event);
 
-		@Override
-		public boolean draw(Canvas canvas, MapView mapView, boolean shadow, long when) 
-		{
-			super.draw(canvas, mapView, shadow);                   
+            //			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            //				touchEventInProgress = true;
+            //			}
+            //
+            //			if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            //				touchEventInProgress = false;  // user is dragging so cancel detecting location on up
+            //			}
+            //
+            //			if (event.getAction() == MotionEvent.ACTION_UP) {
+            //
+            //				if (touchEventInProgress) {
+            //					// store location
+            //
+            //					point = mapView.getProjection().fromPixels((int) event.getX(), (int) event.getY());
+            //
+            //					//                Toast.makeText(getBaseContext(), 
+            //					//                        p.getLatitudeE6() / 1E6 + "," + 
+            //					//                        p.getLongitudeE6() /1E6 , 
+            //					//                        Toast.LENGTH_SHORT).show();
+            //
+            //					Toast.makeText(getBaseContext(), "Location stored", Toast.LENGTH_SHORT);
+            //
+            //					Intent data = new Intent();
+            //
+            //					data.putExtra("lat", point.getLatitudeE6() / 1E6);
+            //					data.putExtra("lon", point.getLongitudeE6() /1E6);
+            //
+            //					setResult(RESULT_OK, data) ;
+            //
+            //				}
+            //
+            //				touchEventInProgress = false;
+            //			}         
+            //
+            //			return false;
+        }        
 
-			if (point!=null) {
-				//---translate the GeoPoint to screen pixels---
-				Point screenPts = new Point();
-				mapView.getProjection().toPixels(point, screenPts);
+        @Override
+        public boolean draw(Canvas canvas, MapView mapView, boolean shadow, long when) 
+        {
+            super.draw(canvas, mapView, shadow);                   
 
-				//---add the marker---
-				Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.pushpin);            
-				canvas.drawBitmap(bmp, screenPts.x, screenPts.y - bmp.getHeight(), null);
-			}
+            if (point!=null) {
+                //---translate the GeoPoint to screen pixels---
+                Point screenPts = new Point();
+                mapView.getProjection().toPixels(point, screenPts);
 
-			return true;
-		}
+                //---add the marker---
+                Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.pushpin);            
+                canvas.drawBitmap(bmp, screenPts.x, screenPts.y - bmp.getHeight(), null);
+            }
 
-		public boolean onDown(MotionEvent arg0) {
-			return false;
-		}
+            return true;
+        }
 
-		public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2, float arg3) {
+        public boolean onDown(MotionEvent arg0) {
+            return false;
+        }
 
-			return false;
-		}
+        public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2, float arg3) {
 
-		public void onLongPress(MotionEvent motion) {
+            return false;
+        }
 
-			point = mapView.getProjection().fromPixels((int) motion.getX(), (int) motion.getY());
-			
-								Toast.makeText(getBaseContext(), "Location stored", Toast.LENGTH_SHORT);
-			
-								Intent data = new Intent();
-			
-								data.putExtra("lat", point.getLatitudeE6() / 1E6);
-								data.putExtra("lon", point.getLongitudeE6() /1E6);
-			
-								setResult(RESULT_OK, data) ;
-		}
+        public void onLongPress(MotionEvent motion) {
 
-		public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,	float arg3) {
-			return false;
-		}
+            point = mapView.getProjection().fromPixels((int) motion.getX(), (int) motion.getY());
 
-		public void onShowPress(MotionEvent arg0) {
-		}
+            Toast.makeText(getBaseContext(), "Location stored", Toast.LENGTH_SHORT);
 
-		public boolean onSingleTapUp(MotionEvent arg0) {
-			return false;
-		}
+            Intent data = new Intent();
 
-		public boolean onDoubleTap(MotionEvent motion) {
-			mapView.getController().zoomInFixing((int) motion.getX(), (int) motion.getY());
-			return true;
-		}
+            data.putExtra("lat", point.getLatitudeE6() / 1E6);
+            data.putExtra("lon", point.getLongitudeE6() /1E6);
 
-		public boolean onDoubleTapEvent(MotionEvent motion) {
-			return false;
-		}
+            setResult(RESULT_OK, data) ;
+        }
 
-		public boolean onSingleTapConfirmed(MotionEvent e) {
-			return false;
-		}
+        public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,	float arg3) {
+            return false;
+        }
 
+        public void onShowPress(MotionEvent arg0) {
+        }
 
+        public boolean onSingleTapUp(MotionEvent arg0) {
+            return false;
+        }
+
+        public boolean onDoubleTap(MotionEvent motion) {
+            mapView.getController().zoomInFixing((int) motion.getX(), (int) motion.getY());
+            return true;
+        }
+
+        public boolean onDoubleTapEvent(MotionEvent motion) {
+            return false;
+        }
+
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            return false;
+        }
 
 
-	}
 
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) 
-	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.map_view);
 
-		mapView = (MapView) findViewById(R.id.mapView);
+    }
 
-		mapView.setBuiltInZoomControls(true);
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.map_view);
 
-		MapOverlay mapOverlay = new MapOverlay();
-		List<Overlay> listOfOverlays = mapView.getOverlays();
-		listOfOverlays.clear();
-		listOfOverlays.add(mapOverlay);  
+        mapView = (MapView) findViewById(R.id.mapView);
 
-		mc = mapView.getController();
+        mapView.setBuiltInZoomControls(true);
 
-		double lat = getIntent().getDoubleExtra("lat",Double.MAX_VALUE);
-		double lng = getIntent().getDoubleExtra("lon", Double.MAX_VALUE);
+        MapOverlay mapOverlay = new MapOverlay();
+        List<Overlay> listOfOverlays = mapView.getOverlays();
+        listOfOverlays.clear();
+        listOfOverlays.add(mapOverlay);  
 
-		if (lat == Double.MAX_VALUE) {
-			lat = 46.4;
-			lng = -35;
-			mc.setZoom(3); 
-		} else {
-			mc.setZoom(15);
-		}
-		
-		mc.setCenter(new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6)));
-		mapView.invalidate();
+        mc = mapView.getController();
 
-	}
+        double lat = getIntent().getDoubleExtra("lat",Double.MAX_VALUE);
+        double lng = getIntent().getDoubleExtra("lon", Double.MAX_VALUE);
 
-	@Override
-	protected boolean isRouteDisplayed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+        if (lat == Double.MAX_VALUE) {
+            lat = 46.4;
+            lng = -35;
+            mc.setZoom(3); 
+        } else {
+            mc.setZoom(15);
+        }
+
+        mc.setCenter(new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6)));
+        mapView.invalidate();
+
+    }
+
+    @Override
+    protected boolean isRouteDisplayed() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

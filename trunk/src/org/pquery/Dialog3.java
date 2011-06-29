@@ -67,112 +67,111 @@ import android.widget.Toast;
  */
 public class Dialog3 extends Activity implements LocationListener {
 
-	private LocationManager locationManager;
-	
-	private QueryStore queryStore;
+    private LocationManager locationManager;
 
-	private EditText name;
-	private EditText radius;
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dialog3);
+    private QueryStore queryStore;
 
-		// Setup GPS
+    private EditText name;
+    private EditText radius;
 
-		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		
-		// Store references to controls
-		
-		name = (EditText)findViewById(R.id.editText_name);
-		radius = (EditText)findViewById(R.id.editText_radius);
-		final Button nextButton = (Button) findViewById(R.id.button_next);
-		
-		name.setText(getDefaultName());
-		radius.setText(getDefaultRadius());
-		
-		// Get parameters passed from previous wizard stage
-		
-		Bundle bundle = getIntent().getBundleExtra("QueryStore");
-		Assert.assertNotNull(bundle);
-		queryStore = new QueryStore(bundle);
-		
-		
-		nextButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View view) {
-				
-				if (!validForm()) {
-					Toast.makeText(getApplicationContext(), "Enter valid values", Toast.LENGTH_LONG).show();
-					return;
-				}
-				
-				queryStore.name = name.getText().toString();
-				queryStore.radius = Integer.parseInt(radius.getText().toString());
-				
-				Bundle bundle = new Bundle();
-				queryStore.saveToBundle(bundle);
-				
-				Intent myIntent = new Intent(view.getContext(), Dialog4.class);
-				myIntent.putExtra("QueryStore", bundle);
-				startActivity(myIntent);
-				finish();
-			}
-		});
-		
-		
-		
-		Button cancelButton = (Button) findViewById(R.id.button_cancel);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.dialog3);
 
-		cancelButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View view) {
-				finish();
-			}
-		});
-		
-	}
+        // Setup GPS
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        // Store references to controls
+
+        name = (EditText)findViewById(R.id.editText_name);
+        radius = (EditText)findViewById(R.id.editText_radius);
+        final Button nextButton = (Button) findViewById(R.id.button_next);
+
+        name.setText(getDefaultName());
+        radius.setText(getDefaultRadius());
+
+        // Get parameters passed from previous wizard stage
+
+        Bundle bundle = getIntent().getBundleExtra("QueryStore");
+        Assert.assertNotNull(bundle);
+        queryStore = new QueryStore(bundle);
 
 
-	/**
-	 * Is current form content valid
-	 */
-	private boolean validForm() {
-		if (name.getText().toString().length()>0)
-			if (radius.getText().toString().length()>0)
-				return true;
-		return false;
-	}
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+                if (!validForm()) {
+                    Toast.makeText(getApplicationContext(), "Enter valid values", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                queryStore.name = name.getText().toString();
+                queryStore.radius = Integer.parseInt(radius.getText().toString());
+
+                Bundle bundle = new Bundle();
+                queryStore.saveToBundle(bundle);
+
+                Intent myIntent = new Intent(view.getContext(), Dialog4.class);
+                myIntent.putExtra("QueryStore", bundle);
+                startActivity(myIntent);
+                finish();
+            }
+        });
 
 
-	private String getDefaultName() {
-		return DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT).format(new Date());
-	}
-	
-	private String getDefaultRadius() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		return prefs.getString("radius_preference", "5");
-	}
-	
-	
-	
-	
-	// Handle GPS
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000L, 200.0f, this);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 200.0f, this);
-	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		locationManager.removeUpdates(this);
-	}
-	
-	public void onLocationChanged(Location arg0) {}
-	public void onProviderDisabled(String arg0) {}
-	public void onProviderEnabled(String arg0) {}
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
+        Button cancelButton = (Button) findViewById(R.id.button_cancel);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+    }
+
+
+    /**
+     * Is current form content valid
+     */
+    private boolean validForm() {
+        if (name.getText().toString().length()>0)
+            if (radius.getText().toString().length()>0)
+                return true;
+        return false;
+    }
+
+
+    private String getDefaultName() {
+        return DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT).format(new Date());
+    }
+
+    private String getDefaultRadius() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        return prefs.getString("radius_preference", "5");
+    }
+
+
+
+
+    // Handle GPS
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GPS.requestLocationUpdates(locationManager, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
+    }
+
+    public void onLocationChanged(Location arg0) {}
+    public void onProviderDisabled(String arg0) {}
+    public void onProviderEnabled(String arg0) {}
+    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
 }

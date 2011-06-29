@@ -89,6 +89,7 @@ public class About extends Activity {
 		"along with this program.  If not, see " +
 		"<a href='http://www.gnu.org/licenses/'>http://www.gnu.org/licenses/</a>." +
 		
+		"<p>Source code is available here <a href='http://code.google.com/p/pocket-query-creator/'>http://code.google.com/p/pocket-query-creator</a>" +
 		"</font>";
 		
 		wv = (WebView) findViewById(R.id.webview1);
