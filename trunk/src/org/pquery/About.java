@@ -56,6 +56,8 @@ public class About extends Activity {
 		"<p>You can't go geocaching with just this app. Try <a href='market://search?q=pname:com.google.code.geobeagle'>geobeagle</a>"+
 		" or <a href='market://search?q=pname:com.groundspeak.geocaching'>the official client</a>" +
 		
+		"<p>Don't hesitate to <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>contact me</a> with comments or errors" +
+		
 		"<br><br><h2>Hints</h2>" +
 		"<ul><li>Once created, Pocket Queries can take a while to run" +
 		"<li>There is no creation limit, but a maximum of 5 pocket queries will run in any 24 hour period" +
@@ -64,7 +66,6 @@ public class About extends Activity {
 		"</ul>" +
 		
  		"<br><br><h2>Contains</h2>" +
-		"<a href='http://jsoup.org'>jsoup</a> - Java HTML Parser<br/>" +
 		"<a href='http://www.openclipart.org/detail/89059/push-pin-icon-by-jhnri4'>Push pin icon</a> - openclipart.org<br/>" +
 		"<a href='http://www.openclipart.org/detail/5055/old-pocketwatch-by-johnny_automatic'>Old pocketwatch</a> - openclipart.org<br/>" +
 		
@@ -89,7 +90,7 @@ public class About extends Activity {
 		"along with this program.  If not, see " +
 		"<a href='http://www.gnu.org/licenses/'>http://www.gnu.org/licenses/</a>." +
 		
-		"<p>Source code is available here <a href='http://code.google.com/p/pocket-query-creator/'>http://code.google.com/p/pocket-query-creator</a>" +
+		"<p>Source code is available here <a href='http://code.google.com/p/pocket-query-creator/'>code.google.com/p/pocket-query-creator</a>" +
 		"</font>";
 		
 		wv = (WebView) findViewById(R.id.webview1);

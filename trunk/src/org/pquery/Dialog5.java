@@ -17,19 +17,29 @@
 
 package org.pquery;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.pquery.IOUtils.Listener;
 
 import junit.framework.Assert;
-
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.Connection.KeyVal;
-import org.jsoup.Connection.Method;
-import org.jsoup.Connection.Request;
-import org.jsoup.Connection.Response;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,10 +47,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import static org.pquery.Util.*;
 
 /**
  * Logs the user into geocaching.com web site
@@ -176,7 +188,8 @@ public class Dialog5 extends Activity {
         private int progress;
         private String errorMessage;
         private String successMessage;
-
+        private boolean debug;
+        
         LoginAsync(Dialog5 activity, QueryStore queryStore, SharedPreferences prefs) {
             attach(activity);
 
@@ -192,6 +205,8 @@ public class Dialog5 extends Activity {
         @Override
         protected String doInBackground(Void... unused) {
 
+            DefaultHttpClient client = new DefaultHttpClient();
+            String html;
 
             // Get values 
 
@@ -199,46 +214,37 @@ public class Dialog5 extends Activity {
             String max = prefs.getString("maxcaches_preference", "500");
             boolean notFound = prefs.getBoolean("not_found_preference", false);
             boolean active = prefs.getBoolean("active_preference", true);
-
-
+            boolean disabled = prefs.getBoolean("disabled_preference", false);
+            debug = prefs.getBoolean("debug_preference", false);
+            
             publishProgress(0);
 
 
-
-
-            // Do GET on pocket query creation page
-            // (Need to get VIEWSTATE hidden parameters)
-
-
-
-
-            Connection connection = Jsoup.connect("https://www.geocaching.com/pocket/gcquery.aspx");
-            connection.timeout(10000);
-            //connection.request().headers().remove("Accept-Encoding"); 
-
-            // Copy cookies from store
-
-            for (String key : queryStore.cookies.keySet()) {
-                String value = queryStore.cookies.get(key);	 
-                connection.cookie(key, value); 
-            }
-
-
-            // Execute the GET
-
-            Response response = null;
-
             try {
-                connection.method(Method.GET);
-                response = connection.execute();
+                // Retrieve and set cookies from store
 
-            } catch (IOException e) {
-                return("Unable to get pocket query creation page");
+                for (Cookie c: queryStore.cookies) {
+                    Log.v(APPNAME, "Dialog5 restored cookie "+c);
+                    client.getCookieStore().addCookie(c);
+                }
+                
+                html = IOUtils.httpGet(client, "pocket/gcquery.aspx", new Listener() {
+
+                    @Override
+                    public void update(int bytesReadSoFar, int expectedLength) {
+                        publishProgress((int)(bytesReadSoFar*40/expectedLength));       //0-40%
+                    }
+                });
+
+            } catch (Exception e) {
+                return "Problem geting Query creation page " + (debug?e:"");
             }
+
+
+
+            // Parse reply
 
             publishProgress(40);
-
-            String html = response.body();
 
             if (html.indexOf("ctl00_divSignedIn") == -1) {
                 return("Don't seem to be logged in anymore");
@@ -249,12 +255,7 @@ public class Dialog5 extends Activity {
                 return("You aren't a premium member. Goto Geocaching.com and upgrade");
             }
 
-            // Retrieve and store cookies in reply
-
-            //Map <String,String> cookiesBob = response.cookies();
-            //QueryStore.cookies = cookies;
-
-            // Copy VIEWSTATE hidden parameters
+            // Extract VIEWSTATE hidden parameters
 
             HashMap<String, String> viewStateMap = new HashMap<String,String>();
 
@@ -266,10 +267,13 @@ public class Dialog5 extends Activity {
             viewStateMap.put("__VIEWSTATE", html.substring(start + VIEWSTATE.length(), end));
 
 
-            for (int i=1; i<11; i++) {
-
-                extractViewState(html, i);
-                viewStateMap.put("__VIEWSTATE" + i, extractViewState(html, i));
+            int i=1;
+            String viewState;
+            
+            while((viewState=extractViewState(html, i)) != null) {
+                Log.v(APPNAME, "Dialog5 extracted viewstate "+i);
+                viewStateMap.put("__VIEWSTATE" + i, viewState);
+                i++;
             }
 
             publishProgress(50);
@@ -277,274 +281,273 @@ public class Dialog5 extends Activity {
 
 
 
-
-
             // Do POST to create pocket query
 
 
+            List <NameValuePair> paramList = new ArrayList <NameValuePair>();
 
+            paramList.add(new BasicNameValuePair("__EVENTTARGET",""));
+            paramList.add(new BasicNameValuePair("__EVENTARGUMENT",""));
+            paramList.add(new BasicNameValuePair("__VIEWSTATEFIELDCOUNT","11"));
 
-            Connection postConnection = Jsoup.connect("https://www.geocaching.com/pocket/gcquery.aspx");
-            postConnection.timeout(10000);
-            //postConnection.request().headers().remove("Accept-Encoding"); 
-
-            // Add cookies returned from previous GET
-
-            for (String key : queryStore.cookies.keySet()) {
-                String value = queryStore.cookies.get(key);	 
-                postConnection.cookie(key, value); 
+            for (Map.Entry <String,String> entry: viewStateMap.entrySet()) {
+                paramList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
             }
 
-
-            postConnection.data("__EVENTTARGET","");
-            postConnection.data("__EVENTARGUMENT","");
-            postConnection.data("__VIEWSTATEFIELDCOUNT","11");
-            postConnection.data(viewStateMap);
-
             // Name of pocket query
-            postConnection.data("ctl00$ContentBody$tbName",queryStore.name);
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbName",queryStore.name));
 
-            postConnection.data("ctl00$ContentBody$cbDays$0","on");
-            postConnection.data("ctl00$ContentBody$cbDays$1","on");
-            postConnection.data("ctl00$ContentBody$cbDays$1","on");
-            postConnection.data("ctl00$ContentBody$cbDays$2","on");
-            postConnection.data("ctl00$ContentBody$cbDays$3","on");
-            postConnection.data("ctl00$ContentBody$cbDays$4","on");
-            postConnection.data("ctl00$ContentBody$cbDays$5","on");
-            postConnection.data("ctl00$ContentBody$cbDays$6","on");
-
+            if (!disabled) {
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$0","on"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$1","on"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$1","on"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$2","on"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$3","on"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$4","on"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$5","on"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$6","on"));
+            }
+            
             // 3 = Run this query once then delete it
-            postConnection.data("ctl00$ContentBody$rbRunOption","3");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$rbRunOption","3"));
 
 
-            postConnection.data("ctl00$ContentBody$tbResults", max);
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbResults", max));
 
-            postConnection.data("ctl00$ContentBody$Type","rbTypeAny");
-            postConnection.data("ctl00$ContentBody$Container","rbContainerAny");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$Type","rbTypeAny"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$Container","rbContainerAny"));
 
             // I haven't found yet
             if (notFound)
-                postConnection.data("ctl00$ContentBody$cbOptions$0","on");
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbOptions$0","on"));
 
             // Is Active
             if (active)
-                postConnection.data("ctl00$ContentBody$cbOptions$13","on");
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbOptions$13","on"));
 
-            postConnection.data("ctl00$ContentBody$ddDifficulty",">=");
-            postConnection.data("ctl00$ContentBody$ddDifficultyScore","1");
-            postConnection.data("ctl00$ContentBody$ddTerrain",">=");
-            postConnection.data("ctl00$ContentBody$ddTerrainScore","1");
-            postConnection.data("ctl00$ContentBody$CountryState","rbNone");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddDifficulty",">="));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddDifficultyScore","1"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddTerrain",">="));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddTerrainScore","1"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$CountryState","rbNone"));
 
-            //postConnection.data("ctl00$ContentBody$Origin","rbOriginWpt"); // rbOriginNone");  //  rbOriginWpt");
+            //paramList.add(new BasicNameValuePair("ctl00$ContentBody$Origin","rbOriginWpt"); // rbOriginNone");  //  rbOriginWpt");
 
-            postConnection.data("ctl00$ContentBody$tbGC","GCXXXX");
-            postConnection.data("ctl00$ContentBody$tbPostalCode","");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbGC","GCXXXX"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbPostalCode",""));
 
-            postConnection.data("ctl00$ContentBody$Origin","rbOriginWpt"); // rbOriginNone");  //  rbOriginWpt");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$Origin","rbOriginWpt")); // rbOriginNone");  //  rbOriginWpt");
 
 
             // 0 = decimal degrees
-            postConnection.data("ctl00$ContentBody$LatLong","0"); // "1");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong","0")); // "1");
 
             if (queryStore.lat>0) {
                 // North
-                postConnection.data("ctl00$ContentBody$LatLong:_selectNorthSouth","1");		// 1 = North, -1 = South
-                postConnection.data("ctl00$ContentBody$LatLong$_inputLatDegs", Double.toString(queryStore.lat));
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong:_selectNorthSouth","1"));		// 1 = North, -1 = South
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong$_inputLatDegs", Double.toString(queryStore.lat)));
             } else {
                 // South
-                postConnection.data("ctl00$ContentBody$LatLong:_selectNorthSouth","-1");	// 1 = North, -1 = South
-                postConnection.data("ctl00$ContentBody$LatLong$_inputLatDegs", Double.toString(- queryStore.lat));
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong:_selectNorthSouth","-1"));	// 1 = North, -1 = South
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong$_inputLatDegs", Double.toString(- queryStore.lat)));
             }
 
 
             // Ignored?
-            //postConnection.data("ctl00$ContentBody$LatLong$_inputLatMins","00.000");
+            //paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong$_inputLatMins","00.000");
 
             if (queryStore.lon>0) {
                 // East
-                postConnection.data("ctl00$ContentBody$LatLong:_selectEastWest","1");		// -1 = West, 1 = East
-                postConnection.data("ctl00$ContentBody$LatLong$_inputLongDegs", Double.toString(queryStore.lon));
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong:_selectEastWest","1"));		// -1 = West, 1 = East
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong$_inputLongDegs", Double.toString(queryStore.lon)));
             } else {
                 // West
-                postConnection.data("ctl00$ContentBody$LatLong:_selectEastWest","-1");		// -1 = West, 1 = East
-                postConnection.data("ctl00$ContentBody$LatLong$_inputLongDegs", Double.toString(- queryStore.lon));
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong:_selectEastWest","-1"));		// -1 = West, 1 = East
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong$_inputLongDegs", Double.toString(- queryStore.lon)));
             }
 
             // Ignored?
-            //postConnection.data("ctl00$ContentBody$LatLong$_inputLongMins","00.000");
+            //paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong$_inputLongMins","00.000");
 
             // = decimal degrees
-            postConnection.data("ctl00$ContentBody$LatLong:_currentLatLongFormat","0"); // "1");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong:_currentLatLongFormat","0")); // "1");
 
-            postConnection.data("ctl00$ContentBody$tbRadius", Integer.toString(radius));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbRadius", Integer.toString(radius)));
 
-            postConnection.data("ctl00$ContentBody$rbUnitType","mi");
-            postConnection.data("ctl00$ContentBody$Placed","rbPlacedNone");
-            postConnection.data("ctl00$ContentBody$ddLastPlaced","WEEK");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$rbUnitType","mi"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$Placed","rbPlacedNone"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddLastPlaced","WEEK"));
 
-            postConnection.data("ctl00$ContentBody$DateTimeBegin","June/11/2011");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$DateTimeBegin","June/11/2011"));
 
-            postConnection.data("ctl00$ContentBody$DateTimeBegin$Month","6");
-            postConnection.data("ctl00$ContentBody$DateTimeBegin$Day","11");
-            postConnection.data("ctl00$ContentBody$DateTimeBegin$Year","2011");
-            postConnection.data("ctl00$ContentBody$DateTimeEnd","June/18/2011");
-            postConnection.data("ctl00$ContentBody$DateTimeEnd$Month","6");
-            postConnection.data("ctl00$ContentBody$DateTimeEnd$Day","18");
-            postConnection.data("ctl00$ContentBody$DateTimeEnd$Year","2011");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl00$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl01$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl02$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl03$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl04$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl05$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl06$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl07$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl08$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl09$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl10$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl11$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl12$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl13$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl14$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl15$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl16$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl17$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl18$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl19$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl20$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl21$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl22$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl23$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl24$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl25$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl26$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl27$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl28$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl29$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl30$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl31$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl32$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl33$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl34$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl35$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl36$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl37$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl38$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl39$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl40$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl41$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl42$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl43$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl44$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl45$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl46$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl47$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl48$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl49$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl50$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl51$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl52$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl53$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl54$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl55$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl56$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl57$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl58$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl59$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl00$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl01$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl02$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl03$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl04$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl05$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl06$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl07$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl08$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl09$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl10$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl11$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl12$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl13$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl14$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl15$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl16$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl17$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl18$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl19$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl20$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl21$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl22$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl23$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl24$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl25$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl26$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl27$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl28$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl29$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl30$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl31$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl32$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl33$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl34$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl35$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl36$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl37$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl38$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl39$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl40$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl41$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl42$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl43$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl44$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl45$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl46$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl47$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl48$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl49$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl50$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl51$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl52$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl53$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl54$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl55$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl56$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl57$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl58$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl59$hidInput","0");
-            postConnection.data("ctl00$ContentBody$ddlAltEmails","b@bigbob.org.uk");
-            postConnection.data("ctl00$ContentBody$ddFormats","GPX");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$DateTimeBegin$Month","6"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$DateTimeBegin$Day","11"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$DateTimeBegin$Year","2011"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$DateTimeEnd","June/18/2011"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$DateTimeEnd$Month","6"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$DateTimeEnd$Day","18"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$DateTimeEnd$Year","2011"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl00$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl01$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl02$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl03$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl04$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl05$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl06$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl07$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl08$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl09$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl10$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl11$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl12$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl13$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl14$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl15$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl16$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl17$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl18$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl19$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl20$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl21$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl22$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl23$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl24$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl25$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl26$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl27$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl28$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl29$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl30$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl31$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl32$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl33$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl34$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl35$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl36$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl37$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl38$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl39$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl40$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl41$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl42$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl43$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl44$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl45$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl46$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl47$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl48$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl49$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl50$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl51$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl52$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl53$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl54$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl55$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl56$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl57$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl58$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl59$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl00$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl01$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl02$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl03$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl04$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl05$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl06$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl07$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl08$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl09$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl10$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl11$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl12$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl13$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl14$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl15$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl16$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl17$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl18$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl19$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl20$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl21$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl22$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl23$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl24$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl25$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl26$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl27$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl28$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl29$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl30$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl31$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl32$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl33$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl34$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl35$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl36$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl37$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl38$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl39$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl40$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl41$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl42$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl43$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl44$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl45$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl46$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl47$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl48$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl49$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl50$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl51$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl52$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl53$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl54$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl55$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl56$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl57$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl58$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl59$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddlAltEmails","b@bigbob.org.uk"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddFormats","GPX"));
 
-            postConnection.data("ctl00$ContentBody$cbZip","on");
-            postConnection.data("ctl00$ContentBody$cbIncludePQNameInFileName","on");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbZip","on"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbIncludePQNameInFileName","on"));
 
-            postConnection.data("ctl00$ContentBody$btnSubmit","Submit Information");
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$btnSubmit","Submit Information"));
 
 
-            Response postResponse = null;
             try {
-                postConnection.method(Method.POST);
-                postResponse = postConnection.execute();
+
+                html = IOUtils.httpPost(client, new UrlEncodedFormEntity(paramList, HTTP.UTF_8), "pocket/gcquery.aspx", new Listener() {
+                    @Override
+                    public void update(int bytesReadSoFar, int expectedLength) {
+                        publishProgress((int) (50 + (bytesReadSoFar*40/expectedLength)));       //50-90%
+                    }
+                });
 
             } catch (IOException e) {
-                return("Error sending creation post");
+                return "Problem submitting Query creation page "  + (debug?e:"");
             }
-            publishProgress(90);
 
-            html = postResponse.body();
+
+            publishProgress(90);
 
             final String SUCCESS = "<p class=\"Success\">";
 
             int successStart = html.indexOf(SUCCESS);
 
             if (successStart==-1) {
-                return("Creation seems to have failed");
+                return "Creation seems to have failed";
             }
 
             int successEnd = html.indexOf("</p>", successStart + SUCCESS.length());
-
             this.successMessage = html.substring(successStart, successEnd);
 
+            
+            // Shutdown
+            client.getConnectionManager().shutdown();
+            
+            publishProgress(100);
             return null;		// no error message returned
         }
 
@@ -554,6 +557,9 @@ public class Dialog5 extends Activity {
             int start = loginHtml.indexOf(VIEWSTATE);
             int end = loginHtml.indexOf("\"", start + VIEWSTATE.length());
 
+            if (start==-1 || end==-1)
+                return null;        // not found
+            
             return loginHtml.substring(start + VIEWSTATE.length(), end);
 
         }

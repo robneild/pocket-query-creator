@@ -17,15 +17,36 @@
 
 package org.pquery;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.CookieHandler;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import junit.framework.Assert;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.Connection.Method;
-import org.jsoup.Connection.Response;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.pquery.IOUtils.Listener;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,6 +68,8 @@ import android.widget.TextView;
  */
 public class Dialog2 extends Activity implements LocationListener {
 
+    private boolean debug;
+    
     private LocationManager locationManager;
 
     private LoginAsync task;
@@ -93,7 +116,8 @@ public class Dialog2 extends Activity implements LocationListener {
 
         final String username = prefs.getString("username_preference", "");
         final String password = prefs.getString("password_preference", "");
-
+        debug = prefs.getBoolean("debug_preference", false);
+        
         // Manage Login Thread
         //
         // It will continue to run over screen rotations &
@@ -104,7 +128,7 @@ public class Dialog2 extends Activity implements LocationListener {
         if (task==null) {
             // No existing task so start one
 
-            task=new LoginAsync(this, username, password);
+            task=new LoginAsync(this, username, password,debug);
             task.execute();
         }
         else {
@@ -129,7 +153,7 @@ public class Dialog2 extends Activity implements LocationListener {
         return task;
     }
 
-    private void onTaskFinished(String result, Map<String,String> cookies) {
+    private void onTaskFinished(String result, List<Cookie> cookies) {
 
         // Login attempt finished
 
@@ -150,7 +174,8 @@ public class Dialog2 extends Activity implements LocationListener {
 
             qs.cookies = cookies;
             qs.saveToBundle(bundle);
-
+            qs.debug = debug;
+            
             Intent myIntent = new Intent(getApplicationContext(), Dialog3.class);
             myIntent.putExtra("QueryStore", bundle);
 
@@ -180,18 +205,20 @@ public class Dialog2 extends Activity implements LocationListener {
 
         private String user;
         private String pass;
-
+        private boolean debug;
+        
         // Results
 
         private int progress;
         private String result;
-        private Map <String,String> cookies;
+        private List <Cookie> cookies;
 
-        LoginAsync(Dialog2 activity, String user, String pass) {
+        LoginAsync(Dialog2 activity, String user, String pass, boolean debug) {
             attach(activity);
 
             this.user = user;
             this.pass = pass;
+            this.debug = debug;
         }
 
         /**
@@ -204,40 +231,40 @@ public class Dialog2 extends Activity implements LocationListener {
         @Override
         protected String doInBackground(Void... unused) {
 
+            String html;
+            
             publishProgress(0);
 
+            DefaultHttpClient client = new DefaultHttpClient();
+
             // Get the login screen
-
-            Connection loginConnection = Jsoup.connect("https://www.geocaching.com/login/");
-            loginConnection.timeout(10000);
-            //loginConnection.request().headers().remove("Accept-Encoding"); 		// don't accept g-zip
-
-            // Do the actual request (HTTP GET)
-
-            Response loginResponse = null;
+            // and read the response
+            
             try {
-                loginConnection.method(Method.GET);
-                loginResponse = loginConnection.execute();
+                html = IOUtils.httpGet(client, "login/", new Listener() {
+                    
+                    @Override
+                    public void update(int bytesReadSoFar, int expectedLength) {
+                        publishProgress((int)(bytesReadSoFar*40/expectedLength));
+                    }
+                });
 
-            } catch (IOException e) {
-                return ("Unable to retrieve Geocaching.com login page. Verify you have network access");
+                // Retrieve and store cookies in reply
+
+                cookies = client.getCookieStore().getCookies();
+                
+            } catch (Exception e) {
+                return "Couldn't download login page " + (debug?e:"");
             }
-
-            // Do some parsing of the response
-
-            String loginHtml = loginResponse.body();
-
+            
+            // Parse the response            
+            
             publishProgress(40);
-
-            // Retrieve and store cookies in reply
-
-            cookies = loginResponse.cookies();
 
             // Check if the login page is there
 
-            if (loginHtml.indexOf("LoginForm") == -1)
+            if (html.indexOf("LoginForm") == -1)
                 return("Couldn't find expected form on Geocaching.com login");
-
 
             // Extract the viewState hidden form value
 
@@ -246,10 +273,10 @@ public class Dialog2 extends Activity implements LocationListener {
             try {
                 String VIEWSTATE = "name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"";
 
-                int start = loginHtml.indexOf(VIEWSTATE);
-                int end = loginHtml.indexOf("\"", start + VIEWSTATE.length());
+                int start = html.indexOf(VIEWSTATE);
+                int end = html.indexOf("\"", start + VIEWSTATE.length());
 
-                viewState = loginHtml.substring(start + VIEWSTATE.length(), end);
+                viewState = html.substring(start + VIEWSTATE.length(), end);
 
             } catch (Exception e) {
                 return("The Geocaching.com login page was mising some expected contents");
@@ -257,57 +284,53 @@ public class Dialog2 extends Activity implements LocationListener {
 
 
 
-
-
-
-            // Start Login POST
-
-            Connection loginPostConnection = Jsoup.connect("https://www.geocaching.com/login/");
-            loginPostConnection.timeout(10000);
-            //loginPostConnection.request().headers().remove("Accept-Encoding"); 		// stop g-zip
-
-            // Copy cookies returned from first response
-
-            for (String key : cookies.keySet()) {
-                String value = cookies.get(key);
-                loginPostConnection.cookie(key, value);
-            }
+            
+            // Create the Login POST
 
 
             // Fill in the form values
+            
+            List <NameValuePair> paramList = new ArrayList <NameValuePair>();
 
-            loginPostConnection.data("__EVENTTARGET","");
-            loginPostConnection.data("__EVENTARGUMENT","");
-            loginPostConnection.data("__VIEWSTATE", viewState);
-            loginPostConnection.data("ctl00$SiteContent$tbUsername", user);
-            loginPostConnection.data("ctl00$SiteContent$tbPassword", pass);
-            loginPostConnection.data("ctl00$SiteContent$cbRememberMe","on");
-            loginPostConnection.data("ctl00$SiteContent$btnSignIn","on");
+            paramList.add(new BasicNameValuePair("__EVENTTARGET",""));
+            paramList.add(new BasicNameValuePair("__EVENTARGUMENT",""));
+            paramList.add(new BasicNameValuePair("__VIEWSTATE", viewState));
+            paramList.add(new BasicNameValuePair("ctl00$SiteContent$tbUsername", user));
+            paramList.add(new BasicNameValuePair("ctl00$SiteContent$tbPassword", pass));
+            paramList.add(new BasicNameValuePair("ctl00$SiteContent$cbRememberMe","on"));
+            paramList.add(new BasicNameValuePair("ctl00$SiteContent$btnSignIn","on"));
 
             publishProgress(50);
 
-            // Do the actual request here (HTTP POST)
 
-            Response postResponse;
             try {
-                loginPostConnection.method(Method.POST);
-                postResponse = loginPostConnection.execute();
+                html = IOUtils.httpPost(client, new UrlEncodedFormEntity(paramList, HTTP.UTF_8), "login/", new Listener() {
+                    
+                    @Override
+                    public void update(int bytesReadSoFar, int expectedLength) {
+                        publishProgress((int) (50 + (bytesReadSoFar*40/expectedLength)));       // 50-90%
+                    }
+                });
+                
+                // Retrieve and store cookies in reply
 
-
+                cookies = client.getCookieStore().getCookies();
+                
             } catch (IOException e) {
-                return("Exception doing post " +e);
+                return("Unable to submit login form " + (debug?e:""));
             }
 
             publishProgress(90);
+            
+            // Parse response to check we are now logged in
 
-            loginHtml = postResponse.body();
-
-            // Check we are now logged in
-
-            if (loginHtml.indexOf("ctl00_SiteContent_lbMessageText") == -1)
+            if (html.indexOf("ctl00_SiteContent_lbMessageText") == -1)
                 return("Login to Geocaching.com failed. Verify your credentials are correct");
 
-
+            
+            // Shutdown
+            client.getConnectionManager().shutdown();  
+            
             publishProgress(100);
             return null;
         }
@@ -357,7 +380,7 @@ public class Dialog2 extends Activity implements LocationListener {
             return result;
         }
 
-        Map<String, String> getCookies() {
+        List<Cookie> getCookies() {
             return cookies;
         }
     }

@@ -17,9 +17,15 @@
 
 package org.pquery;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.cookie.BasicClientCookie;
 
 import android.os.Bundle;
 
@@ -29,8 +35,9 @@ public class QueryStore {
     public int radius;
     public double lat;
     public double lon;
-
-    public Map <String,String> cookies;
+    public boolean debug;
+    
+    public List <Cookie> cookies;
 
     public QueryStore() {
     }
@@ -41,13 +48,20 @@ public class QueryStore {
         lat = bundle.getDouble("QueryStore_lat");
         lon = bundle.getDouble("QueryStore_lon");
 
-        cookies = new HashMap<String,String>();
+        debug = bundle.getBoolean("QueryStore_debug");
+        
+        // Restore cookie list from 2 arrays
+        
+        cookies = new ArrayList<Cookie>();
 
-        String[] keys = bundle.getStringArray("QueryStore_cookie_keys");
-        String[] values = bundle.getStringArray("QueryStore_cookie_values");
+        ArrayList<String> names = bundle.getStringArrayList("QueryStore_cookie_names");
+        ArrayList<String> values = bundle.getStringArrayList("QueryStore_cookie_values");
 
-        for (int i=0; i<keys.length; i++) {
-            cookies.put(keys[i], values[i]);
+        for (int i=0; i<names.size(); i++) {
+            BasicClientCookie c = new BasicClientCookie(names.get(i),values.get(i));
+            c.setDomain("www.geocaching.com");
+            c.setPath("/");
+            cookies.add(c);
         }
     }
 
@@ -58,9 +72,21 @@ public class QueryStore {
         bundle.putDouble("QueryStore_lat", lat);
         bundle.putDouble("QueryStore_lon", lon);
 
-        bundle.putStringArray("QueryStore_cookie_keys", cookies.keySet().toArray(new String[0]));
-        bundle.putStringArray("QueryStore_cookie_values", cookies.values().toArray(new String[0]));
-
+        // Store the cookie list into 2 arrays
+        
+        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> values = new ArrayList<String>();
+        
+        for (Cookie c: cookies) {
+            names.add(c.getName());
+            values.add(c.getValue());
+        }
+        
+        bundle.putStringArrayList("QueryStore_cookie_names", names);
+        bundle.putStringArrayList("QueryStore_cookie_values", values);
+        
+        bundle.putBoolean("QueryStore_debug", debug);
     }
+
 
 }
