@@ -18,8 +18,7 @@
                 android:summary="geocaching.com password"
                 android:dialogTitle="@string/dialog_title_password_preference" />
         
-	<PreferenceCategory
-            android:title="Pocket Query creations options"/>
+	<PreferenceCategory android:title="Pocket Query creations options"/>
             
 		<EditTextPreference
 				android:inputType="number"
@@ -34,7 +33,7 @@
 				android:defaultValue="500"
                 android:key="maxcaches_preference"
                 android:title="Max caches"
-                android:summary="Maximum number of caches to return. Highest allowed value 500"
+                android:summary="Maximum number of caches to return. Highest allowed value 1000"
                 android:dialogTitle="Maximum caches" />
                 
         <CheckBoxPreference
@@ -49,5 +48,19 @@
                 android:title="Only active caches"
                 android:summary="Only include active/enabled geocaches" />
         
-                        
+	<CheckBoxPreference
+        		android:defaultValue="false"
+                android:key="disabled_preference"
+                android:title="Create disabled"
+                android:summary="Create Query in state such that it won't autorun. Allows manual modification after creation" />
+                
+        
+        <PreferenceCategory android:title="Other"/>
+
+        <CheckBoxPreference
+        		android:defaultValue="false"
+                android:key="debug_preference"
+                android:title="Debug mode"
+                android:summary="Extra info in error messages" />
+                
 </PreferenceScreen>

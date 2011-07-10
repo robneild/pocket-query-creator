@@ -61,6 +61,9 @@ public class Dialog6 extends Activity {
 		html += "<h3>Geocaching.com creation message</h3>";
 		html +=	getIntent().getExtras().getString("html");
 		
+		html += "<h3>Useful Geocaching.com links</h3>";
+		html += "<a href='http://www.geocaching.com/pocket/'>List Pocket Queries</a>";
+		
 		wv = (WebView) findViewById(R.id.webview1);
 		wv.setBackgroundColor(0);
 		wv.loadData(html, mimeType, encoding);

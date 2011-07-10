@@ -44,7 +44,7 @@ public class PocketQuery extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
         // Show list
         setListAdapter(new MyListAdapter(this)); // new ArrayAdapter<String>(this, R.layout.list_item, OPTIONS));
 

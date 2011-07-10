@@ -28,15 +28,6 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.Connection.KeyVal;
-import org.jsoup.Connection.Request;
-import org.jsoup.Connection.Response;
-import org.jsoup.nodes.Attributes;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import android.app.Activity;
 import android.content.Intent;
