@@ -55,27 +55,28 @@ import android.widget.TextView;
 import static org.pquery.Util.*;
 
 /**
- * Logs the user into geocaching.com web site
- * If login is successful 'next' button is enabled
+ * Actually creates the pocket query
+ * 
+ * GETS the creation page, then sends a POST to create
  */
 public class Dialog5 extends Activity {
 
-    private LoginAsync task;
+    // Creation takes long time. Use thread
+    private CreationAsync task;
 
-    /**
-     * Show login progress
-     */
+    // Show login progress
     private ProgressBar bar;
-
     private ProgressBar progressSpinner;
 
-    /**
-     * Show result of login attempt
-     */
+    // Show result of login attempt
     private TextView resultTextView;
 
+    // Stores values setup in previous screen
     private QueryStore queryStore;
 
+    /**
+     * Called on page creation and screen rotation etc.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -89,13 +90,13 @@ public class Dialog5 extends Activity {
         resultTextView = (TextView) findViewById(R.id.results);
         Button cancelButton = (Button) findViewById(R.id.button_cancel);
 
-        // Get parameters passed from previous wizard stage
+        // Extract params passed from previous screens
 
         Bundle bundle = getIntent().getBundleExtra("QueryStore");
         Assert.assertNotNull(bundle);
         queryStore = new QueryStore(bundle);
 
-        // Handle button
+        // Handle cancel button
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -105,21 +106,20 @@ public class Dialog5 extends Activity {
 
         // Manage Creation thread Thread
         //
-        // It will continue to run over screen rotations &
-        // activity destruction/creation
+        // IMPORANT: Continues to run over screen rotations & activity destruction/creation
 
-        task = (LoginAsync) getLastNonConfigurationInstance();
+        task = (CreationAsync) getLastNonConfigurationInstance();
 
         if (task==null) {
             // No existing task so start one
 
-            task=new LoginAsync(this, queryStore, PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+            task=new CreationAsync(this, queryStore, PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
             task.execute();
         }
         else {
-            // Existing task, send it our new 'Activity' reference
+            // Existing task already running. Send it our new 'Activity' reference
 
-            // Whilst Activity was being destroyed/created the task thread would have continued
+            // Whilst Activity was destroyed/created task thread continued
             // Update UI for any missed events and check if task completed
 
             task.attach(this);
@@ -138,12 +138,15 @@ public class Dialog5 extends Activity {
     }
 
     /**
-     * Update UI
+     * Update UI progress bar
      */
     private void updateProgress(int progress) {
         bar.setProgress(progress);
     }
 
+    /**
+     * Update GUI etc. after ASync task has finished
+     */
     private void onTaskFinished(String errorMessage, String successMessage) {
 
         if (isFinishing()) // detect if activity has been closed behind us (back or cancel button)
@@ -172,12 +175,12 @@ public class Dialog5 extends Activity {
 
 
     /**
-     * A task running on a thread
+     * A background task running on a thread
      * 
      * Updates UI progress bar as thread executes but needs to manage surrounding 
      * Activity being destroyed & recreated (i.e screen rotate)
      */
-    static class LoginAsync extends AsyncTask<Void, Integer, String> {
+    static class CreationAsync extends AsyncTask<Void, Integer, String> {
 
         private Dialog5 activity;
         private QueryStore queryStore;
@@ -190,7 +193,7 @@ public class Dialog5 extends Activity {
         private String successMessage;
         private boolean debug;
         
-        LoginAsync(Dialog5 activity, QueryStore queryStore, SharedPreferences prefs) {
+        CreationAsync(Dialog5 activity, QueryStore queryStore, SharedPreferences prefs) {
             attach(activity);
 
             this.queryStore = queryStore;
@@ -255,8 +258,13 @@ public class Dialog5 extends Activity {
                 return("You aren't a premium member. Goto Geocaching.com and upgrade");
             }
 
-            // Extract VIEWSTATE hidden parameters
-
+            // Extract VIEWSTATE hidden fields
+            
+            // __VIEWSTATE , __VIEWSTATE1, __VIEWSTATE2
+            // __VIEWSTATEFIELDCOUNT 3
+            
+            // Manually extract the first __VIEWSTATE
+            
             HashMap<String, String> viewStateMap = new HashMap<String,String>();
 
             String VIEWSTATE = "name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"";
@@ -266,6 +274,7 @@ public class Dialog5 extends Activity {
 
             viewStateMap.put("__VIEWSTATE", html.substring(start + VIEWSTATE.length(), end));
 
+            // Loop around extracting __VIEWSTATE1 etc...
 
             int i=1;
             String viewState;
@@ -288,7 +297,7 @@ public class Dialog5 extends Activity {
 
             paramList.add(new BasicNameValuePair("__EVENTTARGET",""));
             paramList.add(new BasicNameValuePair("__EVENTARGUMENT",""));
-            paramList.add(new BasicNameValuePair("__VIEWSTATEFIELDCOUNT","11"));
+            paramList.add(new BasicNameValuePair("__VIEWSTATEFIELDCOUNT", ""+viewStateMap.size()));
 
             for (Map.Entry <String,String> entry: viewStateMap.entrySet()) {
                 paramList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
@@ -299,7 +308,6 @@ public class Dialog5 extends Activity {
 
             if (!disabled) {
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$0","on"));
-            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$1","on"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$1","on"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$2","on"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbDays$3","on"));
@@ -447,6 +455,12 @@ public class Dialog5 extends Activity {
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl57$hidInput","0"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl58$hidInput","0"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl59$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl60$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl61$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl62$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl63$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrInclude$dtlAttributeIcons$ctl64$hidInput","0"));
+            
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl00$hidInput","0"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl01$hidInput","0"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl02$hidInput","0"));
@@ -507,6 +521,13 @@ public class Dialog5 extends Activity {
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl57$hidInput","0"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl58$hidInput","0"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl59$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl60$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl61$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl62$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl63$hidInput","0"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$ctlAttrExclude$dtlAttributeIcons$ctl64$hidInput","0"));
+            
+            
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddlAltEmails","b@bigbob.org.uk"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddFormats","GPX"));
 
@@ -529,19 +550,22 @@ public class Dialog5 extends Activity {
                 return "Problem submitting Query creation page "  + (debug?e:"");
             }
 
-
+            
+            // Parse POST html response
+            // Look for success message inside <p class="Success">
+            
             publishProgress(90);
 
             final String SUCCESS = "<p class=\"Success\">";
-
-            int successStart = html.indexOf(SUCCESS);
+            
+            int successStart = html.indexOf(SUCCESS);                                   // start
 
             if (successStart==-1) {
                 return "Creation seems to have failed";
             }
 
-            int successEnd = html.indexOf("</p>", successStart + SUCCESS.length());
-            this.successMessage = html.substring(successStart, successEnd);
+            int successEnd = html.indexOf("</p>", successStart + SUCCESS.length());     // end
+            this.successMessage = html.substring(successStart, successEnd);             // extract
 
             
             // Shutdown
