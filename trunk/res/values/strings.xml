@@ -26,4 +26,31 @@
 	
     <string name="preferences_from_xml">App/Preferences/1. Preferences from XML</string>
 
+    <string name="filter_cache_type">Cache type</string>
+    <string name="filter_container">Container</string>
+    
+     <string name="type_wherigo">Wherigo</string>
+     <string name="type_adventures">GPS Adventures Exhibit</string>
+     <string name="type_traditional">Traditional</string>
+     <string name="type_multi">Multi-cache</string>
+     <string name="type_virtual">Virtual</string>
+     <string name="type_letterbox">Letterbox Hybrid</string>
+     <string name="type_event">Event</string>      
+     <string name="type_unknown">Unknown</string>
+     <string name="type_project">Project APE</string>
+     <string name="type_webcam">Webcam</string>         
+     <string name="type_earthcache">Earthcache</string>        
+
+     <string name="container_small">Small</string>   
+     <string name="container_large">Large</string>   
+     <string name="container_micro">Micro</string>   
+     <string name="container_other">Other</string>   
+     <string name="container_regular">Regular</string>   
+     <string name="container_unknown">Unknown</string>   
+     <string name="container_virtual">Virtual</string>   
+                              
+     <string name="ok">OK</string>   
+  	 <string name="all">All</string>
+  	 
+
 </resources>

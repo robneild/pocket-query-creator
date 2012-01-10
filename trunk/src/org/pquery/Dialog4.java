@@ -56,6 +56,8 @@ public class Dialog4 extends Activity implements LocationListener {
     private Location gpsLocation;
     private boolean usingGPS = true;
 
+    // Wizard state
+    
     private QueryStore queryStore;
 
     @Override

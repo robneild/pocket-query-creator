@@ -25,12 +25,14 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,13 +42,16 @@ import android.widget.AdapterView.OnItemClickListener;
 public class PocketQuery extends ListActivity {
 
     static final String[] OPTIONS = new String[] {"Create New Pocket Query", "Settings", "About"};
+    static final String[] OPTIONS_BAD_HTML_RESPONSE = new String[] {"Create New Pocket Query", "Settings", "About", "View Bad Response", "Email Bad Response"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Util.deleteBadHTMLResponse();
         
         // Show list
-        setListAdapter(new MyListAdapter(this)); // new ArrayAdapter<String>(this, R.layout.list_item, OPTIONS));
+        setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, OPTIONS)); //new MyListAdapter(this));
 
         ListView lv = getListView();
         lv.setTextFilterEnabled(true);
@@ -83,8 +88,25 @@ public class PocketQuery extends ListActivity {
                     startActivity(myIntent);
                 }
 
+                if (position == 3) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(Util.getBadHTMLResponseFile()), "text/html");
+                    startActivity(intent);
+                }
 
+                if (position == 4) {
+                    
+                    Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
 
+                    String[] recipients = new String[]{"s1@bigbob.org.uk", "",};
+
+                    emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, recipients);
+                    emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, Uri.fromFile(Util.getBadHTMLResponseFile()));
+                    emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "PocketQueryCreator bad html response");
+                    emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "bad html response");
+                    emailIntent.setType("text/html");  
+                    startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                }
 
             }
         });
@@ -92,8 +114,18 @@ public class PocketQuery extends ListActivity {
 
 
 
+    @Override
+    protected void onResume() {
+        if (Util.isBadHTMLResponseExists())
+            setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, OPTIONS_BAD_HTML_RESPONSE));
+        else
+            setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, OPTIONS));
+        
+        super.onResume();
+    }
 
-
+    
+    
     class MyListAdapter extends BaseAdapter {
         public MyListAdapter(Context context) {
             mContext = context;

@@ -18,7 +18,9 @@
 package org.pquery;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
@@ -30,6 +32,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -39,7 +45,8 @@ import android.view.View;
 import android.widget.Button;
 
 /**
- * Just displays some info
+ * Just displays starting some info text.
+ * Also engages GPS
  */
 public class Dialog1 extends Activity implements LocationListener {
 
@@ -59,15 +66,13 @@ public class Dialog1 extends Activity implements LocationListener {
 
         next.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+            
                 Intent myIntent = new Intent(view.getContext(), Dialog2.class);
                 startActivity(myIntent);
                 finish();
             }
         });
     }
-
-
-
 
     @Override
     protected void onResume() {
