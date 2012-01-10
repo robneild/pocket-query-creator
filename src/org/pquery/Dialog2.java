@@ -170,7 +170,7 @@ public class Dialog2 extends Activity implements LocationListener {
             Assert.assertNotNull(cookies);
 
             Bundle bundle = new Bundle();
-            QueryStore qs = new QueryStore();
+            QueryStore qs = new QueryStore(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
 
             qs.cookies = cookies;
             qs.saveToBundle(bundle);
@@ -295,10 +295,10 @@ public class Dialog2 extends Activity implements LocationListener {
             paramList.add(new BasicNameValuePair("__EVENTTARGET",""));
             paramList.add(new BasicNameValuePair("__EVENTARGUMENT",""));
             paramList.add(new BasicNameValuePair("__VIEWSTATE", viewState));
-            paramList.add(new BasicNameValuePair("ctl00$SiteContent$tbUsername", user));
-            paramList.add(new BasicNameValuePair("ctl00$SiteContent$tbPassword", pass));
-            paramList.add(new BasicNameValuePair("ctl00$SiteContent$cbRememberMe","on"));
-            paramList.add(new BasicNameValuePair("ctl00$SiteContent$btnSignIn","on"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbUsername", user));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbPassword", pass));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbRememberMe","on"));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$btnSignIn","on"));
 
             publishProgress(50);
 
@@ -324,9 +324,14 @@ public class Dialog2 extends Activity implements LocationListener {
             
             // Parse response to check we are now logged in
 
-            if (html.indexOf("ctl00_SiteContent_lbMessageText") == -1)
-                return("Login to Geocaching.com failed. Verify your credentials are correct");
-
+            if (html.indexOf("ctl00_ContentBody_lbMessageText") == -1) {
+                String ret = "Login to Geocaching.com failed. Verify your credentials are correct";
+                if (debug) {
+                    Util.writeBadHTMLResponse("Dialog2::ctl00_ContentBody_lbMessageText", html);
+                    ret += ". DEBUG response saved to " + Util.STORE_DIR;
+                }
+                return(ret);
+            }
             
             // Shutdown
             client.getConnectionManager().shutdown();  

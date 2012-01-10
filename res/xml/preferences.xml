@@ -22,14 +22,6 @@
             
 		<EditTextPreference
 				android:inputType="number"
-				android:defaultValue="5"
-                android:key="radius_preference"
-                android:title="Default Radius"
-                android:summary="Default pocket query radius (miles)"
-                android:dialogTitle="Enter default raduis (miles)" />
-
-		<EditTextPreference
-				android:inputType="number"
 				android:defaultValue="500"
                 android:key="maxcaches_preference"
                 android:title="Max caches"
@@ -53,7 +45,18 @@
                 android:key="disabled_preference"
                 android:title="Create disabled"
                 android:summary="Create Query in state such that it won't autorun. Allows manual modification after creation" />
-                
+     
+    <CheckBoxPreference
+        		android:defaultValue="true"
+                android:key="zip_preference"
+                android:title="Compress results"
+                android:summary="Results compressed into zip file" />
+    
+    <CheckBoxPreference
+        		android:defaultValue="false"
+                android:key="metric_preference"
+                android:title="Metric distances"
+                android:summary="Use km instead of miles" />                        
         
         <PreferenceCategory android:title="Other"/>
 

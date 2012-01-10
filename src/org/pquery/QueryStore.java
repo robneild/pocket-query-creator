@@ -26,8 +26,12 @@ import java.util.Set;
 
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.cookie.BasicClientCookie;
+import org.pquery.util.CacheTypeList;
+import org.pquery.util.ContainerTypeList;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 public class QueryStore {
 
@@ -39,8 +43,18 @@ public class QueryStore {
     
     public List <Cookie> cookies;
 
-    public QueryStore() {
+    // Filters
+    // If empty assume match all
+    
+    public CacheTypeList cacheTypeList = new CacheTypeList();
+    public ContainerTypeList containerTypeList  = new ContainerTypeList();
+    
+    public QueryStore(SharedPreferences prefs) {
+        radius = Integer.valueOf(prefs.getString("radius_preference", "5"));
+        cacheTypeList = new CacheTypeList(prefs.getString("cachetype_preference", ""));
+        containerTypeList = new ContainerTypeList(prefs.getString("containertype_preference", ""));
     }
+    
 
     public QueryStore(Bundle bundle) {
         name = bundle.getString("QueryStore_name");
@@ -63,6 +77,15 @@ public class QueryStore {
             c.setPath("/");
             cookies.add(c);
         }
+        
+        // Retrieve cache type filter
+        
+        cacheTypeList = new CacheTypeList(bundle.getString("QueryStore_cacheType"));
+        
+        // Retrieve container type filter
+        
+        containerTypeList = new ContainerTypeList(bundle.getString("QueryStore_containerType"));
+
     }
 
 
@@ -86,7 +109,17 @@ public class QueryStore {
         bundle.putStringArrayList("QueryStore_cookie_values", values);
         
         bundle.putBoolean("QueryStore_debug", debug);
+        
+        // Store cache type filter
+        
+        bundle.putString("QueryStore_cacheType", cacheTypeList.toString());
+        
+        // Store container type filter
+        
+        bundle.putString("QueryStore_containerType", containerTypeList.toString());
+        
     }
+    
 
 
 }

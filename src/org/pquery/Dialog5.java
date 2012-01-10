@@ -18,6 +18,8 @@
 package org.pquery;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -43,8 +45,10 @@ import junit.framework.Assert;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -218,6 +222,8 @@ public class Dialog5 extends Activity {
             boolean notFound = prefs.getBoolean("not_found_preference", false);
             boolean active = prefs.getBoolean("active_preference", true);
             boolean disabled = prefs.getBoolean("disabled_preference", false);
+            boolean metric = prefs.getBoolean("metric_preference", false);
+            boolean zip =  prefs.getBoolean("zip_preference", true);
             debug = prefs.getBoolean("debug_preference", false);
             
             publishProgress(0);
@@ -255,7 +261,12 @@ public class Dialog5 extends Activity {
 
             // TODO NEED TO CHECK
             if (html.indexOf("ctl00_litPMLevel") == -1) {
-                return("You aren't a premium member. Goto Geocaching.com and upgrade");
+                String ret = "You aren't a premium member. Goto Geocaching.com and upgrade";
+                if (debug) {
+                    Util.writeBadHTMLResponse("Dialog5::ctl00_litPMLevel", html);
+                    ret += ". DEBUG response saved to " + Util.STORE_DIR;
+                }
+                return(ret);
             }
 
             // Extract VIEWSTATE hidden fields
@@ -322,9 +333,30 @@ public class Dialog5 extends Activity {
 
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbResults", max));
 
-            paramList.add(new BasicNameValuePair("ctl00$ContentBody$Type","rbTypeAny"));
-            paramList.add(new BasicNameValuePair("ctl00$ContentBody$Container","rbContainerAny"));
+            // Cache type filter
 
+            if (queryStore.cacheTypeList.isAll())
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$Type","rbTypeAny"));
+            else {
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$Type","rbTypeSelect"));
+                
+                for (CacheType cache : queryStore.cacheTypeList) {
+                    paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbTaxonomy$"+cache.ordinal(), "on"));
+                }
+            }
+            
+            // Container type filter
+            
+            if (queryStore.containerTypeList.isAll())            
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$Container","rbContainerAny"));
+            else {
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$Container","rbContainerSelect"));
+                
+                for (ContainerType container : queryStore.containerTypeList) {
+                    paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbContainers$"+container.ordinal(), "on"));
+                }
+            }
+            
             // I haven't found yet
             if (notFound)
                 paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbOptions$0","on"));
@@ -380,9 +412,14 @@ public class Dialog5 extends Activity {
             // = decimal degrees
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$LatLong:_currentLatLongFormat","0")); // "1");
 
-            paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbRadius", Integer.toString(radius)));
+            paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbRadius", Integer.toString(queryStore.radius)));
 
-            paramList.add(new BasicNameValuePair("ctl00$ContentBody$rbUnitType","mi"));
+            
+            if (metric)
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$rbUnitType","km"));
+            else
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$rbUnitType","mi"));
+            
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$Placed","rbPlacedNone"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddLastPlaced","WEEK"));
 
@@ -531,9 +568,10 @@ public class Dialog5 extends Activity {
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddlAltEmails","b@bigbob.org.uk"));
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$ddFormats","GPX"));
 
-            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbZip","on"));
+            if (zip)
+                paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbZip","on"));
+            
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbIncludePQNameInFileName","on"));
-
             paramList.add(new BasicNameValuePair("ctl00$ContentBody$btnSubmit","Submit Information"));
 
 
@@ -637,9 +675,6 @@ public class Dialog5 extends Activity {
         }
 
     }
-
-
-
 
 
 

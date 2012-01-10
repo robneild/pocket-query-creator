@@ -133,6 +133,6 @@ public class IOUtils {
     }
     
     private static String getGeocachingURL() {
-        return "https://www.geocaching.com/";
+        return "http://www.geocaching.com/";
     }
 }

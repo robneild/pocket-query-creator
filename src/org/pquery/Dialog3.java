@@ -34,8 +34,10 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.pquery.util.Prefs;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
@@ -70,19 +72,27 @@ public class Dialog3 extends Activity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog3);
 
+        final Context cxt = getApplicationContext();
+        
         // Setup GPS
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         // Store references to controls
 
+        TextView radiusText = (TextView) findViewById(R.id.text_radius);
         name = (EditText)findViewById(R.id.editText_name);
         radius = (EditText)findViewById(R.id.editText_radius);
         final Button nextButton = (Button) findViewById(R.id.button_next);
 
         name.setText(getDefaultName());
-        radius.setText(getDefaultRadius());
+        radius.setText(Prefs.getDefaultRadius(cxt));
 
+        if (Prefs.isMetric(cxt))
+           radiusText.setText(radiusText.getText() + " (km)");
+        else
+            radiusText.setText(radiusText.getText() + " (miles)");
+            
         // Get parameters passed from previous wizard stage
 
         Bundle bundle = getIntent().getBundleExtra("QueryStore");
@@ -90,28 +100,40 @@ public class Dialog3 extends Activity implements LocationListener {
         queryStore = new QueryStore(bundle);
 
 
+        // Handle next button
+        // Goes onto next stage of wizard
+        
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-
+                
+                // Only go to next wizard page is some form values have been entered
+                
                 if (!validForm()) {
                     Toast.makeText(getApplicationContext(), "Enter valid values", Toast.LENGTH_LONG).show();
                     return;
                 }
-
+                
+                // Save preferences
+                
+                Prefs.saveDefaultRadius(cxt, radius.getText().toString());
+                
+                // Go onto next wizard page; pass current values in QueryStore
+                
                 queryStore.name = name.getText().toString();
                 queryStore.radius = Integer.parseInt(radius.getText().toString());
 
                 Bundle bundle = new Bundle();
                 queryStore.saveToBundle(bundle);
 
-                Intent myIntent = new Intent(view.getContext(), Dialog4.class);
+                Intent myIntent = new Intent(view.getContext(), Dialog3_1.class);
                 myIntent.putExtra("QueryStore", bundle);
                 startActivity(myIntent);
                 finish();
             }
         });
 
-
+        // Handle cancel button
+        // Just closes the activity
 
         Button cancelButton = (Button) findViewById(R.id.button_cancel);
 
@@ -138,13 +160,6 @@ public class Dialog3 extends Activity implements LocationListener {
     private String getDefaultName() {
         return DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT).format(new Date());
     }
-
-    private String getDefaultRadius() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        return prefs.getString("radius_preference", "5");
-    }
-
-
 
 
     // Handle GPS
