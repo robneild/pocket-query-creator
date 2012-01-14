@@ -50,7 +50,7 @@
      <string name="container_virtual">Virtual</string>   
                               
      <string name="ok">OK</string>   
-  	 <string name="all">All</string>
+  	 <string name="any">Any</string>
   	 
 
 </resources>

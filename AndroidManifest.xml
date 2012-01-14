@@ -82,7 +82,7 @@
             </intent-filter>
         </activity>
         
-		<activity android:name="Dialog3_1" android:label="Filters">
+		<activity android:name="Dialog3_1" android:label="Optional filters ">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.SAMPLE_CODE" />

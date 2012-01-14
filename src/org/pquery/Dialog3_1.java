@@ -5,6 +5,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.pquery.Dialog2.LoginAsync;
 import org.pquery.util.CacheTypeList;
 import org.pquery.util.ContainerTypeList;
 import org.pquery.util.Prefs;
@@ -129,9 +130,8 @@ public class Dialog3_1 extends ListActivity {
                 finish();
             }
         });
-
     }
-
+    
     private Dialog createDialog(int id) {
 
         if (id==0) {
@@ -159,7 +159,7 @@ public class Dialog3_1 extends ListActivity {
                     m_adapter.notifyDataSetChanged();
                 }
             })
-            .setNeutralButton(R.string.all, new DialogInterface.OnClickListener() {
+            .setNeutralButton(R.string.any, new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dialog, int which) {
                     queryStore.cacheTypeList.setAll();
                     Prefs.saveCacheTypeFilter(getApplicationContext(), queryStore.cacheTypeList);
@@ -198,7 +198,7 @@ public class Dialog3_1 extends ListActivity {
                 }
 
             })
-            .setNeutralButton(R.string.all, new DialogInterface.OnClickListener() {
+            .setNeutralButton(R.string.any, new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dialog, int which) {
                     queryStore.containerTypeList.setAll();
                     Prefs.saveContainerTypeFilter(getApplicationContext(), queryStore.containerTypeList);
@@ -284,7 +284,7 @@ class FilterOption {
         this.filterValue = cacheTypeList.toLocalisedString(res);
         if (cacheTypeList.isAll()) {
             this.color = Color.GREEN;
-            this.filterValue = res.getString(R.string.all);
+            this.filterValue = res.getString(R.string.any);
         } else
             this.color = Color.MAGENTA;
     }
@@ -293,7 +293,7 @@ class FilterOption {
         this.filterValue = containerList.toLocalisedString(res);
         if (containerList.isAll()) {
             this.color = Color.GREEN;
-            this.filterValue = res.getString(R.string.all);
+            this.filterValue = res.getString(R.string.any);
         } else
             this.color = Color.MAGENTA;
     }
