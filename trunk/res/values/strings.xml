@@ -11,11 +11,13 @@
 		&#8226; A premium Geocaching.com account\n	
 	</string>
 	
-    <string name="hello">Create new pocket query</string>
+    <string name="create_new_query">Create new pocket query</string>
     <string name="app_name">Pocket Query Creator</string>
-    
+    <string name="about">About</string>
     <string name="settings">Settings</string>
-    <string name="dive">Dive</string>
+     <string name="view_bad_response">View Bad Response</string>
+     <string name="email_bad_response">Email Bad Response</string>
+
     
     <string name="title_username_preference">Username</string>
 	<string name="dialog_title_username_preference">Enter username</string>
@@ -24,8 +26,6 @@
     <string name="summary_password_preference">geocaching password</string>
 	<string name="dialog_title_password_preference">Enter password</string>
 	
-    <string name="preferences_from_xml">App/Preferences/1. Preferences from XML</string>
-
     <string name="filter_cache_type">Cache type</string>
     <string name="filter_container">Container</string>
     
@@ -52,5 +52,11 @@
      <string name="ok">OK</string>   
   	 <string name="any">Any</string>
   	 
+  	 
+  	 <!--  Dialog 2 -->
+  	 <string name="login_geocaching_com">Logging into Geocaching.com...</string>
+	 <string name="retrieving_creation_page">Retrieving Pocket Query creation page...</string>
+	 <string name="bad_credentials">Login to Geocaching.com failed. Verify your credentials are correct"</string>
+	 <string name="not_premium">You aren\'t a premium member. Goto Geocaching.com and upgrade</string>
 
 </resources>

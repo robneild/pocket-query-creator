@@ -17,6 +17,8 @@
 
 package org.pquery;
 
+import static org.pquery.Util.APPNAME;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,6 +30,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -41,15 +44,21 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.pquery.IOUtils.Listener;
+import org.pquery.util.Parser.ParseException;
+import org.pquery.util.Prefs;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -57,10 +66,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import org.pquery.util.Parser;
 
 /**
  * Logs the user into geocaching.com web site
@@ -69,7 +80,7 @@ import android.widget.TextView;
 public class Dialog2 extends Activity implements LocationListener {
 
     private boolean debug;
-    
+
     private LocationManager locationManager;
 
     private LoginAsync task;
@@ -79,7 +90,8 @@ public class Dialog2 extends Activity implements LocationListener {
      */
     private ProgressBar bar;
     private ProgressBar progressSpinner;
-
+    private TextView progressText;
+    
     /**
      * Show result of login attempt
      */
@@ -91,6 +103,8 @@ public class Dialog2 extends Activity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog2);
 
+        Context cxt = getApplicationContext();
+        
         // Setup GPS
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -99,6 +113,7 @@ public class Dialog2 extends Activity implements LocationListener {
 
         bar = (ProgressBar) findViewById(R.id.progress_bar);
         progressSpinner = (ProgressBar) findViewById(R.id.progress_spinner);
+        progressText = (TextView) findViewById(R.id.progress_text);
         resultsTextView = (TextView) findViewById(R.id.results);
         Button cancelButton = (Button) findViewById(R.id.button_cancel);
 
@@ -114,10 +129,10 @@ public class Dialog2 extends Activity implements LocationListener {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        final String username = prefs.getString("username_preference", "");
-        final String password = prefs.getString("password_preference", "");
+        final String username = Prefs.getUsername(cxt);
+        final String password = Prefs.getPassword(cxt);
         debug = prefs.getBoolean("debug_preference", false);
-        
+
         // Manage Login Thread
         //
         // It will continue to run over screen rotations &
@@ -128,7 +143,7 @@ public class Dialog2 extends Activity implements LocationListener {
         if (task==null) {
             // No existing task so start one
 
-            task=new LoginAsync(this, username, password,debug);
+            task=new LoginAsync(this, Prefs.getCookies(cxt), username, password,debug, getResources());
             task.execute();
         }
         else {
@@ -140,8 +155,8 @@ public class Dialog2 extends Activity implements LocationListener {
             task.attach(this);
             updateProgress(task.getProgress());
 
-            if (task.getProgress()>=100) {
-                onTaskFinished(task.getResult(), task.getCookies());
+            if (task.getProgress().percent>=100) {
+                onTaskFinished(task.getResult(), task.getCookies(), task.getViewStateMap());
             }
         }
 
@@ -153,7 +168,7 @@ public class Dialog2 extends Activity implements LocationListener {
         return task;
     }
 
-    private void onTaskFinished(String result, List<Cookie> cookies) {
+    private void onTaskFinished(String result, List<Cookie> cookies, Map<String,String> viewStateMap) {
 
         // Login attempt finished
 
@@ -167,15 +182,22 @@ public class Dialog2 extends Activity implements LocationListener {
         if (result == null) {				// no result text means success
             // Automatically move onto next page
 
+            // Save cookies in to preferences
+            // Allows us to remain logged in so subsequent pocket query creations can be quicker
+            
             Assert.assertNotNull(cookies);
+            
+            Prefs.saveCookies(getApplicationContext(), cookies);
 
+            // Save other values into Bundle to pass onto next stages of wizard
+            
             Bundle bundle = new Bundle();
             QueryStore qs = new QueryStore(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
-
-            qs.cookies = cookies;
-            qs.saveToBundle(bundle);
-            qs.debug = debug;
             
+            qs.viewStateMap = viewStateMap;  // hidden values on page. Allow to just submit creation page later
+            qs.debug = debug;
+            qs.saveToBundle(bundle);
+
             Intent myIntent = new Intent(getApplicationContext(), Dialog3.class);
             myIntent.putExtra("QueryStore", bundle);
 
@@ -188,37 +210,61 @@ public class Dialog2 extends Activity implements LocationListener {
     /**
      * Update UI
      */
-    void updateProgress(int progress) {
-        bar.setProgress(progress);
+    void updateProgress(ProgressInfo progress) {
+        bar.setProgress(progress.percent);
+        if (progress.resId != null)
+            progressText.setText(progress.resId);       
     }
 
+    
+    static class ProgressInfo {
+        public int percent;
+        public Integer resId;
+        ProgressInfo(int percent) {
+            this.percent = percent;
+        }
+        ProgressInfo(int percent, int resId) {
+            this(percent);
+            this.resId = resId;
+        }
+    }
+    
+    
     /**
      * A task running on a thread
      * 
      * Updates UI progress bar as thread executes but needs to manage surrounding 
      * Activity being destroyed & recreated (i.e screen rotate)
+     * 
+     * Void = doBackground arguments
+     * String = publisProgress arguments
+     * String = result
      */
-    static class LoginAsync extends AsyncTask<Void, Integer, String> {
+    static class LoginAsync extends AsyncTask<Void, ProgressInfo, String> {
+        
         private Dialog2 activity;
-
+        private Resources res;
+        
         // Parameters
 
         private String user;
         private String pass;
         private boolean debug;
-        
+
         // Results
 
-        private int progress;
+        private ProgressInfo progress;
         private String result;
         private List <Cookie> cookies;
-
-        LoginAsync(Dialog2 activity, String user, String pass, boolean debug) {
+        private Map<String,String> viewStateMap;
+        
+        LoginAsync(Dialog2 activity, List<Cookie> cookies, String user, String pass, boolean debug, Resources res) {
             attach(activity);
-
+            this.res = res;
             this.user = user;
             this.pass = pass;
             this.debug = debug;
+            this.cookies = cookies;
         }
 
         /**
@@ -230,119 +276,150 @@ public class Dialog2 extends Activity implements LocationListener {
          */
         @Override
         protected String doInBackground(Void... unused) {
-
-            String html;
+            String html = "";
             
-            publishProgress(0);
-
-            DefaultHttpClient client = new DefaultHttpClient();
-
-            // Get the login screen
-            // and read the response
+            DefaultHttpClient client = null;
             
             try {
-                html = IOUtils.httpGet(client, "login/", new Listener() {
-                    
-                    @Override
-                    public void update(int bytesReadSoFar, int expectedLength) {
-                        publishProgress((int)(bytesReadSoFar*40/expectedLength));
-                    }
-                });
+                publishProgress(new ProgressInfo(0));
 
-                // Retrieve and store cookies in reply
-
-                cookies = client.getCookieStore().getCookies();
-                
-            } catch (Exception e) {
-                return "Couldn't download login page " + (debug?e:"");
-            }
-            
-            // Parse the response            
-            
-            publishProgress(40);
-
-            // Check if the login page is there
-
-            if (html.indexOf("LoginForm") == -1)
-                return("Couldn't find expected form on Geocaching.com login");
-
-            // Extract the viewState hidden form value
-
-            String viewState = null;
-
-            try {
-                String VIEWSTATE = "name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"";
-
-                int start = html.indexOf(VIEWSTATE);
-                int end = html.indexOf("\"", start + VIEWSTATE.length());
-
-                viewState = html.substring(start + VIEWSTATE.length(), end);
-
-            } catch (Exception e) {
-                return("The Geocaching.com login page was mising some expected contents");
-            }
-
-
-
-            
-            // Create the Login POST
-
-
-            // Fill in the form values
-            
-            List <NameValuePair> paramList = new ArrayList <NameValuePair>();
-
-            paramList.add(new BasicNameValuePair("__EVENTTARGET",""));
-            paramList.add(new BasicNameValuePair("__EVENTARGUMENT",""));
-            paramList.add(new BasicNameValuePair("__VIEWSTATE", viewState));
-            paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbUsername", user));
-            paramList.add(new BasicNameValuePair("ctl00$ContentBody$tbPassword", pass));
-            paramList.add(new BasicNameValuePair("ctl00$ContentBody$cbRememberMe","on"));
-            paramList.add(new BasicNameValuePair("ctl00$ContentBody$btnSignIn","on"));
-
-            publishProgress(50);
-
-
-            try {
-                html = IOUtils.httpPost(client, new UrlEncodedFormEntity(paramList, HTTP.UTF_8), "login/", new Listener() {
-                    
-                    @Override
-                    public void update(int bytesReadSoFar, int expectedLength) {
-                        publishProgress((int) (50 + (bytesReadSoFar*40/expectedLength)));       // 50-90%
-                    }
-                });
-                
-                // Retrieve and store cookies in reply
-
-                cookies = client.getCookieStore().getCookies();
-                
-            } catch (IOException e) {
-                return("Unable to submit login form " + (debug?e:""));
-            }
-
-            publishProgress(90);
-            
-            // Parse response to check we are now logged in
-
-            if (html.indexOf("ctl00_ContentBody_lbMessageText") == -1) {
-                String ret = "Login to Geocaching.com failed. Verify your credentials are correct";
-                if (debug) {
-                    Util.writeBadHTMLResponse("Dialog2::ctl00_ContentBody_lbMessageText", html);
-                    ret += ". DEBUG response saved to " + Util.STORE_DIR;
+                client = new DefaultHttpClient();
+   
+                for (Cookie c: cookies) {
+                    Log.v(APPNAME, "Dialog2 restored cookie "+c);
+                    client.getCookieStore().addCookie(c);
                 }
-                return(ret);
+
+                // Get the pocket query creation page
+                // and read the response. Need to detect if logged in or no
+
+                try {
+                    html = IOUtils.httpGet(client, "pocket/gcquery.aspx", new Listener() {
+
+                        @Override
+                        public void update(int bytesReadSoFar, int expectedLength) {
+                            publishProgress(new ProgressInfo((int)(bytesReadSoFar*90/expectedLength)));     // 0-90%
+                        }
+                    });
+
+                    // Retrieve and store cookies in reply
+
+                    cookies = client.getCookieStore().getCookies();
+
+                } catch (IOException e) {
+                    return "Couldn't download login page " + (debug?e:"");
+                }
+                
+
+                // Parse the response
+                
+                publishProgress(new ProgressInfo(90));
+                Parser parse = new Parser(html);
+                viewStateMap = parse.extractViewState();
+                
+
+                // Check the response. Detecting login and premium state
+
+                if (parse.isLoggedIn()) {
+                    if (!parse.isPremium()) 
+                        return "You aren't a premium member. Goto Geocaching.com and upgrade" ;
+
+                    return null; // All ok. Cookies must be ok and already logged in
+                }
+
+                publishProgress(new ProgressInfo(0,R.string.login_geocaching_com));     // 0%
+                
+                // Extract an extra field that the un-logged in pocket query page seems to have
+
+                String PREVIOUS_PAGE = "name=\"__PREVIOUSPAGE\" id=\"__PREVIOUSPAGE\" value=\"";
+
+                int start = html.indexOf(PREVIOUS_PAGE);
+                int end = html.indexOf("\"", start + PREVIOUS_PAGE.length());
+
+                viewStateMap.put("__PREVIOUSPAGE", html.substring(start + PREVIOUS_PAGE.length(), end));
+
+                
+                // We need to login
+                // Create the POST
+
+                List <NameValuePair> paramList = new ArrayList <NameValuePair>();
+
+                paramList.add(new BasicNameValuePair("__EVENTTARGET",""));
+                paramList.add(new BasicNameValuePair("__EVENTARGUMENT",""));
+                paramList.add(new BasicNameValuePair("__VIEWSTATEFIELDCOUNT", ""+viewStateMap.size()));
+
+                for (Map.Entry <String,String> entry: viewStateMap.entrySet()) {
+                    paramList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+                }
+
+                // Fill in the form values
+
+
+                paramList.add(new BasicNameValuePair("ctl00$tbUsername", user));
+                paramList.add(new BasicNameValuePair("ctl00$tbPassword", pass));
+                paramList.add(new BasicNameValuePair("ctl00$cbRememberMe","on"));
+                paramList.add(new BasicNameValuePair("ctl00$btnSignIn","Sign In"));
+
+                try {
+                    html = IOUtils.httpPost(client, new UrlEncodedFormEntity(paramList, HTTP.UTF_8), "login/default.aspx?redir=%2fpocket%2fgcquery.aspx%3f", true, new Listener() {
+
+                        @Override
+                        public void update(int bytesReadSoFar, int expectedLength) {
+                            publishProgress(new ProgressInfo((int) (10 + (bytesReadSoFar*80/expectedLength))));       // 10 - 90%
+                        }
+                    });
+
+                    // Retrieve and store cookies in reply
+
+                    cookies = client.getCookieStore().getCookies();
+
+                } catch (IOException e) {
+                    return("Unable to submit login form " + (debug?e:""));
+                }
+
+                // Parse response to check we are now logged in
+                
+                publishProgress(new ProgressInfo(90));
+                parse = new Parser(html);
+
+                if (parse.atLoginPage() || !parse.isLoggedIn()) {
+                    String ret = res.getString(R.string.bad_credentials);
+                    if (debug) {
+                        Util.writeBadHTMLResponse("Dialog2 login failed", html);
+                        ret += ". DEBUG response saved to " + Util.STORE_DIR;
+                    }
+                    return(ret);
+                }
+
+                if (!parse.isPremium()) 
+                    return res.getString(R.string.not_premium);
+                
+                
+                // Store page state for later use when we create a pocket query
+
+                viewStateMap = parse.extractViewState();
+
+                publishProgress(new ProgressInfo(100));
+                return null;
+
+            } catch (ParseException e) {
+                String ret = e.getMessage();
+                if (debug) {
+                    Util.writeBadHTMLResponse("Dialog2 parseException=" + e.getMessage(), html);
+                    ret += ". DEBUG response saved to " + Util.STORE_DIR;
+                } 
+                return ret;
+            } 
+            finally {
+                // Shutdown
+                if (client!=null && client.getConnectionManager()!=null)
+                    client.getConnectionManager().shutdown();  
             }
-            
-            // Shutdown
-            client.getConnectionManager().shutdown();  
-            
-            publishProgress(100);
-            return null;
         }
 
 
         @Override
-        protected void onProgressUpdate(Integer... progress) {
+        protected void onProgressUpdate(ProgressInfo... progress) {
 
             this.progress = progress[0];
 
@@ -357,14 +434,14 @@ public class Dialog2 extends Activity implements LocationListener {
         @Override
         protected void onPostExecute(String result) {
 
-            this.progress = 100;
+            this.progress = new ProgressInfo(100);
             this.result = result;
 
             if (activity==null) {
                 // skip UI update as no attached Activity
             }	
             else {
-                activity.onTaskFinished(result, cookies);
+                activity.onTaskFinished(result, cookies, viewStateMap);
             }
         }
 
@@ -377,7 +454,7 @@ public class Dialog2 extends Activity implements LocationListener {
         }
 
 
-        int getProgress() {
+        ProgressInfo getProgress() {
             return progress;
         }
 
@@ -387,6 +464,9 @@ public class Dialog2 extends Activity implements LocationListener {
 
         List<Cookie> getCookies() {
             return cookies;
+        }
+        Map<String, String> getViewStateMap() {
+            return viewStateMap;
         }
     }
 
@@ -412,4 +492,5 @@ public class Dialog2 extends Activity implements LocationListener {
     public void onProviderDisabled(String arg0) {}
     public void onProviderEnabled(String arg0) {}
     public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
+
 }

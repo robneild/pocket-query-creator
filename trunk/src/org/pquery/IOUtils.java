@@ -56,6 +56,8 @@ public class IOUtils {
             }
         }
         
+        Log.v(APPNAME, "toByteArray expectedLength="+expectedLength+", actualLength="+total);
+        
         return byteOut.toByteArray();
     }
     
@@ -67,8 +69,10 @@ public class IOUtils {
 
         Log.v(APPNAME, "httpGet enter");
         
-        HttpGet get = new HttpGet(getGeocachingURL() + path);
+        HttpGet get = new HttpGet(getHost() + path);
         get.addHeader("Accept-Encoding", "gzip");
+        get.addHeader("Connection", "close");
+        
         HttpResponse response = client.execute(get);
         
         int length = (int) response.getEntity().getContentLength();
@@ -80,7 +84,7 @@ public class IOUtils {
         // Read response
          
         if (length==-1)
-            length=10000;   // if chunking is on, we have to guess final length
+            length=48000;   // if chunking is on, we have to guess final length
         
         InputStream in = response.getEntity().getContent();
         byte data[] = IOUtils.toByteArray(in, listener, length);
@@ -97,11 +101,18 @@ public class IOUtils {
         return new String(data, "utf-8");
     }
     
-    public static String httpPost(HttpClient client, HttpEntity entity, String path, Listener listener) throws IOException {
+    public static String httpPost(HttpClient client, HttpEntity entity, String path, boolean secure, Listener listener) throws IOException {
         
         Log.v(APPNAME, "httpPost enter");
         
-        HttpPost post = new HttpPost(getGeocachingURL() + path);
+        String url;
+        if (secure)
+            url = getSecureHost() + path;
+        else
+            url = getHost() + path;
+        
+        HttpPost post = new HttpPost(url);
+        
         post.addHeader("Accept-Encoding", "gzip");
         post.setEntity(entity);
         HttpResponse response = client.execute(post);
@@ -115,7 +126,7 @@ public class IOUtils {
         // Read response
 
         if (length==-1)
-            length=40000;   // if chunking is on, we have to guess final length
+            length=48000;   // if chunking is on, we have to guess final length
         
         InputStream in = response.getEntity().getContent();
         byte data[] = IOUtils.toByteArray(in, listener, length);
@@ -132,7 +143,11 @@ public class IOUtils {
         return new String(data, "utf-8");
     }
     
-    private static String getGeocachingURL() {
+    private static String getHost() {
+        return "http://www.geocaching.com/";
+    }
+    
+    private static String getSecureHost() {
         return "https://www.geocaching.com/";
     }
 }

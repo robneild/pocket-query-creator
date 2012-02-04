@@ -41,8 +41,8 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class PocketQuery extends ListActivity {
 
-    static final String[] OPTIONS = new String[] {"Create New Pocket Query", "Settings", "About"};
-    static final String[] OPTIONS_BAD_HTML_RESPONSE = new String[] {"Create New Pocket Query", "Settings", "About", "View Bad Response", "Email Bad Response"};
+    static final int[] OPTIONS = new int[] {R.string.create_new_query, R.string.settings, R.string.about};
+    static final int[] OPTIONS_BAD_HTML_RESPONSE = new int[] {R.string.create_new_query, R.string.settings, R.string.about, R.string.view_bad_response, R.string.email_bad_response};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,8 +51,8 @@ public class PocketQuery extends ListActivity {
         Util.deleteBadHTMLResponse();
         
         // Show list
-        setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, OPTIONS)); //new MyListAdapter(this));
-
+        setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, getLocalizedArray(OPTIONS))); //new MyListAdapter(this));
+        
         ListView lv = getListView();
         lv.setTextFilterEnabled(true);
 
@@ -117,56 +117,64 @@ public class PocketQuery extends ListActivity {
     @Override
     protected void onResume() {
         if (Util.isBadHTMLResponseExists())
-            setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, OPTIONS_BAD_HTML_RESPONSE));
+            setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,getLocalizedArray(OPTIONS_BAD_HTML_RESPONSE)));
         else
-            setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, OPTIONS));
+            setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, getLocalizedArray(OPTIONS)));
         
         super.onResume();
     }
 
-    
-    
-    class MyListAdapter extends BaseAdapter {
-        public MyListAdapter(Context context) {
-            mContext = context;
+    private String[] getLocalizedArray(int[] resourceArray) {
+        String[] ret = new String[resourceArray.length];
+        for (int i=0; i<resourceArray.length; i++) {
+            ret[i] = getResources().getString(resourceArray[i]);
         }
-
-
-        public int getCount() {
-            return OPTIONS.length;
-        }
-
-        @Override
-        public boolean areAllItemsEnabled() {
-            return false;
-        }
-
-        @Override
-        public boolean isEnabled(int position) {
-            return true;
-        }
-
-        public Object getItem(int position) {
-            return position;
-        }
-
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            TextView tv;
-            if (convertView == null) {
-                tv = (TextView) LayoutInflater.from(mContext).inflate(android.R.layout.simple_expandable_list_item_1, parent, false);
-            } else {
-                tv = (TextView) convertView;
-            }
-            tv.setText(OPTIONS[position]);
-            return tv;
-        }
-
-        private Context mContext;
+        return ret;
     }
+    
+    
+//    
+//    class MyListAdapter extends BaseAdapter {
+//        public MyListAdapter(Context context) {
+//            mContext = context;
+//        }
+//
+//
+//        public int getCount() {
+//            return OPTIONS.length;
+//        }
+//
+//        @Override
+//        public boolean areAllItemsEnabled() {
+//            return false;
+//        }
+//
+//        @Override
+//        public boolean isEnabled(int position) {
+//            return true;
+//        }
+//
+//        public Object getItem(int position) {
+//            return position;
+//        }
+//
+//        public long getItemId(int position) {
+//            return position;
+//        }
+//
+//        public View getView(int position, View convertView, ViewGroup parent) {
+//            TextView tv;
+//            if (convertView == null) {
+//                tv = (TextView) LayoutInflater.from(mContext).inflate(android.R.layout.simple_expandable_list_item_1, parent, false);
+//            } else {
+//                tv = (TextView) convertView;
+//            }
+//            tv.setText(OPTIONS[position]);
+//            return tv;
+//        }
+//
+//        private Context mContext;
+//    }
 
 
 

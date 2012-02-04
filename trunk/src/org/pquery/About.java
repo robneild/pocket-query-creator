@@ -70,7 +70,9 @@ public class About extends Activity {
 		"<a href='http://www.openclipart.org/detail/5055/old-pocketwatch-by-johnny_automatic'>Old pocketwatch</a> - openclipart.org<br/>" +
 	    "<a href='http://openclipart.org/detail/164221/ghost-by-arcdroid'>Ghost</a> - openclipart.org<br/>" +
 	    "<a href='http://openclipart.org/detail/162601/medicina-by-maoriveros'>Medicina</a> - openclipart.org<br/>" +
-	        
+	    "<a href='http://openclipart.org/detail/16813/satellite-by-ivak'>satellite</a> - openclipart.org<br/>" +
+	    "<a href='http://openclipart.org/detail/44005/treasure-map-by-hextrust'>Treasure Map</a> - openclipart.org<br/>" +
+	         
 		"<h2>Acknowledgements</h2>" +
 		"The web site <a href='http://geocaching.com'>Geocaching.com</a> is owned by <a href='http://www.groundspeak.com/'>Groundspeak Inc.</a>" +
 		

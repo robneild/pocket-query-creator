@@ -43,7 +43,7 @@ public class ContainerTypeList implements Iterable<ContainerType> {
             }
         }
         
-        if (CacheType.values().length == inner.size())
+        if (ContainerType.values().length == inner.size())
             inner.clear();
     }
 

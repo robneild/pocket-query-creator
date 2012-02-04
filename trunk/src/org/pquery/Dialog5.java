@@ -40,6 +40,7 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.pquery.IOUtils.Listener;
+import org.pquery.util.Prefs;
 
 import junit.framework.Assert;
 import android.app.Activity;
@@ -213,11 +214,17 @@ public class Dialog5 extends Activity {
         protected String doInBackground(Void... unused) {
 
             DefaultHttpClient client = new DefaultHttpClient();
+            
+            for (Cookie c: Prefs.getCookies(activity.getApplicationContext())) {        // todo not sagfe
+                Log.v(APPNAME, "Dialog5 restored cookie "+c);
+                client.getCookieStore().addCookie(c);
+            }
+            
+            
             String html;
 
             // Get values 
 
-            int radius = Integer.valueOf(prefs.getString("radius_preference", "5"));		
             String max = prefs.getString("maxcaches_preference", "500");
             boolean notFound = prefs.getBoolean("not_found_preference", false);
             boolean active = prefs.getBoolean("active_preference", true);
@@ -226,13 +233,18 @@ public class Dialog5 extends Activity {
             boolean zip =  prefs.getBoolean("zip_preference", true);
             debug = prefs.getBoolean("debug_preference", false);
             
+            
+            Map<String,String> viewStateMap = queryStore.viewStateMap;
+            
             publishProgress(0);
 
 
+            /*
+             
             try {
                 // Retrieve and set cookies from store
 
-                for (Cookie c: queryStore.cookies) {
+                for (Cookie c: Prefs.getCookies(activity.getApplicationContext())) {        // todo not sagfe
                     Log.v(APPNAME, "Dialog5 restored cookie "+c);
                     client.getCookieStore().addCookie(c);
                 }
@@ -298,7 +310,7 @@ public class Dialog5 extends Activity {
 
             publishProgress(50);
 
-
+            */
 
 
             // Do POST to create pocket query
@@ -577,10 +589,10 @@ public class Dialog5 extends Activity {
 
             try {
 
-                html = IOUtils.httpPost(client, new UrlEncodedFormEntity(paramList, HTTP.UTF_8), "pocket/gcquery.aspx", new Listener() {
+                html = IOUtils.httpPost(client, new UrlEncodedFormEntity(paramList, HTTP.UTF_8), "pocket/gcquery.aspx", false, new Listener() {
                     @Override
                     public void update(int bytesReadSoFar, int expectedLength) {
-                        publishProgress((int) (50 + (bytesReadSoFar*40/expectedLength)));       //50-90%
+                        publishProgress((int) (10 + (bytesReadSoFar*80/expectedLength)));       //10-90%
                     }
                 });
 
@@ -611,19 +623,6 @@ public class Dialog5 extends Activity {
             
             publishProgress(100);
             return null;		// no error message returned
-        }
-
-        private String extractViewState(String loginHtml, int i) {
-            String VIEWSTATE = "name=\"__VIEWSTATE" + i + "\" id=\"__VIEWSTATE" + i + "\" value=\"";
-
-            int start = loginHtml.indexOf(VIEWSTATE);
-            int end = loginHtml.indexOf("\"", start + VIEWSTATE.length());
-
-            if (start==-1 || end==-1)
-                return null;        // not found
-            
-            return loginHtml.substring(start + VIEWSTATE.length(), end);
-
         }
 
         @Override
