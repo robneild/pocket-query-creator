@@ -41,7 +41,7 @@ public class QueryStore {
     public double lon;
     public boolean debug;
     
-    public List <Cookie> cookies;
+    public Map <String, String> viewStateMap;
 
     // Filters
     // If empty assume match all
@@ -66,17 +66,15 @@ public class QueryStore {
         
         // Restore cookie list from 2 arrays
         
-        cookies = new ArrayList<Cookie>();
+        viewStateMap = new HashMap<String,String>();
 
-        ArrayList<String> names = bundle.getStringArrayList("QueryStore_cookie_names");
-        ArrayList<String> values = bundle.getStringArrayList("QueryStore_cookie_values");
+        ArrayList<String> names = bundle.getStringArrayList("QueryStore_viewStateMap_names");
+        ArrayList<String> values = bundle.getStringArrayList("QueryStore_viewStateMap_values");
 
         for (int i=0; i<names.size(); i++) {
-            BasicClientCookie c = new BasicClientCookie(names.get(i),values.get(i));
-            c.setDomain("www.geocaching.com");
-            c.setPath("/");
-            cookies.add(c);
+            viewStateMap.put(names.get(i), values.get(i));
         }
+        
         
         // Retrieve cache type filter
         
@@ -100,13 +98,14 @@ public class QueryStore {
         ArrayList<String> names = new ArrayList<String>();
         ArrayList<String> values = new ArrayList<String>();
         
-        for (Cookie c: cookies) {
-            names.add(c.getName());
-            values.add(c.getValue());
+        for (String c: viewStateMap.keySet()) {
+            names.add(c);
+            values.add(viewStateMap.get(c));
         }
         
-        bundle.putStringArrayList("QueryStore_cookie_names", names);
-        bundle.putStringArrayList("QueryStore_cookie_values", values);
+        bundle.putStringArrayList("QueryStore_viewStateMap_names", names);
+        bundle.putStringArrayList("QueryStore_viewStateMap_values", values);
+        
         
         bundle.putBoolean("QueryStore_debug", debug);
         

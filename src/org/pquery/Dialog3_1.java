@@ -77,10 +77,10 @@ public class Dialog3_1 extends ListActivity {
 
         FilterOption o2 = new FilterOption(cxt.getResources().getString(R.string.filter_container), R.drawable.container, cxt.getResources());
         o2.setFilterValue(Prefs.getContainerTypeFilter(cxt));
-
+        
         _filterList.add(o1);
         _filterList.add(o2);
-
+        
         if(_filterList != null && _filterList.size() > 0){
             m_adapter.notifyDataSetChanged();
             for(int i=0;i<_filterList.size();i++)

@@ -225,8 +225,11 @@ public class Dialog4 extends Activity implements LocationListener {
     }
 
     private void setupForGPS() {
+       
+        map.setCompoundDrawablesWithIntrinsicBounds(R.drawable.treasure_map, 0,0,0);
         map.setText("Choose point from map instead");
         locationTextView.setText("Current GPS location");
+        locationTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ivak_satellite, 0,0,0);
         usingGPS = true;
 
         if (gpsLocation!=null)
@@ -238,8 +241,10 @@ public class Dialog4 extends Activity implements LocationListener {
     }
 
     private void setupForMap() {
+        map.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ivak_satellite, 0,0,0);
         map.setText("Use current GPS location instead");
         locationTextView.setText("Selected map point");
+        locationTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.treasure_map, 0,0,0);
         accuracyTextView.setText("");
         usingGPS = false;
 

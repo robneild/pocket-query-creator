@@ -3,7 +3,7 @@
       
 
 
-      <TextView android:paddingTop="10dp" android:textAppearance="@style/MyFont" android:text="Current GPS location" android:id="@+id/textView_location" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+      <TextView android:drawableLeft="@drawable/ivak_satellite" android:drawablePadding="10dp" android:paddingTop="10dp" android:textAppearance="@style/MyFont" android:text="Current GPS location" android:id="@+id/textView_location" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
         
 
       <TextView android:text=" " android:id="@+id/textView_address" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
@@ -21,9 +21,8 @@
         <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout4">
             <TextView android:textSize="17dp" android:textStyle="bold" android:text="" android:id="@+id/textView_accuracy" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
       </LinearLayout>
-      
-
-		<Button  android:layout_marginTop="20dp" android:text="Choose point from map instead" android:id="@+id/button_map" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+        
+		<Button android:drawableLeft="@drawable/treasure_map" android:drawablePadding="10dp" android:layout_marginTop="20dp" android:text="Choose point from map instead" android:id="@+id/button_map" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
       
       
       <TextView android:layout_weight="1" android:text="" android:id="@+id/fillspace" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
