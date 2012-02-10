@@ -33,7 +33,7 @@ public class Parser {
      */
     public boolean isLoggedIn() throws ParseException {
         
-        if (html.indexOf("ctl00_divSignedIn") != -1)
+        if (html.indexOf("www.geocaching.com/login/default.aspx?RESET=Y") != -1)        // Logout link
             return true;
         if (html.indexOf("ctl00_divNotSignedIn") != -1)
         return false;
@@ -50,7 +50,7 @@ public class Parser {
      */
     public boolean isPremium() throws ParseException {
         
-        if (html.indexOf("ctl00_litPMLevel") != -1)
+        if (html.contains("ctl00_litPMLevel") || html.contains("account/EditMembership.aspx"))
             return true;
         if (html.indexOf("ctl00_hlUpgrade") != -1)
         return false;
