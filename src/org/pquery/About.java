@@ -17,9 +17,16 @@
 
 package org.pquery;
 
+import org.pquery.R;
+
+import android.R.color;
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.TextView;
 
 /**
  * Show an HTML about page
@@ -47,34 +54,34 @@ public class About extends Activity {
 		"li {margin: 5px}" +
 		"</style> " +
 		
-		"This app allows the quick creation of " +
-		"<a href='http://www.geocaching.com/pocket/'>Pocket Queries</a>. " +
-		"They are provided to premium members of the website " +
-		"<a href='http://www.geocaching.com'>Geocaching.com</a>." +
-		"<br>This app does nothing that can't be done at the Geocaching.com website. It just acts as a convienience." +
-	
-		"<p>You can't go geocaching with just this app. Try <a href='market://search?q=pname:com.google.code.geobeagle'>geobeagle</a>"+
-		" or <a href='market://search?q=pname:com.groundspeak.geocaching'>the official client</a>" +
-		
-		"<p>Don't hesitate to <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>contact me</a> with comments or errors" +
-		
-		"<br><br><h2>Hints</h2>" +
-		"<ul><li>Once created, Pocket Queries can take a while to run" +
-		"<li>There is no creation limit, but a maximum of 5 pocket queries will run in any 24 hour period" +
-		"<li>The query results will be sent to the email address in your Geocaching.com profile" +
-		"<li>The process to create the Pocket Query can take minutes on slow connections" +
-		"</ul>" +
-		
- 		"<br><br><h2>Contains</h2>" +
+ 		"<h2>Contains</h2>" +
 		"<a href='http://www.openclipart.org/detail/89059/push-pin-icon-by-jhnri4'>Push pin icon</a> - openclipart.org<br/>" +
 		"<a href='http://www.openclipart.org/detail/5055/old-pocketwatch-by-johnny_automatic'>Old pocketwatch</a> - openclipart.org<br/>" +
 	    "<a href='http://openclipart.org/detail/164221/ghost-by-arcdroid'>Ghost</a> - openclipart.org<br/>" +
 	    "<a href='http://openclipart.org/detail/162601/medicina-by-maoriveros'>Medicina</a> - openclipart.org<br/>" +
 	    "<a href='http://openclipart.org/detail/16813/satellite-by-ivak'>satellite</a> - openclipart.org<br/>" +
 	    "<a href='http://openclipart.org/detail/44005/treasure-map-by-hextrust'>Treasure Map</a> - openclipart.org<br/>" +
-	         
+	    "<a href='http://openclipart.org/detail/10941/red-+-green-ok-not-ok-icons-by-tzeeniewheenie-10941'>Red cross</a> - openclipart.org<br/>" +
+	    "<a href='http://openclipart.org/detail/10940/red-+-green-ok-not-ok-icons-by-tzeeniewheenie-10940'>Green cross</a> - openclipart.org<br/>" +
+	    
+	    "<a href='http://openclipart.org/detail/4152/friendly-rabbit-by-danko'>Friendly rabbit</a> - openclipart.org<br/>" +
+	    "<a href='http://openclipart.org/detail/170491/gear---options---icon-by-diamonjohn-170491'>Gear - options - icon</a> - openclipart.org<br/>" +
+	    "<a href='http://openclipart.org/detail/104977/help-orb-button-by-decosigner'>Help Orb Button </a> - openclipart.org<br/>" +
+	    
+	    "<a href='http://openclipart.org/detail/9457/rpg-map-symbols:-mountains-by-nicubunu-9457'>Mountains</a> - openclipart.org<br/>" +
+	    "<a href='http://openclipart.org/detail/11476/rpg-map-symbols:-maze-by-nicubunu'>Maze</a> - openclipart.org<br/>" +
+	    "<a href='http://openclipart.org/detail/33733/info-sign-by-ernes'>Info sign</a> - openclipart.org<br/>" +
+	    "<a href='http://openclipart.org/detail/1067/blue-iris-by-aurium'>Blue iris</a> - openclipart.org<br/>" +
+	    "<a href='http://openclipart.org/detail/73/hammer-by-rejon'>Hammer</a> - openclipart.org<br/>" +
+	    "<br>" +
+	    "<a href='http://code.google.com/p/range-seek-bar'>range-seek-bar</a><br>" +
+	    "<a href='http://www.bgreco.net/directorypicker/'>Android Directory Picker</a><br>"+
+	    "<a href='http://www.gisgraphy.com/gisgraphoid.htm'>Gisgraphoid</a><br>" +
+	    "<a href='http://code.google.com/p/google-gson/'>Google Gson</a>" +
+	    
 		"<h2>Acknowledgements</h2>" +
 		"The web site <a href='http://geocaching.com'>Geocaching.com</a> is owned by <a href='http://www.groundspeak.com/'>Groundspeak Inc.</a>" +
+		"This application is in no way affiliated or approved by them" +
 		
 		"<h2>GPLv3 License</h2>" +
 		
@@ -98,8 +105,9 @@ public class About extends Activity {
 		"</font>";
 		
 		wv = (WebView) findViewById(R.id.webview1);
-		wv.setBackgroundColor(0);
+		wv.setBackgroundColor(getResources().getColor(color.black));
 		wv.loadData(html, mimeType, encoding);
+		
 
 	}
 }

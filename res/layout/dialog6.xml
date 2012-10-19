@@ -12,10 +12,21 @@
  </WebView>        
 
         <TextView android:layout_weight="1" android:id="@+id/padding2" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
-           
-            <LinearLayout android:background="@layout/gradientbg" android:layout_height="wrap_content" android:id="@+id/linearLayout2" android:layout_width="fill_parent" android:gravity="right">
-        	<Button android:layout_height="wrap_content" android:id="@+id/button_ok" android:text="OK" android:layout_width="150dp" android:layout_margin="5dp"></Button>
-    	</LinearLayout>
 
+         
+         
+         
+	<RelativeLayout android:id="@+id/LinearLayout01"
+		android:orientation="horizontal" android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+
+		<Button android:id="@+id/button_ok" android:layout_height="wrap_content"
+			android:text="OK"  android:layout_centerInParent="true"
+			android:layout_width="150dp" android:layout_margin="5dp" />
+	</RelativeLayout>
+         
+	
+	
+            
         
     </LinearLayout>

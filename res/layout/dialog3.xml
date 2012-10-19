@@ -1,26 +1,50 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/linearLayout1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical">
-        
-        <TextView android:textAppearance="@style/MyFont" android:text="Pocket Query Name" android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="5dp"></TextView>
+      
 
-        <EditText android:textAppearance="@style/MyFont" android:maxLength="50" android:text="" android:id="@+id/editText_name" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="5dp"></EditText>
-        
-        <TextView android:textAppearance="@style/MyFont" android:text="Radius" android:id="@+id/text_radius" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="bottom" android:layout_margin="5dp"></TextView>
-        
-        <EditText android:textAppearance="@style/MyFont" android:maxLength="3" android:layout_height="wrap_content" android:id="@+id/editText_radius" android:text="" android:layout_width="fill_parent" android:inputType="number" android:layout_margin="5dp"></EditText>
 
-            
-      <TextView android:layout_weight="1" android:text="" android:id="@+id/fillspace" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+      <TextView android:drawableLeft="@drawable/ivak_satellite" android:drawablePadding="10dp" android:paddingTop="10dp" android:textAppearance="@style/MyFont" android:text="Current GPS location" android:id="@+id/textView_location" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
         
 
-        <LinearLayout android:background="@layout/gradientbg" android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:layout_width="fill_parent">
+      <TextView android:text=" " android:id="@+id/textView_address" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
         
-                <Button android:layout_height="wrap_content" android:id="@+id/button_cancel" android:text="@string/cancel" android:layout_width="150dp" android:layout_margin="5dp"></Button>
+        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout3">
+                <TextView android:text="Latitude: " android:id="@+id/textView2" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+                <TextView android:text="no fix yet" android:id="@+id/textView_lat" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+      </LinearLayout>
 
-    			<TextView android:layout_weight="1" android:text="" android:id="@+id/fillspace2" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout4">
+                <TextView android:text="Longitude: " android:id="@+id/textView4" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+                <TextView android:text="no fix yet" android:id="@+id/textView_lon" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+      </LinearLayout>
+
+        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout5">
+            <TextView android:textSize="17dp" android:textStyle="bold" android:text="" android:id="@+id/textView_accuracy" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+      </LinearLayout>
         
-                <Button android:layout_height="wrap_content" android:id="@+id/button_next" android:text="@string/next" android:drawableRight="@drawable/right_arrow" android:layout_width="150dp" android:layout_margin="5dp"></Button>
+		<Button android:drawableLeft="@drawable/treasure_map" android:drawablePadding="10dp" android:layout_marginTop="20dp" android:text="Choose point from map instead" android:id="@+id/button_map" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+      
+      
+      <TextView android:layout_weight="1" android:text="" android:id="@+id/fillspace" android:layout_width="wrap_content" android:layout_height="0dp"></TextView>
         
-        </LinearLayout>
-    
+        
+
+        
+        
+	<RelativeLayout android:id="@+id/LinearLayout01"
+		android:orientation="horizontal" android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+
+		<Button android:id="@+id/button_cancel" android:layout_height="wrap_content"
+			android:text="@string/cancel" android:layout_alignParentLeft="true"
+			android:layout_width="150dp" android:layout_margin="5dp" />
+
+		<Button android:id="@+id/button_next" android:layout_height="wrap_content"
+			android:text="@string/next" android:layout_alignParentRight="true"
+			android:layout_width="150dp" android:layout_margin="5dp"
+			android:drawableRight="@drawable/right_arrow" />
+	</RelativeLayout>
+        
+        
+        
     </LinearLayout>

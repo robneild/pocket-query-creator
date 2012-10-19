@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,12 +27,12 @@ public class griddialog extends Activity {
         super.onCreate(savedInstanceState);
         mContext = getApplicationContext();
         setContentView(R.layout.main);
-        Button button = (Button)findViewById(R.id.button1);   
-        button.setOnClickListener(new Button.OnClickListener(){   
-            public void onClick(View v) {   
-                showDialog(CATEGORY_ID);   
-            }   
-        }); 
+       // Button button = (Button)findViewById(R.id.button1);   
+//        button.setOnClickListener(new Button.OnClickListener(){   
+//            public void onClick(View v) {   
+//                showDialog(CATEGORY_ID);   
+//            }   
+//        }); 
     }
     protected Dialog onCreateDialog(int id) {   
 
