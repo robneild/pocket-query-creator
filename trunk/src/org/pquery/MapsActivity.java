@@ -25,14 +25,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.GestureDetector.OnDoubleTapListener;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
@@ -135,7 +129,7 @@ public class MapsActivity extends MapActivity
 
             point = mapView.getProjection().fromPixels((int) motion.getX(), (int) motion.getY());
 
-            Toast.makeText(getBaseContext(), "Location stored", Toast.LENGTH_SHORT);
+            //Toast.makeText(getBaseContext(), "Location stored", Toast.LENGTH_SHORT);
 
             Intent data = new Intent();
 

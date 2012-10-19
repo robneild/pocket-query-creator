@@ -2,12 +2,21 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/linearLayout1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical">
     
         <TextView android:textColor="#ffffff" android:textSize="20sp" android:text="@string/dialog1" android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-        <TextView  android:layout_weight="1" android:textSize="15sp" android:lineSpacingExtra="2mm" android:text="@string/dialog2" android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+        <TextView  android:layout_weight="1" android:textSize="15sp" android:lineSpacingExtra="2mm" android:text="@string/dialog2" android:id="@+id/textView2" android:layout_width="wrap_content" android:layout_height="0dp"></TextView>
         
-        
-        <LinearLayout android:background="@layout/gradientbg" android:layout_height="wrap_content" android:id="@+id/linearLayout2" android:layout_width="fill_parent" android:gravity="right">
-           <Button android:layout_height="wrap_content" android:id="@+id/button_create" android:text="@string/next" android:drawableRight="@drawable/right_arrow" android:layout_width="150dp" android:layout_margin="5dp"></Button>
-        </LinearLayout>
 
-    
+        
+        
+        
+	<RelativeLayout android:id="@+id/LinearLayout01"
+		android:orientation="horizontal" android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+
+		<Button android:id="@+id/button_create" android:layout_height="wrap_content"
+			android:text="@string/next" android:layout_alignParentRight="true"
+			android:layout_width="150dp" android:layout_margin="5dp"
+			android:drawableRight="@drawable/right_arrow" />
+	</RelativeLayout>
+        
+	
     </LinearLayout>

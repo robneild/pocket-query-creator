@@ -17,125 +17,80 @@
 
 package org.pquery;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import org.pquery.R;
+import org.pquery.util.GPS;
+import org.pquery.util.Logger;
 
 import junit.framework.Assert;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.pquery.util.Prefs;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-/**
- * Allows entering of pocket query name and radius
- */
 public class Dialog3 extends Activity implements LocationListener {
 
     private LocationManager locationManager;
 
-    private QueryStore queryStore;
+    // References to UI components
 
-    private EditText name;
-    private EditText radius;
+    private TextView lat;
+    private TextView lon;
+    private TextView address;
+    private TextView accuracyTextView;
+    private TextView locationTextView;
+
+    private Button map;
+
+    // State
+
+    private Location mapLocation;
+    private Location gpsLocation;
+    private boolean usingGPS = true;
+
+    // Wizard state
+    
+    private QueryStore queryStore;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog3);
 
-        final Context cxt = getApplicationContext();
-        
         // Setup GPS
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         // Store references to controls
 
-        TextView radiusText = (TextView) findViewById(R.id.text_radius);
-        name = (EditText)findViewById(R.id.editText_name);
-        radius = (EditText)findViewById(R.id.editText_radius);
-        final Button nextButton = (Button) findViewById(R.id.button_next);
+        lat = (TextView) findViewById(R.id.textView_lat);
+        lon = (TextView) findViewById(R.id.textView_lon);
+        accuracyTextView = (TextView) findViewById(R.id.textView_accuracy);
+        address = (TextView) findViewById(R.id.textView_address);
+        map = (Button) findViewById(R.id.button_map);
+        locationTextView = (TextView) findViewById(R.id.textView_location);
+        Button cancelButton = (Button) findViewById(R.id.button_cancel);
 
-        name.setText(getDefaultName());
-        radius.setText(Prefs.getDefaultRadius(cxt));
-
-        if (Prefs.isMetric(cxt))
-           radiusText.setText(radiusText.getText() + " (km)");
-        else
-            radiusText.setText(radiusText.getText() + " (miles)");
-            
         // Get parameters passed from previous wizard stage
 
         Bundle bundle = getIntent().getBundleExtra("QueryStore");
         Assert.assertNotNull(bundle);
         queryStore = new QueryStore(bundle);
 
+        // Restore state
 
-        // Handle next button
-        // Goes onto next stage of wizard
-        
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                
-                // Only go to next wizard page is some form values have been entered
-                
-                if (!validForm()) {
-                    Toast.makeText(getApplicationContext(), "Enter valid values", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                
-                // Save preferences
-                
-                Prefs.saveDefaultRadius(cxt, radius.getText().toString());
-                
-                // Go onto next wizard page; pass current values in QueryStore
-                
-                queryStore.name = name.getText().toString();
-                queryStore.radius = Integer.parseInt(radius.getText().toString());
-
-                Bundle bundle = new Bundle();
-                queryStore.saveToBundle(bundle);
-
-                Intent myIntent = new Intent(view.getContext(), Dialog3_1.class);
-                myIntent.putExtra("QueryStore", bundle);
-                startActivity(myIntent);
-                finish();
-            }
-        });
+        if (savedInstanceState != null) {
+            usingGPS = savedInstanceState.getBoolean("usingGPS");
+            mapLocation = savedInstanceState.getParcelable("mapLocation");
+            gpsLocation = savedInstanceState.getParcelable("gpsLocation");
+        }
 
         // Handle cancel button
-        // Just closes the activity
-
-        Button cancelButton = (Button) findViewById(R.id.button_cancel);
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -143,26 +98,148 @@ public class Dialog3 extends Activity implements LocationListener {
             }
         });
 
+        // Handle the map button
+
+        map.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+                if (usingGPS) {
+
+                    Intent myIntent = new Intent(view.getContext(), MapsActivity.class);
+
+                    // Try to open map at current location (if we have it)
+
+                    if (gpsLocation!=null) {
+                        myIntent.putExtra("lat",gpsLocation.getLatitude());
+                        myIntent.putExtra("lon",gpsLocation.getLongitude());
+                    }
+                    startActivityForResult(myIntent, 123);
+
+                } else {
+                    setupForGPS();
+                }
+            }
+        });
+
+        final Button nextButton = (Button) findViewById(R.id.button_next);
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+                // Save preferences
+                
+                if (usingGPS) {
+                    if (gpsLocation == null) {
+                    	Logger.d("No gpx fix yet");
+                    }
+                    else
+                    {
+                    	queryStore.lat = gpsLocation.getLatitude();
+                    	queryStore.lon = gpsLocation.getLongitude();
+                    }
+                } else {
+                    queryStore.lat = mapLocation.getLatitude();
+                    queryStore.lon = mapLocation.getLongitude();
+                }
+
+                // Move onto next dialog
+                
+                Bundle bundle = new Bundle();
+                queryStore.saveToBundle(bundle);
+
+                Intent myIntent = new Intent(view.getContext(), Dialog4.class);
+                myIntent.putExtra("QueryStore", bundle);
+                startActivity(myIntent);
+                finish();
+            }
+        });
+
+        if (usingGPS)
+            setupForGPS();
+        else
+            setupForMap();
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean("usingGPS", usingGPS);
+        outState.putParcelable("mapLocation", mapLocation);
+        outState.putParcelable("gpsLocation", gpsLocation);
+    } 
 
 
     /**
-     * Is current form content valid
+     * Gets result back from map point selection
      */
-    private boolean validForm() {
-        if (name.getText().toString().length()>0)
-            if (radius.getText().toString().length()>0)
-                return true;
-        return false;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK) {
+
+            Bundle bundle = data.getExtras();
+
+            Object o1 = bundle.get("lat");
+            Object o2 = bundle.get("lon");
+
+            if (o1 !=null && o2 != null) {
+                mapLocation = new Location("map");
+
+                mapLocation.setLatitude((Double) o1);
+                mapLocation.setLongitude((Double) o2);
+
+                setupForMap();
+            }
+        }
+    };
+
+    private void updateLocation(double latitude, double longitude, float accuracy) {
+        lat.setText(Double.toString(latitude));
+        lon.setText(Double.toString(longitude));
+
+        if (accuracy==0)
+            accuracyTextView.setText("");
+        else
+            accuracyTextView.setText("Accuracy: " + Float.toString(accuracy)+"m");
+
+        //address.setText(getStreetAddress(latitude, longitude));
+    }
+
+    private void setupForGPS() {
+       
+        map.setCompoundDrawablesWithIntrinsicBounds(R.drawable.treasure_map, 0,0,0);
+        map.setText("Choose point from map instead");
+        locationTextView.setText("Current GPS location");
+        locationTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ivak_satellite, 0,0,0);
+        usingGPS = true;
+
+        if (gpsLocation!=null)
+            updateLocation(gpsLocation.getLatitude(), gpsLocation.getLongitude(), gpsLocation.getAccuracy());
+        else {
+            lat.setText("no fix yet");
+            lon.setText("no fix yet");
+        }
+    }
+
+    private void setupForMap() {
+        map.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ivak_satellite, 0,0,0);
+        map.setText("Use current GPS location instead");
+        locationTextView.setText("Selected map point");
+        locationTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.treasure_map, 0,0,0);
+        accuracyTextView.setText("");
+        usingGPS = false;
+
+        if (mapLocation!=null)
+            updateLocation(mapLocation.getLatitude(), mapLocation.getLongitude(), 0);
     }
 
 
-    private String getDefaultName() {
-        return DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT).format(new Date());
-    }
 
 
-    // Handle GPS
+
+    // Control GPS
+
+
 
     @Override
     protected void onResume() {
@@ -173,10 +250,22 @@ public class Dialog3 extends Activity implements LocationListener {
     @Override
     protected void onPause() {
         super.onPause();
-        locationManager.removeUpdates(this);
+        GPS.stopLocationUpdate(locationManager, this);
     }
 
-    public void onLocationChanged(Location arg0) {}
+    public void onLocationChanged(Location gpsLocation) {
+        if (gpsLocation.getProvider().equals(LocationManager.NETWORK_PROVIDER) && 
+                this.gpsLocation != null &&
+                this.gpsLocation.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+            // don't over write GPS with network provider
+        } else {
+            this.gpsLocation = gpsLocation;
+        }
+
+        if (usingGPS)
+            updateLocation(gpsLocation.getLatitude(), gpsLocation.getLongitude(), gpsLocation.getAccuracy());
+
+    }
     public void onProviderDisabled(String arg0) {}
     public void onProviderEnabled(String arg0) {}
     public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}

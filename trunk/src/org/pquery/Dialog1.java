@@ -17,25 +17,11 @@
 
 package org.pquery;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.pquery.R;
+import org.pquery.util.GPS;
+import org.pquery.util.Logger;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -56,9 +42,10 @@ public class Dialog1 extends Activity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog1);
 
+        Logger.d("enter");
+        
         // Setup GPS
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
 
         Button next = (Button) findViewById(R.id.button_create);
 
@@ -83,9 +70,11 @@ public class Dialog1 extends Activity implements LocationListener {
     @Override
     protected void onPause() {
         super.onPause();
-        locationManager.removeUpdates(this);
+        GPS.stopLocationUpdate(locationManager, this);
     }
 
+    // Impementation of LocationListener
+    
     public void onLocationChanged(Location arg0) {}
     public void onProviderDisabled(String arg0) {}
     public void onProviderEnabled(String arg0) {}

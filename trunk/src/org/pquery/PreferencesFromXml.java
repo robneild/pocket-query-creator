@@ -17,11 +17,18 @@
 
 package org.pquery;
 
+import org.pquery.util.Logger;
+import org.pquery.util.Prefs;
+
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 
-public class PreferencesFromXml extends PreferenceActivity {
-
+public class PreferencesFromXml extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,4 +37,38 @@ public class PreferencesFromXml extends PreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Preference userDownload = findPreference(Prefs.USER_DOWNLOAD_DIR);
+        userDownload.setSummary(Prefs.getUserSpecifiedDownloadDir(this));
+        // Set up a listener whenever a key changes
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        
+        // Unregister the listener whenever a key changes
+        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    }
+    
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    	// Toggle log file creation on and off as soon as changed in preferences
+        if (key.equals(Prefs.DEBUG_PREFERENCE)) {
+            boolean logOn = sharedPreferences.getBoolean(key, false);
+            if (logOn)
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+             builder.setTitle("Debug logs")
+                    .setMessage("Logs into LogCat and (if directory available) 'sdcard/Android/data/org.pquery/files/log.html'. Warning - logs may contain some personal info like your username, although your password should be masked. Cookies will be logged which could potentially be replayed by someone to log into geocaching.com as you");
+             builder.setPositiveButton(R.string.ok, null);
+             AlertDialog dialog = builder.create();
+             dialog.show();
+            }
+        	Logger.setEnable(logOn);
+        }
+    }
+    
 }

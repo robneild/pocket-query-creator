@@ -27,8 +27,9 @@
                 android:title="Max caches"
                 android:summary="Maximum number of caches to return. Highest allowed value 1000"
                 android:dialogTitle="Maximum caches" />
-                
-        <CheckBoxPreference
+               
+		<!-- 
+		<CheckBoxPreference
         		android:defaultValue="false"
                 android:key="not_found_preference"
                 android:title="Only caches not found"
@@ -39,13 +40,9 @@
                 android:key="active_preference"
                 android:title="Only active caches"
                 android:summary="Only include active/enabled geocaches" />
+        -->
         
-	<CheckBoxPreference
-        		android:defaultValue="false"
-                android:key="disabled_preference"
-                android:title="Create disabled"
-                android:summary="Create Query in state such that it won't autorun. Allows manual modification after creation" />
-     
+
     <CheckBoxPreference
         		android:defaultValue="true"
                 android:key="zip_preference"
@@ -57,13 +54,78 @@
                 android:key="metric_preference"
                 android:title="Metric distances"
                 android:summary="Use km instead of miles" />                        
-        
+      
+            
+      <ListPreference android:title="Retry on errors"
+                      android:summary="How many times should creation steps be reattempted if errors occur. Useful if network connectivity is intermittent or slow"
+                      android:key="retry_preference"
+                      android:defaultValue="3"
+                      android:entries="@array/retry"
+                      android:entryValues="@array/retry_values" />
+
+      	<ListPreference android:title="Location accuracy"
+                      android:summary="How accurate a location fix to wait for, before creating Pocket Query"
+                      android:key="location_accuracy_preference"
+                      android:defaultValue="150"
+                      android:entries="@array/location_accuracy"
+                      android:entryValues="@array/location_accuracy_values" />
+             
+      	      	<ListPreference android:title="Geocoding provider"
+                      android:summary="Who to use to get a name for a location"
+                      android:key="geocoding_provider_preference"
+                      android:defaultValue="Google"
+                      android:entries="@array/geocoder_provider"
+                      android:entryValues="@array/geocoder_provider_values" />
+      	      	
+      <CheckBoxPreference
+        		android:defaultValue="false"
+                android:key="disabled_preference"
+                android:title="Create disabled"
+                android:disableDependentsState="true"
+                android:summary="Create Query in state such that it won't autorun. Allows manual modification after creation" />
+     
+        	
+        <CheckBoxPreference
+        		android:defaultValue="true"
+                android:key="download_preference"
+                android:title="Download results"
+                android:summary="After Pocket Query runs, download output"
+                android:dependency="disabled_preference" />     
+                
+        <EditTextPreference
+				android:inputType=""
+				android:defaultValue="pocketquery_"
+                android:key="nameprefix_preference"
+                android:title="Filename Prefix"
+                android:summary="...put on front of downloaded Pocket Query filename"
+                android:dialogTitle="Filename Prefix"
+                android:dependency="download_preference" />
+          
+          <CheckBoxPreference
+        		android:defaultValue="true"
+                android:key="default_download_dir_preference"
+                android:title="Default download directory"
+                android:summary="Output to default 'Download' directory"
+                 android:dependency="download_preference"
+                android:disableDependentsState="true"
+                 />     
+                
+                
+         <Preference
+        android:key="user_download_dir_preference"
+        android:title="Choose download directory"
+        android:summary=""
+         android:dependency="default_download_dir_preference">
+        <intent android:action="your.action.string"/>   
+    </Preference>
+
+            
         <PreferenceCategory android:title="Other"/>
 
         <CheckBoxPreference
         		android:defaultValue="false"
                 android:key="debug_preference"
-                android:title="Debug mode"
-                android:summary="Extra info in error messages" />
+                android:title="Debug logs"
+                android:summary="Logs into LogCat and a file" />
                 
 </PreferenceScreen>

@@ -19,19 +19,12 @@ package org.pquery;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.cookie.BasicClientCookie;
-import org.pquery.util.CacheTypeList;
-import org.pquery.util.ContainerTypeList;
+import org.pquery.util.Prefs;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 
 public class QueryStore {
 
@@ -41,18 +34,22 @@ public class QueryStore {
     public double lon;
     public boolean debug;
     
-    public Map <String, String> viewStateMap;
+    public Map <String, String> viewStateMap = new HashMap<String,String>();
 
     // Filters
     // If empty assume match all
     
-    public CacheTypeList cacheTypeList = new CacheTypeList();
-    public ContainerTypeList containerTypeList  = new ContainerTypeList();
+    //public CacheTypeList cacheTypeList = new CacheTypeList();
+    //public ContainerTypeList containerTypeList  = new ContainerTypeList();
+    //public OneToFiveFilter terrainFilter = new OneToFiveFilter();
+    //public OneToFiveFilter difficultyFilter = new OneToFiveFilter();
     
-    public QueryStore(SharedPreferences prefs) {
-        radius = Integer.valueOf(prefs.getString("radius_preference", "5"));
-        cacheTypeList = new CacheTypeList(prefs.getString("cachetype_preference", ""));
-        containerTypeList = new ContainerTypeList(prefs.getString("containertype_preference", ""));
+    public QueryStore(Context cxt) {
+        radius = Prefs.getRadius(cxt);
+        //cacheTypeList = Prefs.getCacheTypeFilter(cxt);
+        //containerTypeList = Prefs.getContainerTypeFilter(cxt);
+        //terrainFilter = Prefs.getTerrainFilter(cxt);
+        //difficultyFilter = Prefs.getDifficultyFilter(cxt);
     }
     
 
@@ -76,14 +73,16 @@ public class QueryStore {
         }
         
         
-        // Retrieve cache type filter
-        
-        cacheTypeList = new CacheTypeList(bundle.getString("QueryStore_cacheType"));
-        
-        // Retrieve container type filter
-        
-        containerTypeList = new ContainerTypeList(bundle.getString("QueryStore_containerType"));
-
+//        // Retrieve cache type filter
+//        
+//        cacheTypeList = new CacheTypeList(bundle.getString("QueryStore_cacheType"));
+//        
+//        // Retrieve container type filter
+//        
+//        containerTypeList = new ContainerTypeList(bundle.getString("QueryStore_containerType"));
+//
+//        difficultyFilter = new OneToFiveFilter(bundle.getString("QueryStore_difficulty"));
+//        terrainFilter = new OneToFiveFilter(bundle.getString("QueryStore_terrain"));
     }
 
 
@@ -111,14 +110,20 @@ public class QueryStore {
         
         // Store cache type filter
         
-        bundle.putString("QueryStore_cacheType", cacheTypeList.toString());
-        
-        // Store container type filter
-        
-        bundle.putString("QueryStore_containerType", containerTypeList.toString());
-        
+//        bundle.putString("QueryStore_cacheType", cacheTypeList.toString());
+//        
+//        // Store container type filter
+//        
+//        bundle.putString("QueryStore_containerType", containerTypeList.toString());
+//        
+//        bundle.putString("QueryStore_difficulty", difficultyFilter.toString());
+//        bundle.putString("QueryStore_terrain", terrainFilter.toString());
     }
     
-
+    public boolean haveLocation() {
+    	if (lat==0 || lat==0)
+    		return false;
+    	return true;
+    }
 
 }
