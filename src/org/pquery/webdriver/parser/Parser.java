@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.pquery.util.Logger;
-import org.pquery.webdriver.FailureDontRetry;
 
 public class Parser {
     

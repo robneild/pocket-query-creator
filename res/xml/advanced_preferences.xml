@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ListPreference
+        android:defaultValue="3"
+        android:entries="@array/retry"
+        android:entryValues="@array/retry_values"
+        android:key="retry_preference"
+        android:summary="How many times should creation steps be reattempted if errors occur. Useful if network connectivity is intermittent or slow"
+        android:title="Retry on errors" />
+    
+    <ListPreference
+        android:defaultValue="150"
+        android:entries="@array/location_accuracy"
+        android:entryValues="@array/location_accuracy_values"
+        android:key="location_accuracy_preference"
+        android:summary="How accurate a location fix to wait for, before creating Pocket Query"
+        android:title="Location accuracy" />
+    
+    <ListPreference
+        android:defaultValue="Google"
+        android:entries="@array/geocoder_provider"
+        android:entryValues="@array/geocoder_provider_values"
+        android:key="geocoding_provider_preference"
+        android:summary="Who to use to get a name for a location"
+        android:title="Geocoding provider" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="debug_preference"
+        android:summary="Logs into LogCat and a file"
+        android:title="Debug logs" />
+
+</PreferenceScreen>

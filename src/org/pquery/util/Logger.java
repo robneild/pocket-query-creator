@@ -37,10 +37,18 @@ public class Logger {
             init();
     }
 
+    public static boolean isEnabled() {
+        return enabled;
+    }
+    
     public static void d(String message) {
         log(message, Log.DEBUG);
     }
 
+    public static void w(String message) {
+        log(message, Log.WARN);
+    }
+    
     public static void cookie(String message, List<Cookie> cookies) {
         if (enabled) {
             StringBuffer s = new StringBuffer();

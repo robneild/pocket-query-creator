@@ -27,6 +27,9 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.GestureDetector.OnDoubleTapListener;
+
+import com.actionbarsherlock.app.SherlockMapActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
@@ -34,7 +37,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import android.view.GestureDetector;
 
-public class MapsActivity extends MapActivity
+public class MapsActivity extends SherlockMapActivity
 {    
     MapView mapView; 
     MapController mc;
@@ -173,6 +176,9 @@ public class MapsActivity extends MapActivity
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         setContentView(R.layout.map_view);
 
         mapView = (MapView) findViewById(R.id.mapView);
@@ -204,7 +210,15 @@ public class MapsActivity extends MapActivity
 
     @Override
     protected boolean isRouteDisplayed() {
-        // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            finish();
+        }
+        return true;
     }
 }

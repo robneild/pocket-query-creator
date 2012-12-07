@@ -16,9 +16,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.protocol.HTTP;
+import org.pquery.util.Logger;
 
 import android.util.Log;
-import static org.pquery.Util.*;
 
 
 public class IOUtils {    
@@ -56,7 +56,7 @@ public class IOUtils {
             }
         }
         
-        Log.v(APPNAME, "toByteArray expectedLength="+expectedLength+", actualLength="+total);
+        Logger.d("toByteArray expectedLength="+expectedLength+", actualLength="+total);
         
         return byteOut.toByteArray();
     }
@@ -67,7 +67,7 @@ public class IOUtils {
      */
     public static String httpGet(HttpClient client, String path, Listener listener) throws IOException {
 
-        Log.v(APPNAME, "httpGet enter");
+        Logger.d("httpGet enter");
         
         HttpGet get = new HttpGet(getHost() + path);
         get.addHeader("Accept-Encoding", "gzip");
@@ -79,7 +79,7 @@ public class IOUtils {
         boolean chunked = response.getEntity().isChunked();
         Header contentEncoding = response.getFirstHeader("Content-Encoding");
         
-        Log.v(APPNAME, "httpGet response [length="+length+",chunked="+chunked+",contentEncoding="+contentEncoding+"]");
+        Logger.d("httpGet response [length="+length+",chunked="+chunked+",contentEncoding="+contentEncoding+"]");
         
         // Read response
          
@@ -96,14 +96,14 @@ public class IOUtils {
             data = IOUtils.toByteArray(in);
         }
         
-        Log.v(APPNAME, "httpGet exit [read_length="+data.length+"]");
+        Logger.d("httpGet exit [read_length="+data.length+"]");
         
         return new String(data, "utf-8");
     }
     
     public static String httpPost(HttpClient client, HttpEntity entity, String path, boolean secure, Listener listener) throws IOException {
         
-        Log.v(APPNAME, "httpPost enter");
+        Logger.d("httpPost enter");
         
         String url;
         if (secure)
@@ -121,7 +121,7 @@ public class IOUtils {
         boolean chunked = response.getEntity().isChunked();
         Header contentEncoding = response.getFirstHeader("Content-Encoding");
         
-        Log.v(APPNAME, "httpPost response [length="+length+",chunked="+chunked+",contentEncoding="+contentEncoding+"]");
+        Logger.d("httpPost response [length="+length+",chunked="+chunked+",contentEncoding="+contentEncoding+"]");
         
         // Read response
 
@@ -138,7 +138,7 @@ public class IOUtils {
             data = IOUtils.toByteArray(in);
         }
         
-        Log.v(APPNAME, "httpPost exit [read_length="+data.length+"]");
+        Logger.d("httpPost exit [read_length="+data.length+"]");
         
         return new String(data, "utf-8");
     }

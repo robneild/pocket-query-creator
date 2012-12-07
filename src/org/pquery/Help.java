@@ -17,29 +17,34 @@
 
 package org.pquery;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.R.color;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebView;
 
 /**
  * Show an HTML about page
  */
-public class Help extends Activity {
+public class Help extends SherlockActivity {
 
-	@Override
-	public void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
+    @Override
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
 
-		setContentView(R.layout.about);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.about);
 
-		final String mimeType = "text/html";
-		final String encoding = "utf-8";
+        final String mimeType = "text/html";
+        final String encoding = "utf-8";
 
-		WebView wv;
+        WebView wv;
 
-		String html = "<font color='#ffffff'>" + 
-		
+        String html = "<font color='#ffffff'>" + 
+
 		"<style type='text/css'>" +
 		"a:link {color: #0066FF; text-decoration: underline; }" +
 		"a:active {color: #0066FF; text-decoration: underline; }" +
@@ -47,18 +52,18 @@ public class Help extends Activity {
 		"a:hover {color: #0066FF; text-decoration: underline; }" +
 		"li {margin: 5px}" +
 		"</style> " +
-		
+
 		"This app allows the quick creation of " +
 		"<a href='http://www.geocaching.com/pocket/'>Pocket Queries</a>. " +
 		"They are provided to premium members of the website " +
 		"<a href='http://www.geocaching.com'>Geocaching.com</a>." +
 		"<br>This app does nothing that can't be done at the Geocaching.com website. It just acts as a convienience." +
-	
+
 		"<p>You can't go geocaching with just this app. Try <a href='market://search?q=pname:com.google.code.geobeagle'>geobeagle</a>"+
 		" or <a href='market://search?q=pname:com.groundspeak.geocaching'>the official client</a>" +
-		
+
 		"<p>Don't hesitate to <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>contact me</a> with comments or errors" +
-		
+
 		"<br><br><h2>Hints</h2>" +
 		"<ul><li>Once created, Pocket Queries can take a while to run" +
 		"<li>There is no creation limit, but a maximum of 5 pocket queries will run in any 24 hour period" +
@@ -66,10 +71,21 @@ public class Help extends Activity {
 		"<li>The process to create the Pocket Query can take minutes on slow connections" +
 		"</ul>" +
 		"</font>";
-		
+
         wv = (WebView) findViewById(R.id.webview1);
         wv.setBackgroundColor(getResources().getColor(color.black));
         wv.loadData(html, mimeType, encoding);
+    }
 
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            Intent intent = new Intent(this, Main.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

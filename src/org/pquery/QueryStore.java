@@ -17,25 +17,20 @@
 
 package org.pquery;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.pquery.util.Prefs;
+import java.text.DateFormat;
+import java.util.Date;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 
 public class QueryStore {
 
     public String name;
-    public int radius;
     public double lat;
     public double lon;
     public boolean debug;
     
-    public Map <String, String> viewStateMap = new HashMap<String,String>();
-
     // Filters
     // If empty assume match all
     
@@ -44,18 +39,23 @@ public class QueryStore {
     //public OneToFiveFilter terrainFilter = new OneToFiveFilter();
     //public OneToFiveFilter difficultyFilter = new OneToFiveFilter();
     
-    public QueryStore(Context cxt) {
-        radius = Prefs.getRadius(cxt);
+    public QueryStore() {
+        //radius = Prefs.getRadius(cxt);
         //cacheTypeList = Prefs.getCacheTypeFilter(cxt);
         //containerTypeList = Prefs.getContainerTypeFilter(cxt);
         //terrainFilter = Prefs.getTerrainFilter(cxt);
         //difficultyFilter = Prefs.getDifficultyFilter(cxt);
-    }
+
+            name = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT).format(new Date());
+            name = name.replaceAll(":", ".");
+            name = name.replaceAll("/", "-");
+        }
+    
     
 
     public QueryStore(Bundle bundle) {
         name = bundle.getString("QueryStore_name");
-        radius = bundle.getInt("QueryStore_radius");
+        //radius = bundle.getInt("QueryStore_radius");
         lat = bundle.getDouble("QueryStore_lat");
         lon = bundle.getDouble("QueryStore_lon");
 
@@ -63,14 +63,14 @@ public class QueryStore {
         
         // Restore cookie list from 2 arrays
         
-        viewStateMap = new HashMap<String,String>();
+        //viewStateMap = new HashMap<String,String>();
 
-        ArrayList<String> names = bundle.getStringArrayList("QueryStore_viewStateMap_names");
-        ArrayList<String> values = bundle.getStringArrayList("QueryStore_viewStateMap_values");
+        //ArrayList<String> names = bundle.getStringArrayList("QueryStore_viewStateMap_names");
+        //ArrayList<String> values = bundle.getStringArrayList("QueryStore_viewStateMap_values");
 
-        for (int i=0; i<names.size(); i++) {
-            viewStateMap.put(names.get(i), values.get(i));
-        }
+        //for (int i=0; i<names.size(); i++) {
+        //    viewStateMap.put(names.get(i), values.get(i));
+        //}
         
         
 //        // Retrieve cache type filter
@@ -88,22 +88,22 @@ public class QueryStore {
 
     public void saveToBundle(Bundle bundle) {
         bundle.putString("QueryStore_name", name);
-        bundle.putInt("QueryStore_radius", radius);
+        //bundle.putInt("QueryStore_radius", radius);
         bundle.putDouble("QueryStore_lat", lat);
         bundle.putDouble("QueryStore_lon", lon);
 
         // Store the cookie list into 2 arrays
         
-        ArrayList<String> names = new ArrayList<String>();
-        ArrayList<String> values = new ArrayList<String>();
+        //ArrayList<String> names = new ArrayList<String>();
+        //ArrayList<String> values = new ArrayList<String>();
         
-        for (String c: viewStateMap.keySet()) {
-            names.add(c);
-            values.add(viewStateMap.get(c));
-        }
+        //for (String c: viewStateMap.keySet()) {
+        //    names.add(c);
+        //    values.add(viewStateMap.get(c));
+        //}
         
-        bundle.putStringArrayList("QueryStore_viewStateMap_names", names);
-        bundle.putStringArrayList("QueryStore_viewStateMap_values", values);
+        //bundle.putStringArrayList("QueryStore_viewStateMap_names", names);
+        //bundle.putStringArrayList("QueryStore_viewStateMap_values", values);
         
         
         bundle.putBoolean("QueryStore_debug", debug);
@@ -126,4 +126,10 @@ public class QueryStore {
     	return true;
     }
 
+    public Location getLocation() {
+        Location ret = new Location("rob");
+        ret.setLatitude(lat);
+        ret.setLongitude(lon);
+        return ret;
+    }
 }

@@ -72,6 +72,8 @@
 	 <string name="cancel_creation">Cancel Creation</string>
 	 <string name="create">Create</string>
 	 <string name="error_parsing">Problem parsing the geocaching webpage</string>
+	 <string name="retrieving_page">Retrieving page</string>
+	 <string name="parsing">Parsing</string>
 	 <string-array name="retry">
 	     <item >Don\'t retry</item>
 	     <item >Retry a few times</item>
@@ -108,9 +110,9 @@
 	 <string name="file_creation_error">Unable to create output file</string>
 	 <string name="creation_zero_pqs">Pocket Query created but didn\'t find any matching geocaches</string>
 	 <string name="created_ok">Pocket Query created and currently matches</string>
-	 <string name="login_page_wrong">Retrieved web page doesn\'t mention geocaching. A wifi login page?</string>
+	 <string name="not_geocaching_page">Retrieved web page doesn\'t mention geocaching. A wifi login page?</string>
 	 <string name="download_not_ready">PocketQuery hasn\'t been run yet</string>
-	 <string name="auto_name">During creation, try to set from location name. See menu to do this now</string>
+	 <string name="auto_name">During creation, try to set from location name</string>
 	 <string name="directory_picker_title">Choose directory</string>
 	<string-array name="geocoder_provider">
 	     <item >Google</item>
@@ -122,4 +124,22 @@
 	     <item >Gisgraphy</item>
 	     <item >GeoNames</item>
 	 </string-array>
+	 <string-array name="action_bar_list">
+	     <item >Active</item>
+	     <item >Downloadable</item>
+	 </string-array>
+	 <string name="refresh">Refresh</string>
+	 <string name="prefs_advanced">Advanced</string>
+	 <string name="prefs_creation">Creation</string>
+	 <string name="prefs_download">Download</string>
+	 <string name="prefs_login">Login credentials</string>
+	 <string name="actionbar_view_details">Detail</string>
+	 <string name="downloading">Downloading</string>
+	 <string-array name="create_categories">
+	     <item >Filters</item>
+	     <item >Name</item>
+	     <item >Location</item>
+	 </string-array>
+	 
+
 </resources>

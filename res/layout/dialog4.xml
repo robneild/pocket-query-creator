@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<ScrollView>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/linearLayout1" android:layout_height="fill_parent"
+	android:id="@+id/linearLayout1" android:layout_height="wrap_content"
 	android:layout_width="fill_parent" android:orientation="vertical">
 
 	<TextView android:textAppearance="@style/MyFont" android:text="Pocket Query Name"
@@ -19,6 +20,9 @@
         android:text="@string/auto_name" />
 	   
 		
+   	<Button android:text="Set from location now" android:id="@+id/button_autoname" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+      
+   
 	<TextView android:textAppearance="@style/MyFont" android:text="Radius"
 		android:id="@+id/text_radius" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:gravity="bottom"
@@ -30,26 +34,5 @@
 		android:layout_margin="5dp" />
 
 
-	<TextView android:layout_weight="1" android:text=""
-		android:id="@+id/fillspace" android:layout_width="wrap_content"
-		android:layout_height="0dp" />
-
-	
-	
-
-	<RelativeLayout android:id="@+id/LinearLayout01"
-		android:orientation="horizontal" android:layout_width="fill_parent"
-		android:layout_height="wrap_content">
-
-		<Button android:id="@+id/button_cancel" android:layout_height="wrap_content"
-			android:text="@string/cancel" android:layout_alignParentLeft="true"
-			android:layout_width="150dp" android:layout_margin="5dp" />
-
-		<Button android:id="@+id/button_next" android:layout_height="wrap_content"
-			android:text="@string/create" android:layout_alignParentRight="true"
-			android:layout_width="150dp" android:layout_margin="5dp"
-			android:drawableRight="@drawable/right_arrow" />
-	</RelativeLayout>
-
-
 </LinearLayout>
+</ScrollView>

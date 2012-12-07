@@ -700,7 +700,43 @@ public class Base64
         
     }   // end encode
     
-    
+    public static Object decodeObject(String serializedObject)
+    throws java.io.IOException, ClassNotFoundException {
+
+        if( serializedObject == null ){
+            throw new NullPointerException( "Cannot deserialize a null object." );
+        }   // end if: null
+        
+        // Streams
+        java.io.ByteArrayInputStream  baos  = null; 
+        java.io.InputStream           b64os = null;
+        java.util.zip.GZIPOutputStream gzos  = null;
+        java.io.ObjectInputStream     oos   = null;
+        
+        
+        try {
+            // ObjectOutputStream -> (GZIP) -> Base64 -> ByteArrayOutputStream
+            baos  = new java.io.ByteArrayInputStream(serializedObject.getBytes());
+            b64os = new Base64.InputStream( baos, DECODE | 0);
+           
+                oos = new java.io.ObjectInputStream( b64os );
+            
+            return oos.readObject();
+        }   // end try
+        catch( java.io.IOException e ) {
+            // Catch it and then throw it immediately so that
+            // the finally{} block is called for cleanup.
+            throw e;
+        }   // end catch
+        finally {
+            try{ oos.close();   } catch( Exception e ){}
+            try{ gzos.close();  } catch( Exception e ){}
+            try{ b64os.close(); } catch( Exception e ){}
+            try{ baos.close();  } catch( Exception e ){}
+        }   // end finally
+        
+        
+    }
 
     /**
      * Encodes a byte array into Base64 notation.
