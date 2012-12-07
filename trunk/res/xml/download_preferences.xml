@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:dependency="disabled_preference"
+        android:key="download_preference"
+        android:summary="After Pocket Query runs, download output"
+        android:title="Download results" />
+
+    <EditTextPreference
+        android:defaultValue="pocketquery_"
+        android:dependency="download_preference"
+        android:dialogTitle="Filename Prefix"
+        android:inputType=""
+        android:key="nameprefix_preference"
+        android:summary="...put on front of downloaded Pocket Query filename"
+        android:title="Filename Prefix" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:dependency="download_preference"
+        android:disableDependentsState="true"
+        android:key="default_download_dir_preference"
+        android:summary="Output to default &apos;Download&apos; directory"
+        android:title="Default download directory" />
+
+    <Preference
+        android:dependency="default_download_dir_preference"
+        android:key="user_download_dir_preference"
+        android:summary=""
+        android:title="Choose download directory" >
+        <intent android:action="your.action.string" />
+    </Preference>
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:disableDependentsState="true"
+        android:key="disabled_preference"
+        android:summary="Create Query in state such that it won&apos;t autorun. Allows manual modification after creation"
+        android:title="Create disabled" />
+
+</PreferenceScreen>

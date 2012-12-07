@@ -54,7 +54,7 @@ public class Dialog1 extends Activity implements LocationListener {
         next.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
             
-                Intent myIntent = new Intent(view.getContext(), Dialog2.class);
+                Intent myIntent = new Intent(view.getContext(), CreateFiltersActivity.class);
                 startActivity(myIntent);
                 finish();
             }

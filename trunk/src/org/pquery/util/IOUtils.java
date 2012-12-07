@@ -4,8 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+
+import net.htmlparser.jericho.FormFields;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -25,7 +28,7 @@ public class IOUtils {
     private static final int ESTIMATED_CONTENT_SIZE = 48000;
     
     public interface Listener {
-        public void update(int bytesReadSoFar, int expectedLength);
+        public void update(int bytesReadSoFar, int expectedLength, int percent);
     }
     
     public static byte[] toByteArray(InputStream input) throws IOException {
@@ -51,9 +54,10 @@ public class IOUtils {
                 updatesSent++;
                 if (listener!=null) {
                     if (total>expectedLength)     // handle if we've gone past expectedLength (eg chunking)
-                        listener.update(expectedLength-1, expectedLength);
-                    else
-                        listener.update(total, expectedLength);
+                        listener.update(expectedLength-1, expectedLength, 99);
+                    else {
+                        listener.update(total, expectedLength, total*100/expectedLength);
+                    }
                 }
             }
         }
@@ -170,10 +174,10 @@ public class IOUtils {
     }
     
     private static String getHost() {
-        return "http://www.geocaching.com/";
+        return "http://www.geocaching.com";
     }
     
     private static String getSecureHost() {
-        return "https://www.geocaching.com/";
+        return "https://www.geocaching.com";
     }
 }

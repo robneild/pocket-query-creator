@@ -1,6 +1,5 @@
 package org.pquery.util;
 
-import static org.pquery.Util.APPNAME;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +75,7 @@ public class Parser {
         String viewState;
 
         while((viewState=extractViewState(html, i)) != null) {
-            Log.v(APPNAME, "extracted viewstate "+i);
+            Logger.d("extracted viewstate "+i);
             viewStateMap.put("__VIEWSTATE" + i, viewState);
             i++;
         }

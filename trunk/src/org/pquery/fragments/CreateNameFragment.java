@@ -1,0 +1,252 @@
+package org.pquery.fragments;
+
+import java.text.DateFormat;
+import java.util.Date;
+
+import junit.framework.Assert;
+
+import org.pquery.AutoSetNameDialog;
+import org.pquery.CreateSettingsChangedListener;
+import org.pquery.QueryStore;
+import org.pquery.R;
+import org.pquery.AutoSetNameDialog.AutoSetNameDialogListener;
+import org.pquery.dao.QueryName;
+import org.pquery.service.PQService;
+import org.pquery.util.GPS;
+import org.pquery.util.Logger;
+import org.pquery.util.Prefs;
+
+import com.actionbarsherlock.app.SherlockFragment;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+
+public class CreateNameFragment extends SherlockFragment  implements LocationListener, AutoSetNameDialogListener {
+
+    private LocationManager locationManager;
+
+    private EditText name;
+    private CheckBox autoName;
+    private EditText radius;
+    private Button autoNameButton;
+    private Location location = new Location("rob");
+    
+    private CreateSettingsChangedListener listener;
+    private String initialName;
+    
+    public CreateNameFragment() {
+    }
+    
+    public CreateNameFragment(String initialName) {
+        this.initialName = initialName;
+    }
+    
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            listener = (CreateSettingsChangedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement CreateSettingsChangedListener");
+        }
+    }
+    
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+    
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        
+        View view = inflater.inflate(R.layout.dialog4, null);
+
+        Logger.d("enter");
+        
+        // Setup GPS
+
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        // Store references to controls
+
+        TextView radiusText = (TextView) view.findViewById(R.id.text_radius);
+        name = (EditText)view.findViewById(R.id.editText_name);
+        radius = (EditText)view.findViewById(R.id.editText_radius);
+        autoName = (CheckBox) view.findViewById(R.id.checkBox_autoname);
+        autoNameButton = (Button) view.findViewById(R.id.button_autoname);
+        
+        name.setText(initialName);
+        radius.setText(Prefs.getDefaultRadius(getActivity()));
+
+        if (Prefs.isMetric(getActivity()))
+           radiusText.setText(radiusText.getText() + " (km)");
+        else
+            radiusText.setText(radiusText.getText() + " (miles)");
+  
+        // TODO check geocoder is available
+        autoName.setChecked(Prefs.isAutoName(getActivity()));
+        
+        // Get parameters passed from previous wizard stage
+
+//        Bundle bundle = getIntent().getBundleExtra("QueryStore");
+//        Assert.assertNotNull(bundle);
+//        queryStore = new QueryStore(bundle);
+        
+        autoName.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Prefs.saveAutoName(getActivity(), isChecked);   
+            }
+        });
+        
+        radius.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (radius.getText().length()>0)
+                    Prefs.saveDefaultRadius(getActivity(), radius.getText().toString());
+            }
+        });
+        
+        name.addTextChangedListener(new TextWatcher() {
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length()>0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("queryName", new QueryName(name.getText().toString()));
+                    listener.onSettingsChange(bundle);
+                }  
+            }
+        });
+       
+        autoNameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog();
+            }
+        });
+        
+        // Handle next button
+        // Goes onto next stage of wizard
+        
+//        nextButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View view) {
+//                
+//                // Only go to next wizard page is some form values have been entered
+//                
+//                if (!validForm()) {
+//                    Toast.makeText(getActivity(), "Enter valid values", Toast.LENGTH_LONG).show();
+//                    return;
+//                }
+//                
+//                // Save preferences
+//                
+//                Prefs.saveDefaultRadius(getActivity(), radius.getText().toString());
+//                
+//                // Go onto next wizard page; pass current values in QueryStore
+//                
+//                queryStore.name = name.getText().toString();
+//                queryStore.radius = Integer.parseInt(radius.getText().toString());
+//
+//                                
+//                // All info collected. Kick off creation service
+//                
+//                Bundle bundle = new Bundle();
+//                queryStore.saveToBundle(bundle);
+//
+//            }
+//        });
+
+        return view;
+    }
+
+
+    
+
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.dialog4, menu);
+//        return true;
+//    }
+//    
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.start_autoname:
+//                showDialog();
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
+    
+
+    void showDialog() {
+        DialogFragment newFragment = AutoSetNameDialog.newInstance(location.getLatitude(), location.getLongitude());
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    /**
+     * Callback for when locality lookup done
+     */
+    @Override
+    public void onAutoSetSuccess(String locality) {
+       name.setText(locality);
+       autoName.setChecked(false);
+    }
+    
+    // Handle GPS
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        GPS.requestLocationUpdates(locationManager, this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        GPS.stopLocationUpdate(locationManager, this);
+    }
+
+    public void onLocationChanged(Location location) {
+        this.location = location;
+    }
+    public void onProviderDisabled(String arg0) {}
+    public void onProviderEnabled(String arg0) {}
+    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
+
+
+}

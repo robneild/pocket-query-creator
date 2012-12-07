@@ -5,26 +5,38 @@ import android.os.Bundle;
 public class ProgressInfo extends ResultInfo {
 	
     public int percent;
-    public String message;
+    public String htmlMessage;
     
-    public ProgressInfo(int percent, String message) {
+    
+    public static ProgressInfo create(int percent, String plainMessage, String goodDetail) {
+        if (goodDetail!=null && goodDetail.length()>0)
+            return new ProgressInfo(percent, plainMessage + " [" + goodDetail + "]");
+        else
+            return new ProgressInfo(percent, plainMessage);
+    }
+    public static ProgressInfo create(int percent, FailurePermanentException failure, int retryIn) {
+        return new ProgressInfo(percent, failure.toHTML() + "<br><br>Will try again in " + retryIn + " seconds");
+    }
+    
+    
+    public ProgressInfo(int percent, String htmlMessage) {
     	this.percent = percent;
-        this.message = message;
+        this.htmlMessage =htmlMessage;
     }
     
     @Override
     public String toString() {
-    	return "[percent=" + percent + ",message="+message+"]";
+    	return "[percent=" + percent + ",htmlMessage="+htmlMessage+"]";
     }
     
     public ProgressInfo(Bundle bundle) {
     	percent = bundle.getInt("percent");
-    	message = bundle.getString("message");
+    	htmlMessage = bundle.getString("htmlMessage");
     }
     
 	public void saveToBundle(Bundle bundle) {
 		bundle.putInt("percent", percent);
-		bundle.putString("message", message);
+		bundle.putString("htmlMessage", htmlMessage);
 		bundle.putInt("msgType", UPDATE);
 	}
 }

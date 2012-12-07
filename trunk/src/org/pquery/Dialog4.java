@@ -24,6 +24,7 @@ import junit.framework.Assert;
 
 import org.pquery.AutoSetNameDialog.AutoSetNameDialogListener;
 import org.pquery.R;
+import org.pquery.service.PQService;
 import org.pquery.util.GPS;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
@@ -129,7 +130,8 @@ public class Dialog4 extends FragmentActivity  implements LocationListener, Auto
                 // Go onto next wizard page; pass current values in QueryStore
                 
                 queryStore.name = name.getText().toString();
-                queryStore.radius = Integer.parseInt(radius.getText().toString());
+                
+                //queryStore.radius = Integer.parseInt(radius.getText().toString());
 
                                 
                 // All info collected. Kick off creation service
@@ -138,7 +140,7 @@ public class Dialog4 extends FragmentActivity  implements LocationListener, Auto
                 queryStore.saveToBundle(bundle);
 
                 
-                Intent myIntent = new Intent(view.getContext(), CreationService.class);
+                Intent myIntent = new Intent(view.getContext(), PQService.class);
                 myIntent.putExtra("QueryStore", bundle);
                 getApplicationContext().startService(myIntent);
                 
