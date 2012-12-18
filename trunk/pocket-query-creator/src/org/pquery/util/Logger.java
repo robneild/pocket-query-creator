@@ -56,7 +56,7 @@ public class Logger {
             for (Cookie cookie : cookies) {
                 s.append("name=" + cookie.getName() + ", value=" + cookie.getValue()+"\n");
             }
-            d(s.toString());
+            log(s.toString(), Log.DEBUG);
         }
     }
     
@@ -70,7 +70,7 @@ public class Logger {
                 else
                     s.append(nvp.getName()+ " = " + nvp.getValue()+"\n");
             }
-            d(s.toString());
+            log(s.toString(), Log.DEBUG);
         }
     }
     public static void i(String message) {

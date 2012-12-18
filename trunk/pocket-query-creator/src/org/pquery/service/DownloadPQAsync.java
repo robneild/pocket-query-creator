@@ -2,8 +2,6 @@ package org.pquery.service;
 
 import java.io.File;
 
-import net.htmlparser.jericho.Source;
-
 import org.pquery.dao.PQ;
 import org.pquery.webdriver.CancelledListener;
 import org.pquery.webdriver.CreateOutputFileTask;
@@ -11,9 +9,6 @@ import org.pquery.webdriver.DownloadTask;
 import org.pquery.webdriver.FailurePermanentException;
 import org.pquery.webdriver.ProgressInfo;
 import org.pquery.webdriver.ProgressListener;
-import org.pquery.webdriver.RetrievePageTask;
-import org.pquery.webdriver.parser.PocketQueryPage;
-
 import android.content.Context;
 import android.os.AsyncTask;
 

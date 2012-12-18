@@ -4,8 +4,6 @@ package org.pquery.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.util.Log;
-
 public class Parser {
     
     private String html;
@@ -99,7 +97,9 @@ public class Parser {
     
     
     public class ParseException extends Exception {
-        public ParseException(String message) {
+		private static final long serialVersionUID = 2827583462232890549L;
+
+		public ParseException(String message) {
             super(message);
         }
     }

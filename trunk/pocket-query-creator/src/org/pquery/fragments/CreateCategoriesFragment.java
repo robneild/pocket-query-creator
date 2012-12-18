@@ -18,8 +18,8 @@ import com.actionbarsherlock.app.SherlockListFragment;
 
 public class CreateCategoriesFragment extends SherlockListFragment {
     
-    boolean mDualPane;
-    int mCurCheckPosition = 0;
+    private boolean mDualPane;
+    private int selectedIndex;
     private String initialName;
     private Location initialLocation;
     
@@ -35,20 +35,16 @@ public class CreateCategoriesFragment extends SherlockListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup vg, Bundle data) {
         return inflater.inflate(R.layout.list_fragment, null);
     }
-
-//    @Override
-//    public void onViewCreated(View arg0, Bundle arg1) {
-//    super.onViewCreated(arg0, arg1);
-//    setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.create_categories)));
-//    }
-
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        // simple_list_item_activated_1 API Level 11
         // Populate list with our static array of titles.
-        setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.create_categories)));
+        //setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, getResources().getStringArray(R.array.create_categories)));
+
+        setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.create_categories)));
+
 
         // Check to see if we have a frame in which to embed the details
         // fragment directly in the containing UI.
@@ -57,21 +53,26 @@ public class CreateCategoriesFragment extends SherlockListFragment {
 
         if (savedInstanceState != null) {
             // Restore last state for checked position.
-            mCurCheckPosition = savedInstanceState.getInt("curChoice", 0);
+            selectedIndex = savedInstanceState.getInt("selectedIndex", 0);
         }
 
+        if (mDualPane && android.os.Build.VERSION.SDK_INT>=11)
+        	setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_activated_1, getResources().getStringArray(R.array.create_categories)));
+        else
+        	setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.create_categories)));
+        
         if (mDualPane) {
             // In dual-pane mode, the list view highlights the selected item.
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             // Make sure our UI is in the correct state.
-            showDetails(mCurCheckPosition);
+            showDetails(selectedIndex);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("curChoice", mCurCheckPosition);
+        outState.putInt("selectedIndex", selectedIndex);
     }
 
     @Override
@@ -85,7 +86,7 @@ public class CreateCategoriesFragment extends SherlockListFragment {
      * whole new activity in which it is displayed.
      */
     void showDetails(int index) {
-        mCurCheckPosition = index;
+        selectedIndex = index;
 
         if (mDualPane) {
             // We can display everything in-place with fragments, so update
@@ -98,16 +99,16 @@ public class CreateCategoriesFragment extends SherlockListFragment {
             
             switch(index) {
             case 0:
-                if (!(currentFrag instanceof CreateFiltersFragment))
-                    newFrag = new CreateFiltersFragment();
-                break;
-            case 1:
                 if (!(currentFrag instanceof CreateNameFragment))
                     newFrag = new CreateNameFragment(initialName);
                 break;
-            case 2:
+            case 1:
                 if (!(currentFrag instanceof CreateLocationFragment))
                     newFrag = new CreateLocationFragment(initialLocation);
+                break;
+            case 2:
+                if (!(currentFrag instanceof CreateFiltersFragment))
+                    newFrag = new CreateFiltersFragment();
                 break;
             }
             
@@ -124,16 +125,16 @@ public class CreateCategoriesFragment extends SherlockListFragment {
             // Otherwise we need to launch a new activity to display
             // the dialog fragment with selected text.
             Intent intent = new Intent();
-            if (index==0)
-                intent.setClass(getActivity(), CreateFiltersActivity.class);
-            if(index==1) {
+            if(index==0) {
                 intent.setClass(getActivity(), CreateNameActivity.class);
                 intent.putExtra("initialName", initialName);
             }
-            if(index==2) {
+            if(index==1) {
                 intent.putExtra("initialLocation", initialLocation);
                 intent.setClass(getActivity(), CreateLocationActivity.class);
             }
+            if (index==2)
+                intent.setClass(getActivity(), CreateFiltersActivity.class);
             startActivityForResult(intent, 0);
         }
     }

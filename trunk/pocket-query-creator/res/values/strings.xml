@@ -66,7 +66,7 @@
 	 <string name="service_creation_success">Created ok</string>
 	 <string name="gps_wait">Waiting for GPS fix</string>
 	 <string name="gps_timeout">Timed out getting GPS fix</string>
-	 <string name="login_detect">Detect login status</string>
+	 <string name="retrieve_page">Retrieving page</string>
 	 <string name="creating">Submitting creation page</string>
 	 <string name="creation_pending">View creation progress</string>
 	 <string name="cancel_creation">Cancel Creation</string>
@@ -136,10 +136,11 @@
 	 <string name="actionbar_view_details">Detail</string>
 	 <string name="downloading">Downloading</string>
 	 <string-array name="create_categories">
-	     <item >Filters</item>
 	     <item >Name</item>
 	     <item >Location</item>
+	     <item >Filters</item>
 	 </string-array>
+	 <string name="get_pq_list">Get Downloadable PQ List</string>
 	 
 
 </resources>

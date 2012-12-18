@@ -1,13 +1,7 @@
 package org.pquery.webdriver;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.Collection;
 import java.util.List;
-
-import net.htmlparser.jericho.FormControl;
-import net.htmlparser.jericho.FormField;
-import net.htmlparser.jericho.Source;
 
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -18,11 +12,6 @@ import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 import org.pquery.util.IOUtils.Listener;
 import org.pquery.util.Util;
-import org.pquery.webdriver.parser.GeocachingPage;
-import org.pquery.webdriver.parser.FormFieldsExtra;
-import org.pquery.webdriver.parser.ParseException;
-
-import net.htmlparser.jericho.FormFields;
 import android.content.Context;
 import android.content.res.Resources;
 
@@ -42,14 +31,23 @@ public class SubmitFormPageTask extends RetriableTask<String> {
     }
 
     @Override
-    protected String task() throws FailureException, FailurePermanentException {
+    protected String task() throws FailureException, FailurePermanentException, InterruptedException {
 
         Logger.d("enter");
 
         String html = "";
-        DefaultHttpClient client = null;
+        
+        // Create client and restore cookies so we will be logged in
+        // ASSUMING already logged in at this stage
+        
+        DefaultHttpClient client =  new DefaultHttpClient();
+        
         List<Cookie> cookies = Prefs.getCookies(cxt);
-
+        for (Cookie c :  cookies) {
+            Logger.d("restored cookie " + c);
+            client.getCookieStore().addCookie(c);
+        }
+        
         try {
             // Initialize to 0%
 
@@ -58,26 +56,25 @@ public class SubmitFormPageTask extends RetriableTask<String> {
             try {
                 // https://www.geocaching.com/login/default.aspx?redir=%2fpocket%2fdefault.aspx%3f
 
-                html = IOUtils.httpPost(client, form, urlPath, true, new Listener() {
+                html = IOUtils.httpPost(client, form, urlPath, false, cancelledListener, new Listener() {
 
                     @Override
                     public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
                         progressReport(
                                 percent0to100,
                                 res.getString(R.string.creating),
-                                Util.humanDownloadCounter(bytesReadSoFar, expectedLength)); // 18-30%
+                                Util.humanDownloadCounter(bytesReadSoFar, expectedLength));
                     }
                 });
 
                 // Retrieve and store cookies in reply
                 cookies = client.getCookieStore().getCookies();
-
+                Prefs.saveCookies(cxt, cookies);
+                
             } catch (IOException e) {
                 throw new FailureException("Unable to submit creation form", e);
             }
             
-            Prefs.saveCookies(cxt, cookies);
-
             return html;
 
         }

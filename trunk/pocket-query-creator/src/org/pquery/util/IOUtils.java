@@ -4,11 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
-
-import net.htmlparser.jericho.FormFields;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -20,6 +17,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
+import org.pquery.webdriver.CancelledListener;
 
 
 public class IOUtils {    
@@ -31,11 +29,11 @@ public class IOUtils {
         public void update(int bytesReadSoFar, int expectedLength, int percent);
     }
     
-    public static byte[] toByteArray(InputStream input) throws IOException {
-        return toByteArray(input, null, -1);
-    }
+//    public static byte[] toByteArray(InputStream input) throws IOException {
+//        return toByteArray(input, null, -1);
+//    }
         
-    public static byte[] toByteArray(InputStream input, Listener listener, int expectedLength) throws IOException {
+    public static byte[] toByteArray(InputStream input, CancelledListener cancelledListener, Listener listener, int expectedLength) throws IOException, InterruptedException {
         
         byte[] buffer = new byte[3000];
         int total=0;
@@ -60,6 +58,7 @@ public class IOUtils {
                     }
                 }
             }
+            cancelledListener.ifCancelledThrow();
         }
         
         Logger.d("toByteArray expectedLength="+expectedLength+", actualLength="+total);
@@ -67,8 +66,8 @@ public class IOUtils {
         return byteOut.toByteArray();
     }
     
-    public static String httpGet(HttpClient client, String path, Listener listener) throws IOException { 
-        byte[] data =  httpGetBytes(client, path, listener);
+    public static String httpGet(HttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException { 
+        byte[] data =  httpGetBytes(client, path, cancelledListener, listener);
         
         // Convert data into string. Geocaching.com uses utf-8 pages?
         String ret = new String(data, "utf-8");
@@ -79,8 +78,9 @@ public class IOUtils {
     /**
      * Read a html string from HttpResponse
      * Doesn't follow redirects and throws exception if http status code isn't good
+     * @throws InterruptedException 
      */
-    public static byte[] httpGetBytes(HttpClient client, String path, Listener listener) throws IOException {
+    public static byte[] httpGetBytes(HttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
 
         Logger.d("enter [path=" + getHost() + path +"]");
         
@@ -104,14 +104,14 @@ public class IOUtils {
             length=ESTIMATED_CONTENT_SIZE;   // if chunking is on, we have to guess final length
         
         InputStream in = response.getEntity().getContent();
-        byte data[] = IOUtils.toByteArray(in, listener, length);
+        byte data[] = IOUtils.toByteArray(in, cancelledListener, listener, length);
         
         // Handle if response is compressed
         
         if (contentEncoding != null && contentEncoding.getValue().equalsIgnoreCase("gzip")) {
         	Logger.d("decoding gzip");
         	in = new GZIPInputStream(new ByteArrayInputStream(data));
-            data = IOUtils.toByteArray(in, null, length*ESTIMATED_COMPRESSION_RATIO);
+            data = IOUtils.toByteArray(in, cancelledListener, null, length*ESTIMATED_COMPRESSION_RATIO);
         }
         
         // Check for 404 page not found, 302 object moved etc
@@ -127,7 +127,7 @@ public class IOUtils {
         return data;
     }
     
-    public static String httpPost(HttpClient client, List<BasicNameValuePair> paramList, String path, boolean secure, Listener listener) throws IOException {
+    public static String httpPost(HttpClient client, List<BasicNameValuePair> paramList, String path, boolean secure, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
         
         HttpEntity entity = new UrlEncodedFormEntity(paramList, HTTP.UTF_8);
         
@@ -137,13 +137,13 @@ public class IOUtils {
         else
             url = getHost() + path;
         
-        Logger.d("enter [path=" + url +"]");
+        Logger.d("enter [url=" + url +"]");
         Logger.d(paramList);
         
         HttpPost post = new HttpPost(url);
-        
         post.addHeader("Accept-Encoding", "gzip");
         post.setEntity(entity);
+        
         HttpResponse response = client.execute(post);
         
         int length = (int) response.getEntity().getContentLength();
@@ -158,14 +158,14 @@ public class IOUtils {
             length=ESTIMATED_CONTENT_SIZE;   // if chunking is on, we have to guess final length
         
         InputStream in = response.getEntity().getContent();
-        byte data[] = IOUtils.toByteArray(in, listener, length);
+        byte data[] = IOUtils.toByteArray(in, cancelledListener, listener, length);
 
         // Handle if response is compressed
         
         if (contentEncoding != null && contentEncoding.getValue().equalsIgnoreCase("gzip")) {
         	Logger.d("decoding gzip");
             in = new GZIPInputStream(new ByteArrayInputStream(data));
-            data = IOUtils.toByteArray(in, null, length*ESTIMATED_COMPRESSION_RATIO);
+            data = IOUtils.toByteArray(in, cancelledListener, null, length*ESTIMATED_COMPRESSION_RATIO);
         }
         
         String ret = new String(data, "utf-8");

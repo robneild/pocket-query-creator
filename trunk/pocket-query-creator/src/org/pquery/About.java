@@ -21,17 +21,10 @@ import org.pquery.R;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
-
 import android.R.color;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
-import android.view.View;
 import android.webkit.WebView;
-import android.widget.TextView;
 
 /**
  * Show an HTML about page

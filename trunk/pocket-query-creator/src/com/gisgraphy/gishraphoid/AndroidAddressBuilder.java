@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Locale;
 
 import com.gisgraphy.domain.valueobject.GeoNamesAddressDto;
-import com.gisgraphy.domain.valueobject.GeoNamesDto;
 import com.gisgraphy.domain.valueobject.Street;
 
 import android.location.Address;

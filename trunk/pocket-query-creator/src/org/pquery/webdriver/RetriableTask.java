@@ -1,6 +1,6 @@
 package org.pquery.webdriver;
 
-import java.util.concurrent.Callable;
+import org.pquery.util.Logger;
 
 import junit.framework.Assert;
 
@@ -9,7 +9,7 @@ public abstract class RetriableTask<T> {
     private int numberOfTriesLeft; // number left
     private int lastPercent;
     private ProgressListener progressListener;
-    private CancelledListener cancelledListener;
+    protected CancelledListener cancelledListener;
     private int fromPercent;
     private int toPercent;
     
@@ -45,7 +45,7 @@ public abstract class RetriableTask<T> {
         }
     }
     
-    abstract protected T task() throws FailurePermanentException;
+    abstract protected T task() throws FailurePermanentException, InterruptedException;
     
     protected void ifCancelledThrow() throws InterruptedException {
         cancelledListener.ifCancelledThrow();

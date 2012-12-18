@@ -21,7 +21,6 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 
 import android.R.color;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebView;
@@ -64,12 +63,15 @@ public class Help extends SherlockActivity {
 
 		"<p>Don't hesitate to <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>contact me</a> with comments or errors" +
 
-		"<br><br><h2>Hints</h2>" +
+		"<br><h2>Hints</h2>" +
 		"<ul><li>Once created, Pocket Queries can take a while to run" +
 		"<li>There is no creation limit, but a maximum of 5 pocket queries will run in any 24 hour period" +
 		"<li>The query results will be sent to the email address in your Geocaching.com profile" +
 		"<li>The process to create the Pocket Query can take minutes on slow connections" +
 		"</ul>" +
+		"<br><h2>FAQ</h2>" +
+		"Q. What can I do with the zip files?<br>" +
+		"A. This app can't use them. You need another app to use them, like GeoBeagle" +
 		"</font>";
 
         wv = (WebView) findViewById(R.id.webview1);

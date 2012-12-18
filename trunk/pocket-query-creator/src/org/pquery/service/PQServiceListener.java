@@ -4,9 +4,11 @@ import org.pquery.webdriver.ProgressInfo;
 
 public interface PQServiceListener {
     
-    public void onServicePQDownloaded(DownloadPQResult downloadPQResult);
+	public void onServiceOperationResult(String title, String message, int notificationId);
+	
+    //public void onServicePQDownloaded(DownloadPQResult downloadPQResult);
     public void onServiceRetrievePQList(RetrievePQListResult pqListResult);
-    public void onServicePQCreated(CreatePQResult createPQResult);
+    //public void onServicePQCreated(CreatePQResult createPQResult);
     
     public void onServiceProgressInfo(ProgressInfo progressInfo);
     

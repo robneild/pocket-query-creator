@@ -4,11 +4,7 @@ import java.util.ArrayList;
 
 import junit.framework.Assert;
 
-import org.pquery.CreateSettingsChangedListener;
-import org.pquery.Dialog3;
 import org.pquery.DiscreteRangeSeekBar;
-import org.pquery.CreateFiltersActivity;
-import org.pquery.QueryStore;
 import org.pquery.R;
 import org.pquery.RangeSeekBar;
 import org.pquery.filter.CacheType;
@@ -17,18 +13,14 @@ import org.pquery.filter.CheckBoxesFilter;
 import org.pquery.filter.ContainerType;
 import org.pquery.filter.ContainerTypeList;
 import org.pquery.filter.OneToFiveFilter;
-import org.pquery.fragments.PQListFragment.PQClickedListener;
 import org.pquery.util.Prefs;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -36,14 +28,11 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout.LayoutParams;
 
 public class CreateFiltersFragment extends SherlockListFragment {

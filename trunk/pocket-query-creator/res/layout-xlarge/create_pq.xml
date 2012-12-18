@@ -1,13 +1,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+     android:showDividers="middle"
+     android:layout_marginRight="80dip"
+     android:layout_marginLeft="80dip">
 
     <fragment class="org.pquery.fragments.CreateCategoriesFragment"
-            android:id="@+id/titles" android:layout_weight="1"
-            android:layout_width="0px" android:layout_height="match_parent" />
+            android:id="@+id/titles"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dip"
+           	android:layout_weight="1"
+            android:layout_width="0dp"
+             />
 
-    <FrameLayout android:id="@+id/details" android:layout_weight="1"
-            android:layout_width="0px" android:layout_height="match_parent"
-            android:background="?android:attr/detailsElementBackground" />
+    <FrameLayout android:id="@+id/details"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+             android:layout_height="match_parent"
+            android:background="?android:attr/detailsElementBackground" 
+            android:padding="30dip"/>
 
 </LinearLayout>

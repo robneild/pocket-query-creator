@@ -2,11 +2,9 @@ package org.pquery;
 
 import junit.framework.Assert;
 
-import org.pquery.fragments.CreateFiltersFragment;
 import org.pquery.fragments.CreateNameFragment;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;

@@ -20,7 +20,6 @@ package org.pquery;
 import java.text.DateFormat;
 import java.util.Date;
 
-import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 

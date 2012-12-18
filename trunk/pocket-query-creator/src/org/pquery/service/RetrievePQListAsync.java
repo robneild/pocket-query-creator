@@ -4,17 +4,15 @@ import net.htmlparser.jericho.Source;
 
 import org.pquery.dao.PQ;
 import org.pquery.util.Logger;
-import org.pquery.util.Prefs;
 import org.pquery.webdriver.CancelledListener;
 import org.pquery.webdriver.FailurePermanentException;
 import org.pquery.webdriver.ProgressInfo;
 import org.pquery.webdriver.ProgressListener;
-import org.pquery.webdriver.ResultInfo;
 import org.pquery.webdriver.RetrievePageTask;
+import org.pquery.webdriver.parser.ParseException;
 import org.pquery.webdriver.parser.PocketQueryPage;
 
 import android.content.Context;
-import android.location.LocationListener;
 import android.os.AsyncTask;
 
 public class RetrievePQListAsync extends AsyncTask<Void, ProgressInfo, RetrievePQListResult> implements CancelledListener, ProgressListener {
@@ -49,7 +47,9 @@ public class RetrievePQListAsync extends AsyncTask<Void, ProgressInfo, RetrieveP
             return new RetrievePQListResult();
         } catch (FailurePermanentException e) {
             return new RetrievePQListResult(e);
-        }
+        } catch (ParseException e) {
+        	return new RetrievePQListResult(new FailurePermanentException(e.getMessage()));
+		}
 
     }
     

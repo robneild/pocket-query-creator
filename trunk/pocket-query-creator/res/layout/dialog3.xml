@@ -1,28 +1,91 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="2dip" >
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/linearLayout1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical">
-      
+    <TextView
+        android:id="@+id/textView_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ivak_satellite"
+        android:drawablePadding="10dp"
+        android:paddingTop="10dp"
+        android:text="Current GPS location"
+        android:textAppearance="@style/MyFont" >
+    </TextView>
 
+    <TextView
+        android:id="@+id/textView_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" " >
+    </TextView>
 
-      <TextView android:drawableLeft="@drawable/ivak_satellite" android:drawablePadding="10dp" android:paddingTop="10dp" android:textAppearance="@style/MyFont" android:text="Current GPS location" android:id="@+id/textView_location" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-        
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
 
-      <TextView android:text=" " android:id="@+id/textView_address" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-        
-        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout3">
-                <TextView android:text="Latitude: " android:id="@+id/textView2" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-                <TextView android:text="no fix yet" android:id="@+id/textView_lat" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-      </LinearLayout>
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Latitude: " >
+        </TextView>
 
-        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout4">
-                <TextView android:text="Longitude: " android:id="@+id/textView4" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-                <TextView android:text="no fix yet" android:id="@+id/textView_lon" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-      </LinearLayout>
-
-        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout5">
-            <TextView android:textSize="17dp" android:textStyle="bold" android:text="" android:id="@+id/textView_accuracy" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-      </LinearLayout>
-        
-		<Button android:drawableLeft="@drawable/treasure_map" android:drawablePadding="10dp" android:layout_marginTop="20dp" android:text="Choose point from map instead" android:id="@+id/button_map" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
-      
-        
+        <TextView
+            android:id="@+id/textView_lat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="no fix yet" >
+        </TextView>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Longitude: " >
+        </TextView>
+
+        <TextView
+            android:id="@+id/textView_lon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="no fix yet" >
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/textView_accuracy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="17dp"
+            android:textStyle="bold" >
+        </TextView>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/treasure_map"
+        android:drawablePadding="10dp"
+        android:text="Choose point from map instead" >
+    </Button>
+
+</LinearLayout>
