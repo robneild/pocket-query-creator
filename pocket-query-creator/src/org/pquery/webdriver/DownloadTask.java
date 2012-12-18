@@ -34,7 +34,7 @@ public class DownloadTask extends RetriableTask<Integer> {
     }
 
     @Override
-    protected Integer task() throws FailureException, FailurePermanentException {
+    protected Integer task() throws FailureException, FailurePermanentException, InterruptedException {
 
         byte [] pq;
         DefaultHttpClient client = new DefaultHttpClient();
@@ -51,7 +51,7 @@ public class DownloadTask extends RetriableTask<Integer> {
         // and read the response. Need to detect if logged in or no
 
         try {
-            pq = IOUtils.httpGetBytes(client, url, new Listener() {
+            pq = IOUtils.httpGetBytes(client, url, cancelledListener, new Listener() {
 
                 @Override
                 public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {

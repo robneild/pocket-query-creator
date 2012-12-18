@@ -6,7 +6,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class PQ implements Parcelable, Serializable {
-    public String name;
+
+	private static final long serialVersionUID = -6540850109992510771L;
+	public String name;
     public String size;
     public String age;
     public String waypoints;

@@ -4,25 +4,21 @@ import org.pquery.util.GPS;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 
+import com.actionbarsherlock.app.SherlockDialogFragment;
+
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.location.Address;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.LinearLayout.LayoutParams;
+import android.support.v4.app.FragmentActivity;
 
-public class AutoSetNameDialog extends DialogFragment implements LocationListener {
+public class AutoSetNameDialog extends SherlockDialogFragment implements LocationListener {
 
     /** the async task the does the lookup */
     private LookupLocationTask lookupLocationTask;
@@ -148,8 +144,10 @@ public class AutoSetNameDialog extends DialogFragment implements LocationListene
 
         @Override
         protected void onPostExecute(String result) {
-            if (result!=null)
-                ((AutoSetNameDialogListener) getActivity()).onAutoSetSuccess(result);
+            if (result!=null) {
+            	Activity ab = getActivity();
+                ((AutoSetNameDialogListener) getTargetFragment()).onAutoSetSuccess(result);
+            }
             dismiss();
         }
 

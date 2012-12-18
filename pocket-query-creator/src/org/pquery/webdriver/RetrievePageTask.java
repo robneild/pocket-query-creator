@@ -2,11 +2,8 @@ package org.pquery.webdriver;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Collection;
 import java.util.List;
 
-import net.htmlparser.jericho.FormControl;
-import net.htmlparser.jericho.FormField;
 import net.htmlparser.jericho.Source;
 
 import org.apache.http.cookie.Cookie;
@@ -41,7 +38,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
     }
 
     @Override
-    protected Source task() throws FailureException, FailurePermanentException {
+    protected Source task() throws FailureException, FailurePermanentException, InterruptedException {
 
         Logger.d("enter");
 
@@ -72,13 +69,13 @@ public class RetrievePageTask extends RetriableTask<Source> {
             // 0 - 50%
 
             try {
-                html = IOUtils.httpGet(client, urlPath, new Listener() {
+                html = IOUtils.httpGet(client, urlPath, cancelledListener, new Listener() {
 
                     @Override
                     public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
                         progressReport(
                                 percent0to100/2,    // convert to 0-50%
-                                res.getString(R.string.login_detect),
+                                res.getString(R.string.retrieve_page),
                                 Util.humanDownloadCounter(bytesReadSoFar, expectedLength));
                     }
                 });
@@ -98,9 +95,12 @@ public class RetrievePageTask extends RetriableTask<Source> {
             // Can take a long time an old CPU but good way
             // to update progress
 
+           
             progressReport(50, res.getString(R.string.parsing), "");
             GeocachingPage pageParser = new GeocachingPage(html);
-
+            
+            ifCancelledThrow();
+ 
             // Check for a completely wrong page returned that doesn't mention
             // Geocaching in the title
             // Likely to be a wifi login page
@@ -147,7 +147,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
                 // https://www.geocaching.com/login/default.aspx?redir=%2fpocket%2fdefault.aspx%3f
 
                 html = IOUtils.httpPost(client, nameValuePairs, "/login/default.aspx?redir=" + URLEncoder.encode(urlPath),
-                        true, new Listener() {
+                        true, cancelledListener, new Listener() {
 
                     @Override
                     public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
@@ -172,7 +172,8 @@ public class RetrievePageTask extends RetriableTask<Source> {
             progressReport(99, res.getString(R.string.parsing), "");
 
             pageParser = new GeocachingPage(html);
-
+            ifCancelledThrow();
+            
             if (pageParser.atLoginPage() || !pageParser.isLoggedIn()) {
                 throw new FailurePermanentException(res.getString(R.string.bad_credentials));
             }

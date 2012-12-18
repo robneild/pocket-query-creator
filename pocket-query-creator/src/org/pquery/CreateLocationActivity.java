@@ -2,12 +2,9 @@ package org.pquery;
 
 import junit.framework.Assert;
 
-import org.pquery.fragments.CreateFiltersFragment;
 import org.pquery.fragments.CreateLocationFragment;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
 

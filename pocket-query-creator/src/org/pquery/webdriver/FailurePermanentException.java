@@ -2,7 +2,9 @@ package org.pquery.webdriver;
 
 public class FailurePermanentException extends Exception {
 
-    public String error;
+	private static final long serialVersionUID = 7687740322490670417L;
+	
+	public String error;
     public String details;
     
     public FailurePermanentException(String error) {

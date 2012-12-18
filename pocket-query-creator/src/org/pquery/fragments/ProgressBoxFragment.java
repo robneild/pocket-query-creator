@@ -1,40 +1,27 @@
 package org.pquery.fragments;
 
-import junit.framework.Assert;
-
 import org.pquery.R;
-import org.pquery.fragments.PQListFragment.PQClickedListener;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.TypedValue;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
+/**
+ * Fragment displays box containing service progress text
+ * User can click on it to cancel service
+ */
 public class ProgressBoxFragment extends Fragment {
     
     public interface ProgressBoxFragmentListener {
         public void onProgressBoxFragmentClicked();
     }
     
-    private String text;
+    private String htmlText;
     private ProgressBoxFragmentListener listener;
-    
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
-        super.onCreate(savedInstanceState);
-    }
-    
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        // TODO Auto-generated method stub
-        super.onSaveInstanceState(outState);
-    }
     
     @Override
     public void onAttach(Activity activity) {
@@ -50,29 +37,30 @@ public class ProgressBoxFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         
-        View root = inflater.inflate(R.layout.progress_box_fragment, container, false);
-        TextView tv = (TextView) root.findViewById(R.id.progress_text);
-        tv.setText(text);
+        View view = inflater.inflate(R.layout.progress_box_fragment, container, false);
+        TextView tv = (TextView) view.findViewById(R.id.progress_text);
+        tv.setText(htmlText);
         
-        root.setClickable(true);
-        root.setOnClickListener(new View.OnClickListener() {
+        view.setClickable(true);
+        view.setOnClickListener(new View.OnClickListener() {
             
             @Override
             public void onClick(View v) {
-               int i = 0;
-                
+            	listener.onProgressBoxFragmentClicked();
             }
         });
-        return root;
+        return view;
     }
 
-    
-    public void setText(String text) {
-        this.text = text;
+    /**
+     * Update text as to what service is doing now
+     */
+    public void setText(String htmlText) {
+        this.htmlText = htmlText;
         
         if (getView() != null) {
             TextView tv = (TextView) getView().findViewById(R.id.progress_text);
-            tv.setText(text);
+            tv.setText(Html.fromHtml(htmlText));
         }
     }
 }

@@ -5,4 +5,7 @@
         <ignore path="res/values-de" />
         <ignore path="res/values-fr" />
     </issue>
+    <issue id="NewApi">
+        <ignore path="src/org/pquery/PreferencesFromXml.java" />
+    </issue>
 </lint>

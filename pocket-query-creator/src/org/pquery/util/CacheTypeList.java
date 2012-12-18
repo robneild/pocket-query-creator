@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import junit.framework.Assert;
 
 import org.pquery.CacheType;
-import org.pquery.ContainerType;
-
 import android.content.res.Resources;
 
 public class CacheTypeList implements Iterable<CacheType> {

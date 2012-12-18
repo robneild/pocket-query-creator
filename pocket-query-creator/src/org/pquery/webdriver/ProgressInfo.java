@@ -2,7 +2,7 @@ package org.pquery.webdriver;
 
 import android.os.Bundle;
 
-public class ProgressInfo extends ResultInfo {
+public class ProgressInfo {
 	
     public int percent;
     public String htmlMessage;
@@ -37,6 +37,5 @@ public class ProgressInfo extends ResultInfo {
 	public void saveToBundle(Bundle bundle) {
 		bundle.putInt("percent", percent);
 		bundle.putString("htmlMessage", htmlMessage);
-		bundle.putInt("msgType", UPDATE);
 	}
 }

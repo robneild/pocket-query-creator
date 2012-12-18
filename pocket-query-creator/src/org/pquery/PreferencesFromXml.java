@@ -19,7 +19,6 @@ package org.pquery;
 
 import java.util.List;
 
-import org.pquery.service.PQService;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 
@@ -32,10 +31,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Messenger;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceScreen;
 
 public class PreferencesFromXml extends SherlockPreferenceActivity  implements OnSharedPreferenceChangeListener {
 

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-
+    
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:disableDependentsState="true"
+        android:key="disabled_preference"
+        android:summary="Create Query in state such that it won&apos;t autorun. Allows manual modification after creation"
+        android:title="Create disabled" />
+    
     <CheckBoxPreference
         android:defaultValue="true"
         android:dependency="disabled_preference"
@@ -10,7 +17,6 @@
 
     <EditTextPreference
         android:defaultValue="pocketquery_"
-        android:dependency="download_preference"
         android:dialogTitle="Filename Prefix"
         android:inputType=""
         android:key="nameprefix_preference"
@@ -19,7 +25,6 @@
 
     <CheckBoxPreference
         android:defaultValue="true"
-        android:dependency="download_preference"
         android:disableDependentsState="true"
         android:key="default_download_dir_preference"
         android:summary="Output to default &apos;Download&apos; directory"
@@ -33,11 +38,5 @@
         <intent android:action="your.action.string" />
     </Preference>
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:disableDependentsState="true"
-        android:key="disabled_preference"
-        android:summary="Create Query in state such that it won&apos;t autorun. Allows manual modification after creation"
-        android:title="Create disabled" />
 
 </PreferenceScreen>

@@ -7,7 +7,6 @@ import org.pquery.R;
 import org.pquery.webdriver.FailurePermanentException;
 
 import android.content.res.Resources;
-import android.content.res.Resources.NotFoundException;
 
 /**
  * Parser the message we get back after pq creation. It appears at top of
@@ -22,82 +21,82 @@ import android.content.res.Resources.NotFoundException;
  * title="Preview the Search">preview the search</a> on the nearest cache page.
  * 
  * <p class="Success">
- * Merci ! Votre pocket query a été modifié et comprend présentement 10 caches.
+ * Merci ! Votre pocket query a ï¿½tï¿½ modifiï¿½ et comprend prï¿½sentement 10 caches.
  * Vous pouvez <a href=
  * "http://www.geocaching.com/seek/nearest.aspx?pq=692a0d6f-1494-4ba6-9ac9-5877aff7e6b4"
- * title="Prévisualiser la recherche">prévisualiser la recherche</a> sur la page
- * de caches la plus près.
+ * title="Prï¿½visualiser la recherche">prï¿½visualiser la recherche</a> sur la page
+ * de caches la plus prï¿½s.
  * </p>
  */
 public class SuccessMessageParser {
 
-    private static final String PARSE_ERROR_DOWNLOAD = "Parse error. Can't extract download link";
-    private static final String PARSE_ERROR_NUMB = "Parse error. Can't extract numb generated pqs";
-    private static final String NOT_FIND = "Response seemed to indicate creation failed";
+	private static final String PARSE_ERROR_DOWNLOAD = "Parse error. Can't extract download link";
+	private static final String PARSE_ERROR_NUMB = "Parse error. Can't extract numb generated pqs";
+	private static final String NOT_FIND = "Response seemed to indicate creation failed";
 
-    public String successMessage;
+	public String successMessage;
 
-    /**
-     * Try to parse out success message from passed in html
-     * 
-     * Extracts out everything between <p class="Success"> and </p>
-     */
-    public SuccessMessageParser(String html) throws FailurePermanentException {
+	/**
+	 * Try to parse out success message from passed in html
+	 * 
+	 * Extracts out everything between <p class="Success"> and </p>
+	 */
+	public SuccessMessageParser(String html) throws FailurePermanentException {
 
-        final String START = Pattern.quote("<p class=\"Success\">");
-        final String END = Pattern.quote("</p>");
-        
-        Matcher m = Pattern.compile(START + "(.+)" + END).matcher(html);
-        
-        if (m.find()) {
-            String name = m.group(1);
-            successMessage = name;
-        } else
-            throw new FailurePermanentException(NOT_FIND);
-    }
+		final String START = Pattern.quote("<p class=\"Success\">");
+		final String END = Pattern.quote("</p>");
+
+		Matcher m = Pattern.compile(START + "(.+)" + END).matcher(html);
+
+		if (m.find()) {
+			String name = m.group(1);
+			successMessage = name;
+		} else
+			throw new FailurePermanentException(NOT_FIND);
+	}
 
 
-    /**
-     * Extract out the Pocket Query guid (within the preview link)
-     * We need it to calculate the download link
-     * 
-     * Extract between nearest.aspx?pq= and end "
-     * 
-     * <a href="http://www.geocaching.com/seek/nearest.aspx?pq=692a0d6f-1494-4ba6-9ac9-5877aff7e6b4" 
-     */
-    public String extractDownloadGuid() throws FailurePermanentException {
+	/**
+	 * Extract out the Pocket Query guid (within the preview link)
+	 * We need it to calculate the download link
+	 * 
+	 * Extract between nearest.aspx?pq= and end "
+	 * 
+	 * <a href="http://www.geocaching.com/seek/nearest.aspx?pq=692a0d6f-1494-4ba6-9ac9-5877aff7e6b4" 
+	 */
+	public String extractDownloadGuid() throws FailurePermanentException {
 
-        final String START = Pattern.quote("nearest.aspx?pq=");
-        final String END = Pattern.quote("\"");
-        
-        Matcher m = Pattern.compile(START + "(.+)" + END).matcher(successMessage);
-        
-        while (m.find()) {
-            String guid = m.group(1);
-            return guid;
-        }
-        
-            throw new FailurePermanentException(PARSE_ERROR_DOWNLOAD);
-    }
+		final String START = Pattern.quote("nearest.aspx?pq=");
+		final String END = Pattern.quote("\"");
 
-    /**
-     * Return number of created Pocket Queries
-     * 
-     * Matches any digit group before the download link starts
-     */
-    public int extractNumberPQ() throws FailurePermanentException {
+		Matcher m = Pattern.compile(START + "(.+?)" + END).matcher(successMessage);
 
-        Matcher m = Pattern.compile("(\\d+).*?<a href").matcher(successMessage);
-        
-        while (m.find()) {
-            String name = m.group(1);
-            return Integer.parseInt(name);
-        }
-        
-        throw new FailurePermanentException(PARSE_ERROR_NUMB);
-    }
+		while (m.find()) {
+			String guid = m.group(1);
+			return guid;
+		}
 
-    public String toString(Resources res) throws FailurePermanentException {
-        return res.getString(R.string.created_ok) + " " + extractNumberPQ() + " caches";
-    }
+		throw new FailurePermanentException(PARSE_ERROR_DOWNLOAD);
+	}
+
+	/**
+	 * Return number of created Pocket Queries
+	 * 
+	 * Matches any digit group before the download link starts
+	 */
+	public int extractNumberPQ() throws FailurePermanentException {
+
+		Matcher m = Pattern.compile("(\\d+).*?<a href").matcher(successMessage);
+
+		while (m.find()) {
+			String name = m.group(1);
+			return Integer.parseInt(name);
+		}
+
+		throw new FailurePermanentException(PARSE_ERROR_NUMB);
+	}
+
+	public String toString(Resources res) throws FailurePermanentException {
+		return res.getString(R.string.created_ok) + " " + extractNumberPQ() + " caches";
+	}
 }

@@ -6,7 +6,9 @@ import org.apache.http.StatusLine;
 
 public class HTTPStatusCodeException extends IOException {
 
-    public int code;
+	private static final long serialVersionUID = 6392750451335427514L;
+	
+	public int code;
     public String reason;
     public String body;
     
