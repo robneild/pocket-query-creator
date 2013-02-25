@@ -22,7 +22,7 @@
         android:entries="@array/geocoder_provider"
         android:entryValues="@array/geocoder_provider_values"
         android:key="geocoding_provider_preference"
-        android:summary="Who to use to get a name for a location"
+        android:summary="Who to use to lookup a name for a location"
         android:title="Geocoding provider" />
 
     <CheckBoxPreference

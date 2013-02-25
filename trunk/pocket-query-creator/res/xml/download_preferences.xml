@@ -23,13 +23,15 @@
         android:summary="...put on front of downloaded Pocket Query filename"
         android:title="Filename Prefix" />
 
+    <!--  summary is set in code -->
     <CheckBoxPreference
         android:defaultValue="true"
         android:disableDependentsState="true"
         android:key="default_download_dir_preference"
-        android:summary="Output to default &apos;Download&apos; directory"
+        android:summary=""
         android:title="Default download directory" />
 
+    <!--  summary is set in code -->
     <Preference
         android:dependency="default_download_dir_preference"
         android:key="user_download_dir_preference"

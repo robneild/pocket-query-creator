@@ -30,19 +30,19 @@ import android.webkit.WebView;
  */
 public class Help extends SherlockActivity {
 
-    @Override
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
+	@Override
+	public void onCreate(Bundle icicle) {
+		super.onCreate(icicle);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setContentView(R.layout.about);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		setContentView(R.layout.about);
 
-        final String mimeType = "text/html";
-        final String encoding = "utf-8";
+		final String mimeType = "text/html";
+		final String encoding = "utf-8";
 
-        WebView wv;
+		WebView wv;
 
-        String html = "<font color='#ffffff'>" + 
+		String html = "<font color='#ffffff'>" + 
 
 		"<style type='text/css'>" +
 		"a:link {color: #0066FF; text-decoration: underline; }" +
@@ -52,42 +52,58 @@ public class Help extends SherlockActivity {
 		"li {margin: 5px}" +
 		"</style> " +
 
-		"This app allows the quick creation of " +
+		"<br>This app allows the quick creation and downloading of " +
 		"<a href='http://www.geocaching.com/pocket/'>Pocket Queries</a>. " +
 		"They are provided to premium members of the website " +
 		"<a href='http://www.geocaching.com'>Geocaching.com</a>." +
-		"<br>This app does nothing that can't be done at the Geocaching.com website. It just acts as a convienience." +
+		"<p>This app does nothing that can't be done at the Geocaching.com website. It just acts as a convienience." +
 
 		"<p>You can't go geocaching with just this app. Try <a href='market://search?q=pname:com.google.code.geobeagle'>geobeagle</a>"+
 		" or <a href='market://search?q=pname:com.groundspeak.geocaching'>the official client</a>" +
 
 		"<p>Don't hesitate to <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>contact me</a> with comments or errors" +
 
-		"<br><h2>Hints</h2>" +
+		"<br><h2>Creating a Pocket Query</h2>" +
+
+		"<ul><li>Ensure your geocaching.com credentials have been entered into settings page" +
+		"<li>Press <img width='20px' src='content_new.png'>" +
+		"<li>Tailor creation options" +
+		"<li>Press <img width='20px' src='content_new.png'> again to create and download the Pocket Query" +
+		"</ul>" +
+		
+		"<h2>Downloading a Pocket Query</h2>" +
+
+		"<ul><li>Press <img width='20px' src='navigation_refresh.png'>" +
+		"<li>A list will be shown of Pocket Query that are ready to download" +
+		"<li>Select a Pocket Query then <img width='20px' src='av_download.png'> to download it" +
+		"</ul>" +
+		
+		"<h2>Hints</h2>" +
 		"<ul><li>Once created, Pocket Queries can take a while to run" +
 		"<li>There is no creation limit, but a maximum of 5 pocket queries will run in any 24 hour period" +
 		"<li>The query results will be sent to the email address in your Geocaching.com profile" +
 		"<li>The process to create the Pocket Query can take minutes on slow connections" +
 		"</ul>" +
-		"<br><h2>FAQ</h2>" +
+		"<h2>FAQ</h2>" +
 		"Q. What can I do with the zip files?<br>" +
 		"A. This app can't use them. You need another app to use them, like GeoBeagle" +
 		"</font>";
 
-        wv = (WebView) findViewById(R.id.webview1);
-        wv.setBackgroundColor(getResources().getColor(color.black));
-        wv.loadData(html, mimeType, encoding);
-    }
+		wv = (WebView) findViewById(R.id.webview1);
+		wv.setBackgroundColor(getResources().getColor(color.black));
+		wv.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "windows-1252", "");
+		//wv.loadData(html, mimeType, encoding);
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case android.R.id.home:
-            Intent intent = new Intent(this, Main.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			Intent intent = new Intent(this, Main.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			startActivity(intent);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }

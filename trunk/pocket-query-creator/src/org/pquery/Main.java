@@ -66,7 +66,7 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 	private enum ServiceStatus { NotConnected, Connected, ServiceBusy };
 
 	private ServiceStatus serviceStatus;
-	private long pqListTimestamp;
+	//private long pqListTimestamp;
 
 	@Override
 	protected void onDestroy() {
@@ -108,7 +108,7 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 		setContentView(R.layout.main2);
 
 		if (savedInstanceState!=null) {
-			this.pqListTimestamp = savedInstanceState.getLong("pqListTimestamp");
+			//this.pqListTimestamp = savedInstanceState.getLong("pqListTimestamp");
 		}
 
 		String title = getIntent().getStringExtra("title");
@@ -134,16 +134,28 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 		
 		long time = Prefs.getPQListStateTimestamp(this);
 
-		if (time> pqListTimestamp) {
-			if (new Date().getTime() - time > 1000 * 60 * 60) {
-				Prefs.erasePQListState(this);
-				time = 0;
-			}
+		// First check if we have a PQ list stored
+		if (time!=0)
+		{	
+			// OK we know we have a PQ list
+			
 			PQListFragment pqList = (PQListFragment) getSupportFragmentManager().findFragmentById(R.id.pq_list_fragment);
-			pqList.updateList(Prefs.getPQListState(this));
-			this.pqListTimestamp = time;
+			
+			// First check if it is too old
+			// If so erase it and set list to be empty
+			
+			if (new Date().getTime() - time > 1000 * 60 * 15) {
+				Prefs.erasePQListState(this);
+				pqList.updateList(null);
+			}
+			else {
+				pqList.updateList(Prefs.getPQListState(this));
+			
+			}
+			//this.pqListTimestamp = time;
+		//}
 		}
-
+		
 		if (doDialog) {
 			String title = getIntent().getStringExtra("title");
 			String message = getIntent().getStringExtra("message");
@@ -177,7 +189,7 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		Logger.d("enter");
-		outState.putLong("pqListTimestamp", pqListTimestamp);
+		//outState.putLong("pqListTimestamp", pqListTimestamp);
 		onSaveInstanceStateCalled = true;
 	}
 
@@ -380,7 +392,7 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 	public void onServiceRetrievePQList(RetrievePQListResult pqListResult) {
 		PQListFragment pqList = (PQListFragment) getSupportFragmentManager().findFragmentById(R.id.pq_list_fragment);
 
-		pqListTimestamp = Prefs.getPQListStateTimestamp(this);
+		//pqListTimestamp = Prefs.getPQListStateTimestamp(this);
 		pqList.updateList(pqListResult.pqs);
 
 		if (pqListResult.failure != null) {

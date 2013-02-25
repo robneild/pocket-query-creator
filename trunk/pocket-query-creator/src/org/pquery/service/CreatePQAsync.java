@@ -158,7 +158,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
 
 			Logger.d("[successMessage=" + successMessageParser.successMessage + "]");
 
-			if (!Prefs.getDownload(cxt) || Prefs.getDisabled(cxt)) {
+			if (!Prefs.getDownload(cxt) || Prefs.getDisabled(cxt) || successMessageParser.extractNumberPQ()==0) {
 				// We we aren't downloading or creating disabled then can finish
 				// now
 				return new CreatePQResult(successMessageParser.toString(res));
@@ -552,7 +552,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
 			// = decimal degrees
 			loginFormExtra.setValueChecked("ctl00$ContentBody$LatLong:_currentLatLongFormat", "0"); // "1");
 
-			loginFormExtra.setValueChecked("ctl00$ContentBody$tbRadius", Integer.toString(Prefs.getRadius(cxt)));
+			loginFormExtra.setValueChecked("ctl00$ContentBody$tbRadius", Prefs.getDefaultRadius(cxt));
 
 			if (Prefs.isMetric(cxt))
 				loginFormExtra.setValueChecked("ctl00$ContentBody$rbUnitType", "km");

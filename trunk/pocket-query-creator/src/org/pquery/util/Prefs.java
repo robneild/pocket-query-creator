@@ -92,9 +92,6 @@ public class Prefs {
     public static boolean getDisabled(Context cxt) {
         return PreferenceManager.getDefaultSharedPreferences(cxt).getBoolean(DISABLED, false);
     }
-    public static int getRadius(Context cxt) {
-        return PreferenceManager.getDefaultSharedPreferences(cxt).getInt(RADIUS, 5);
-    }
 
     public static boolean getDownload(Context cxt) {
         return PreferenceManager.getDefaultSharedPreferences(cxt).getBoolean("download_preference", true);

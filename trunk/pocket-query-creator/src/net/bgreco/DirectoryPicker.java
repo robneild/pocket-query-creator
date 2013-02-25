@@ -3,9 +3,14 @@ package net.bgreco;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import org.pquery.R;
+import org.pquery.util.FileComparator;
 import org.pquery.util.Prefs;
+
+import com.actionbarsherlock.app.SherlockListActivity;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -18,6 +23,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -42,7 +49,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 
-public class DirectoryPicker extends ListActivity {
+public class DirectoryPicker extends SherlockListActivity {
 
 	public static final String START_DIR = "startDir";
 	public static final String ONLY_DIRS = "onlyDirs";
@@ -57,7 +64,9 @@ public class DirectoryPicker extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
-        dir = Environment.getExternalStorageDirectory();
+        
+        dir = new File("/"); 		// ROB getExternalStorageDirectory();
+        
         if (extras != null) {
         	String preferredStartDir = extras.getString(START_DIR);
         	showHidden = extras.getBoolean(SHOW_HIDDEN, false);
@@ -71,7 +80,11 @@ public class DirectoryPicker extends ListActivity {
         }
         
         setContentView(R.layout.directory_chooser_list);
+        
+        // Make current directory visible in ActionBar at top
         setTitle(dir.getAbsolutePath());
+        
+        // Select Button
         Button btnChoose = (Button) findViewById(R.id.btnChoose);
         String name = dir.getName();
         if(name.length() == 0)
@@ -82,23 +95,30 @@ public class DirectoryPicker extends ListActivity {
             	returnDir(dir.getAbsolutePath());
             }
         });
-        
+       
+		
         ListView lv = getListView();
         lv.setTextFilterEnabled(true);
         
         if(!dir.canRead()) {
+        	// User has gone into directory that we can't read
+        	// We immediately close this activity to return to directory above
         	Context context = getApplicationContext();
         	String msg = "Could not read folder contents.";
         	Toast toast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
         	toast.show();
+        	finish();
         	return;
         }
         
-        final ArrayList<File> files = filter(dir.listFiles(), onlyDirs, showHidden);
-        String[] names = names(files);
-        setListAdapter(new ArrayAdapter<String>(this, R.layout.directory_chooser_list_item, names));        	
+        // We now know can read directory so get list of directories
+        final List<File> files = filter(dir.listFiles(), onlyDirs, showHidden);
+        String[] names = getNamesForFiles(files);
+        
+        setListAdapter(new ArrayAdapter<String>(this, R.layout.directory_chooser_list_item, R.id.fdrowtext , names));        	
         
 
+        // Go down a directory when selected
         lv.setOnItemClickListener(new OnItemClickListener() {
         	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         		if(!files.get(position).isDirectory())
@@ -113,6 +133,9 @@ public class DirectoryPicker extends ListActivity {
         });
     }
 	
+	/**
+	 * Directory was clicked. Go down a directory
+	 */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if(requestCode == PICK_DIRECTORY && resultCode == RESULT_OK) {
@@ -122,6 +145,7 @@ public class DirectoryPicker extends ListActivity {
     	}
     }
 	
+
     private void returnDir(String path) {
     	Intent result = new Intent();
     	result.putExtra(CHOSEN_DIRECTORY, path);
@@ -133,7 +157,10 @@ public class DirectoryPicker extends ListActivity {
     	finish();    	
     }
 
-	public ArrayList<File> filter(File[] file_list, boolean onlyDirs, boolean showHidden) {
+    /**
+     * Filter a list of files
+     */
+	private List<File> filter(File[] file_list, boolean onlyDirs, boolean showHidden) {
 		ArrayList<File> files = new ArrayList<File>();
 		for(File file: file_list) {
 			if(onlyDirs && !file.isDirectory())
@@ -142,11 +169,15 @@ public class DirectoryPicker extends ListActivity {
 				continue;
 			files.add(file);
 		}
-		Collections.sort(files);
+		Collections.sort(files, new FileComparator());
 		return files;
 	}
+
 	
-	public String[] names(ArrayList<File> files) {
+	/**
+	 * Convert list of files into list of file names
+	 */
+	private String[] getNamesForFiles(List<File> files) {
 		String[] names = new String[files.size()];
 		int i = 0;
 		for(File file: files) {
@@ -155,5 +186,7 @@ public class DirectoryPicker extends ListActivity {
 		}
 		return names;
 	}
+	
+
 }
 
