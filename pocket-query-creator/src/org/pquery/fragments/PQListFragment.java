@@ -1,7 +1,5 @@
 package org.pquery.fragments;
 
-import junit.framework.Assert;
-
 import org.pquery.R;
 import org.pquery.dao.PQ;
 import org.pquery.util.Logger;
@@ -17,6 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * Shows list of PQ that user can download
+ */
 public class PQListFragment extends ListFragment {
 
 	public interface PQClickedListener {
@@ -36,37 +37,39 @@ public class PQListFragment extends ListFragment {
 		}
 	}
 
+	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		Logger.d("enter");
-
-		outState.putParcelableArray("pqs", pqs);
+	//	super.onSaveInstanceState(outState);
+	//	Logger.d("enter");
+	//
+	//	outState.putParcelableArray("pqs", pqs);
 	}
 
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		Logger.d("enter");
 
-		if (savedInstanceState != null) {
-			try {
-				Parcelable[] parcel = savedInstanceState.getParcelableArray("pqs");
-				PQ [] pqs = null;
-				if (parcel!=null) {
-					Logger.d("parcelable info [parcel_length=" + parcel.length +"]");
-					pqs = new PQ[parcel.length];
-					for (int i=0; i<parcel.length; i++) {
-						Logger.d("working on = " + i + parcel[i].getClass().getName());
-						Logger.d("instanceof =" + (parcel[i] instanceof PQ));
-						pqs[i] = (PQ) parcel[i];
-					}
-				}
-				updateList(pqs);
-			} catch (ClassCastException e) {
-				Logger.e("ClassCaseException " + e);
-			}
-		}
+//		if (savedInstanceState != null) {
+//			try {
+//				Parcelable[] parcel = savedInstanceState.getParcelableArray("pqs");
+//				PQ [] pqs = null;
+//				if (parcel!=null) {
+//					Logger.d("parcelable info [parcel_length=" + parcel.length +"]");
+//					pqs = new PQ[parcel.length];
+//					for (int i=0; i<parcel.length; i++) {
+//						Logger.d("working on = " + i + parcel[i].getClass().getName());
+//						Logger.d("instanceof =" + (parcel[i] instanceof PQ));
+//						pqs[i] = (PQ) parcel[i];
+//					}
+//				}
+//				updateList(pqs);
+//			} catch (ClassCastException e) {
+//				Logger.e("ClassCaseException " + e);
+//			}
+//		}
 	}
 
 	@Override
