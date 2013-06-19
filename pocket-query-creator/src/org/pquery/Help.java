@@ -52,7 +52,7 @@ public class Help extends SherlockActivity {
 		"li {margin: 5px}" +
 		"</style> " +
 
-		"<br>This app allows the quick creation and downloading of " +
+		"This app allows the quick creation and downloading of " +
 		"<a href='http://www.geocaching.com/pocket/'>Pocket Queries</a>. " +
 		"They are provided to premium members of the website " +
 		"<a href='http://www.geocaching.com'>Geocaching.com</a>." +
@@ -61,9 +61,7 @@ public class Help extends SherlockActivity {
 		"<p>You can't go geocaching with just this app. Try <a href='market://search?q=pname:com.google.code.geobeagle'>geobeagle</a>"+
 		" or <a href='market://search?q=pname:com.groundspeak.geocaching'>the official client</a>" +
 
-		"<p>Don't hesitate to <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>contact me</a> with comments or errors" +
-
-		"<br><h2>Creating a Pocket Query</h2>" +
+		"<br><h2>Howto Create a Pocket Query</h2>" +
 
 		"<ul><li>Ensure your geocaching.com credentials have been entered into settings page" +
 		"<li>Press <img width='20px' src='content_new.png'>" +
@@ -71,7 +69,7 @@ public class Help extends SherlockActivity {
 		"<li>Press <img width='20px' src='content_new.png'> again to create and download the Pocket Query" +
 		"</ul>" +
 		
-		"<h2>Downloading a Pocket Query</h2>" +
+		"<h2>Howto Download a Pocket Query</h2>" +
 
 		"<ul><li>Press <img width='20px' src='navigation_refresh.png'>" +
 		"<li>A list will be shown of Pocket Query that are ready to download" +
@@ -86,12 +84,16 @@ public class Help extends SherlockActivity {
 		"</ul>" +
 		"<h2>FAQ</h2>" +
 		"Q. What can I do with the zip files?<br>" +
-		"A. This app can't use them. You need another app to use them, like GeoBeagle" +
+		"<i>A. This app can't use them. You need another app to use them, like GeoBeagle</i><p>" +
+		"Q. Can I use Pocket Queries in c:geo?<br>" +
+		"<i>A. Yes, however, not zipped ones. Un-zip them using another app</i><p>" +
+		"Q. Can I extract the PQ attachment from emails?<br>" +
+		"<i>A. Use an email client that can (K-9 Mail) or use this app to download the PQ</i>" +
 		"</font>";
 
 		wv = (WebView) findViewById(R.id.webview1);
 		wv.setBackgroundColor(getResources().getColor(color.black));
-		wv.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "windows-1252", "");
+		wv.loadDataWithBaseURL("file:///android_asset/", html, mimeType, encoding, "");
 		//wv.loadData(html, mimeType, encoding);
 	}
 

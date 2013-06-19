@@ -43,12 +43,12 @@ public class CreateFiltersFragment extends SherlockListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup vg, Bundle data) {
 
-        View view = inflater.inflate(R.layout.dialog2, null);
+        View view = inflater.inflate(R.layout.create_filters_fragment, null);
 
         // Create list of filters, adding each one
 
         _filterList = new ArrayList<FilterOption>();
-        this.m_adapter = new OrderAdapter(getActivity(), R.layout.dialog2_1_list, _filterList);
+        this.m_adapter = new OrderAdapter(getActivity(), R.layout.create_filters_fragment_list, _filterList);
         setListAdapter(this.m_adapter);
 
         _filterList = new ArrayList<FilterOption>();
@@ -267,7 +267,7 @@ public class CreateFiltersFragment extends SherlockListFragment {
             View v = convertView;
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.dialog2_1_list, null);
+                v = vi.inflate(R.layout.create_filters_fragment_list, null);
             }
             FilterOption o = items.get(position);
             if (o != null) {

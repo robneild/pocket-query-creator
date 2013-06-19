@@ -10,6 +10,7 @@ public class CheckBoxesFilter {
     public boolean notFound;
     public boolean found7days;
     public boolean travelBug;
+	public boolean idontown;
     
     public CheckBoxesFilter() {
     }
@@ -19,6 +20,7 @@ public class CheckBoxesFilter {
         notFound = selections[2];
         found7days = selections[3];
         travelBug = selections[4];
+        idontown = selections[5];
     }
     
     public String toLocalisedString(Resources res) {
@@ -33,7 +35,9 @@ public class CheckBoxesFilter {
         if (found7days)
             ret.append(res.getString(R.string.filter_found7days) + ", ");
         if (travelBug)
-            ret.append(res.getString(R.string.filter_travelbug) + ",");
+            ret.append(res.getString(R.string.filter_travelbug) + ", ");
+        if (idontown)
+        	ret.append(res.getString(R.string.filter_idontown) + ", ");
         
         // Knock off ending ', '
         if (ret.length()>0)
@@ -43,22 +47,24 @@ public class CheckBoxesFilter {
     }
     
     public String[] getOptions(Resources res) {
-        String[] ret = new String[5];
+        String[] ret = new String[6];
         ret[0] = res.getString(R.string.filter_enabled);
         ret[1] = res.getString(R.string.filter_ignorelist);
         ret[2] = res.getString(R.string.filter_notfound);
         ret[3] = res.getString(R.string.filter_found7days);
         ret[4] = res.getString(R.string.filter_travelbug);
+        ret[5] = res.getString(R.string.filter_idontown);
         return ret;
     }
     
     public boolean[] getAsBooleanArray() {
-        boolean[] ret = new boolean[5];
+        boolean[] ret = new boolean[6];
         ret[0] = enabled;
         ret[1] = notOnIgnore;
         ret[2] = notFound;
         ret[3] = found7days;
         ret[4] = travelBug;
+        ret[5] = idontown;
         return ret;
     }
 }

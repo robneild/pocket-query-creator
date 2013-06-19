@@ -53,6 +53,8 @@ public class About extends SherlockActivity {
 		"a:hover {color: #0066FF; text-decoration: underline; }" +
 		"li {margin: 5px}" +
 		"</style> " +
+		
+		"Written by Rob Neild<p>Don't hesitate to <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>contact me</a> with comments or errors" +
 
  		"<h2>Contains</h2>" +
  		"<a href='http://www.openclipart.org/detail/89059/push-pin-icon-by-jhnri4'>Push pin icon</a> - openclipart.org<br/>" +
@@ -63,16 +65,8 @@ public class About extends SherlockActivity {
  		"<a href='http://openclipart.org/detail/44005/treasure-map-by-hextrust'>Treasure Map</a> - openclipart.org<br/>" +
  		"<a href='http://openclipart.org/detail/10941/red-+-green-ok-not-ok-icons-by-tzeeniewheenie-10941'>Red cross</a> - openclipart.org<br/>" +
  		"<a href='http://openclipart.org/detail/10940/red-+-green-ok-not-ok-icons-by-tzeeniewheenie-10940'>Green cross</a> - openclipart.org<br/>" +
-
-	    "<a href='http://openclipart.org/detail/4152/friendly-rabbit-by-danko'>Friendly rabbit</a> - openclipart.org<br/>" +
-	    "<a href='http://openclipart.org/detail/170491/gear---options---icon-by-diamonjohn-170491'>Gear - options - icon</a> - openclipart.org<br/>" +
-	    "<a href='http://openclipart.org/detail/104977/help-orb-button-by-decosigner'>Help Orb Button </a> - openclipart.org<br/>" +
-
 	    "<a href='http://openclipart.org/detail/9457/rpg-map-symbols:-mountains-by-nicubunu-9457'>Mountains</a> - openclipart.org<br/>" +
 	    "<a href='http://openclipart.org/detail/11476/rpg-map-symbols:-maze-by-nicubunu'>Maze</a> - openclipart.org<br/>" +
-	    "<a href='http://openclipart.org/detail/33733/info-sign-by-ernes'>Info sign</a> - openclipart.org<br/>" +
-	    "<a href='http://openclipart.org/detail/1067/blue-iris-by-aurium'>Blue iris</a> - openclipart.org<br/>" +
-	    "<a href='http://openclipart.org/detail/73/hammer-by-rejon'>Hammer</a> - openclipart.org<br/>" +
 	    "<br>" +
 	    "<a href='http://code.google.com/p/range-seek-bar'>range-seek-bar</a><br>" +
 	    "<a href='http://www.bgreco.net/directorypicker/'>Android Directory Picker</a><br>"+

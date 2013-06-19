@@ -26,8 +26,8 @@
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="zip_preference"
-        android:summary="Results compressed into zip file"
-        android:title="Compress results" />
+        android:summary="However, downloaded PQ with this app are always zipped"
+        android:title="Compress emailed PQ" />
     
     <CheckBoxPreference
         android:defaultValue="false"
