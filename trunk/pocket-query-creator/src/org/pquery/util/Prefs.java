@@ -39,14 +39,15 @@ public class Prefs {
     public static final String USERNAME = "username_preference";
     public static final String PASSWORD = "password_preference";
     private static final String RADIUS = "radius_preference2";
-
+    
     private static final String ENABLED_FILTER = "enabled_filter_preference";
     private static final String TRAVEL_BUG_FILTER = "travel_bug_filter";
     private static final String NOT_IGNORED_FILTER = "not_ignored_filter";
     private static final String FOUND_7DAYS_FILTER = "found_7days_filter";
     private static final String NOT_FOUND_FILTER = "not_found_filter";
+    private static final String I_DONT_OWN_FILTER = "i_dont_own_filter";
     private static final String LOCATION_ACCURACY = "location_accuracy_preference";
-
+    
     private static final String COMMA = "\u001F";
     private static final String SEMI_COLON = "\u007F";
 
@@ -68,13 +69,15 @@ public class Prefs {
         boolean notOnIgnore = prefs.getBoolean(NOT_IGNORED_FILTER, true);
         boolean found7days = prefs.getBoolean(FOUND_7DAYS_FILTER, false);
         boolean notFound = prefs.getBoolean(NOT_FOUND_FILTER, false);
-
+        boolean idontown = prefs.getBoolean(I_DONT_OWN_FILTER, false);
+        
         CheckBoxesFilter ret = new CheckBoxesFilter();
         ret.enabled = enabled;
         ret.travelBug = travelBug;
         ret.notOnIgnore = notOnIgnore;
         ret.found7days = found7days;
         ret.notFound = notFound;
+        ret.idontown = idontown;
         return ret;
     }
     public static String getMaxCaches(Context cxt) {
@@ -107,7 +110,7 @@ public class Prefs {
     public static String getDefaultRadius(Context cxt) {
         return PreferenceManager.getDefaultSharedPreferences(cxt).getString(RADUIS, "5");
     }
-
+    
     public static void saveDefaultRadius(Context cxt, String radius) {
         Editor edit = PreferenceManager.getDefaultSharedPreferences(cxt).edit();
         edit.putString(RADUIS, radius);
@@ -273,6 +276,7 @@ public class Prefs {
         edit.putBoolean(NOT_IGNORED_FILTER, checkBoxesFilter.notOnIgnore);
         edit.putBoolean(FOUND_7DAYS_FILTER, checkBoxesFilter.found7days);
         edit.putBoolean(NOT_FOUND_FILTER, checkBoxesFilter.notFound);
+        edit.putBoolean(I_DONT_OWN_FILTER, checkBoxesFilter.idontown);
         edit.commit();
     }
 

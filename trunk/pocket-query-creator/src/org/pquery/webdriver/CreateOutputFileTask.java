@@ -48,8 +48,10 @@ public class CreateOutputFileTask extends RetriableTask<File> {
 
         // Does all the work, combines the prefix with basename with the extension
         // and then tries to find a unique file name by adding on (1) etc if necessary
+        //
+        // The extension is *always* 'zip' as the web page option to create a non-zipped PQ only affects the emailed PQ
         
-        File outputFile = Util.getUniqueFile(dir, Prefs.getDownloadPrefix(cxt) + baseName, (Prefs.isZip(cxt) ? "zip": ""));
+        File outputFile = Util.getUniqueFile(dir, Prefs.getDownloadPrefix(cxt) + baseName, "zip");
 
         // Check directory tree exists above file (even possible that the Downloads directory doesn't exist)
         

@@ -70,7 +70,7 @@ public class CreateNameFragment extends SherlockFragment  implements LocationLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         
-        View view = inflater.inflate(R.layout.dialog4, null);
+        View view = inflater.inflate(R.layout.create_name_fragment, null);
 
         Logger.d("enter");
         

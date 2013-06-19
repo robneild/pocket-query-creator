@@ -47,7 +47,7 @@ public class CreateActivity extends SherlockFragmentActivity implements CreateSe
     public boolean onCreateOptionsMenu(Menu menu) {
             menu.add(0, R.string.create, 0, R.string.create)
             .setIcon(R.drawable.content_new)
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
             
             return true;
     }

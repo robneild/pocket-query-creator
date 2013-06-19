@@ -67,7 +67,7 @@ public class CreateLocationFragment extends SherlockFragment implements Location
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         
-        View view = inflater.inflate(R.layout.dialog3, null);
+        View view = inflater.inflate(R.layout.create_location_fragment, null);
         
         // Setup GPS
 

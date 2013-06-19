@@ -38,6 +38,9 @@ import org.pquery.util.Prefs;
 import org.pquery.util.Util;
 import org.pquery.webdriver.ProgressInfo;
 
+import android.R.color;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -48,6 +51,8 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -245,6 +250,40 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
+		/*
+		Dialog myDialog = new Dialog(this, R.style.CustomDialogTheme);
+		 myDialog.setContentView(R.layout.rob);
+
+
+	        final String mimeType = "text/html";
+	        final String encoding = "utf-8";
+
+		 WebView wv;
+
+	        String html = "<font color='#ffffff'>" + 
+
+			"<style type='text/css'>" +
+			"a:link {color: #0066FF; text-decoration: underline; }" +
+			"a:active {color: #0066FF; text-decoration: underline; }" +
+			"a:visited {color: #0066FF; text-decoration: underline; }" +
+			"a:hover {color: #0066FF; text-decoration: underline; }" +
+			"li {margin: 5px}" +
+			"</style> " +
+			
+			"Welcome to Pocket Query Creator<p>" +
+			"Enter your Geocaching.com in Settings" +
+			"</font>";
+
+	        wv = (WebView) myDialog.findViewById(R.id.webview);
+	        wv.setBackgroundColor(getResources().getColor(color.black));
+	        wv.loadData(html, mimeType, encoding);
+
+	        
+	        
+		myDialog.show();
+		*/
+		
+		
 		switch (item.getItemId()) {
 		case R.string.create:
 			if (Prefs.getUsername(this).length() == 0 || Prefs.getPassword(this).length() ==0) {
@@ -278,7 +317,7 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 			startActivity(new Intent(this, Help.class));
 			break;
 		}
-
+		
 
 		return true;
 	}
