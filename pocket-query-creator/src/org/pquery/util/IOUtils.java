@@ -22,6 +22,15 @@ import org.pquery.webdriver.CancelledListener;
 
 public class IOUtils {    
 
+	/**
+	 * Used to store response from downloading a file
+	 */
+	public static class FileDetails {
+		public String filename;		// sent to us from far end server in the HTTP headers response
+		public byte[] contents;
+	}
+	
+	
     private static final int ESTIMATED_COMPRESSION_RATIO = 5;
     private static final int ESTIMATED_CONTENT_SIZE = 48000;
     
@@ -68,10 +77,10 @@ public class IOUtils {
 
     
     public static String httpGet(HttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException { 
-        byte[] data =  httpGetBytes(client, path, cancelledListener, listener);
+    	FileDetails fileDetails =  httpGetBytes(client, path, cancelledListener, listener);
         
         // Convert data into string. Geocaching.com uses utf-8 pages?
-        String ret = new String(data, "utf-8");
+        String ret = new String(fileDetails.contents, "utf-8");
         Logger.d(ret);
         return ret;
     }
@@ -81,7 +90,7 @@ public class IOUtils {
      * Doesn't follow redirects and throws exception if http status code isn't good
      * @throws InterruptedException 
      */
-    public static byte[] httpGetBytes(HttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
+    public static FileDetails httpGetBytes(HttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
 
         Logger.d("enter [path=" + getHost() + path +"]");
         
@@ -90,13 +99,17 @@ public class IOUtils {
         get.addHeader("Connection", "close");
         HttpClientParams.setRedirecting(get.getParams(), false);    // don't follow redirects. geocaching redirects on errors
         
+        // Initiate the HTTP request
+        
         HttpResponse response = client.execute(get);
+        
+        // Get info from the HTTP response headers
         
         int length = (int) response.getEntity().getContentLength();
         boolean chunked = response.getEntity().isChunked();
         Header contentEncoding = response.getFirstHeader("Content-Encoding");
         int statusCode = response.getStatusLine().getStatusCode();
-
+        String filename = decodeContentDispositionHeader(response.getHeaders("Content-Disposition"));
         Logger.d("response [length="+length+",chunked="+chunked+",contentEncoding="+contentEncoding+",statusCode="+statusCode+"]");
         
         // Read response
@@ -125,7 +138,12 @@ public class IOUtils {
         }
         
         Logger.d("returning " + data.length + " bytes");
-        return data;
+        
+        FileDetails ret = new FileDetails();
+        ret.filename = filename;
+        ret.contents = data;
+        
+        return ret;
     }
     
     public static String httpPost(HttpClient client, List<BasicNameValuePair> paramList, String path, boolean secure, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
@@ -180,5 +198,17 @@ public class IOUtils {
     
     private static String getSecureHost() {
         return "https://www.geocaching.com";
+    }
+    
+    private static String decodeContentDispositionHeader(Header[] header) {
+    	if (header.length!=1) {
+    		Logger.d("Unable to decode PQ name from Content-Disposition response http headers [length="+header.length+"]");
+    		return null;
+    	}
+    	
+    	String depoSplit[] = header[0].getValue().split("filename=");
+        String ret = depoSplit[1].replace("filename=", "").replace("\"", "").trim();
+
+        return ret;
     }
 }

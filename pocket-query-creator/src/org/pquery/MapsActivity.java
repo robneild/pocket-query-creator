@@ -19,12 +19,17 @@ package org.pquery;
 
 import java.util.List;
 
+import org.pquery.util.Prefs;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.GestureDetector.OnDoubleTapListener;
 
@@ -34,10 +39,15 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
+import com.google.android.maps.Projection;
+
 import android.view.GestureDetector;
 
 public class MapsActivity extends SherlockMapActivity
-{    
+{  
+	/** Pulled out of prefs when activity created */
+	private float radiusInKm;
+	
     MapView mapView; 
     MapController mc;
 
@@ -113,6 +123,25 @@ public class MapsActivity extends SherlockMapActivity
                 //---add the marker---
                 Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.pushpin);            
                 canvas.drawBitmap(bmp, screenPts.x, screenPts.y - bmp.getHeight(), null);
+                
+                
+                // draw a circle around the center point to show the radius the pocket query will cover
+                Projection projection = mapView.getProjection();
+                
+                float circleRadius = projection.metersToEquatorPixels(radiusInKm * 1000) * (1/ FloatMath.cos((float) Math.toRadians(point.getLatitudeE6() / 1E6)));
+
+                Paint innerCirclePaint;
+
+                innerCirclePaint = new Paint();
+                innerCirclePaint.setColor(Color.BLUE);
+                innerCirclePaint.setAlpha(25);
+                innerCirclePaint.setAntiAlias(true);
+
+                innerCirclePaint.setStyle(Paint.Style.FILL);
+
+                canvas.drawCircle((float)screenPts.x, (float)screenPts.y, circleRadius, innerCirclePaint);
+                
+                
             }
 
             return true;
@@ -205,6 +234,10 @@ public class MapsActivity extends SherlockMapActivity
         mc.setCenter(new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6)));
         mapView.invalidate();
 
+        if (Prefs.isMetric(this))
+        	radiusInKm = Float.parseFloat(Prefs.getDefaultRadius(this));
+        else
+        	radiusInKm = Float.parseFloat(Prefs.getDefaultRadius(this)) * 1.609344f;
     }
 
     @Override

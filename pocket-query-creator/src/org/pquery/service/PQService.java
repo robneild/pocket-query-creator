@@ -158,6 +158,8 @@ public class PQService extends Service {
                 String message = result.getMessage();
                 int notificationId = notificationUtil.showEndNotification(title, message);
                 
+                Prefs.erasePQListState(PQService.this);		// erase any PQ list as we know is out-of-date now
+                sendMessageToClients(new RetrievePQListResult());		// sends an empty PQ list to GUI so will redraw empty
                 sendMessageToClients(title, message, notificationId);
                 cleanUpAndStopSelf();
             }

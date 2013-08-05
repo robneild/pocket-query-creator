@@ -133,19 +133,18 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 
 	@Override
 	protected void onResume() {
-		super.onStart();
+		super.onResume();
 		Logger.d("enter");
 		onSaveInstanceStateCalled = false;
 		
 		long time = Prefs.getPQListStateTimestamp(this);
-
+		PQListFragment pqList = (PQListFragment) getSupportFragmentManager().findFragmentById(R.id.pq_list_fragment);
+		
 		// First check if we have a PQ list stored
 		if (time!=0)
 		{	
 			// OK we know we have a PQ list
-			
-			PQListFragment pqList = (PQListFragment) getSupportFragmentManager().findFragmentById(R.id.pq_list_fragment);
-			
+
 			// First check if it is too old
 			// If so erase it and set list to be empty
 			
@@ -159,6 +158,9 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 			}
 			//this.pqListTimestamp = time;
 		//}
+		}
+		else {
+			pqList.updateList(null);
 		}
 		
 		if (doDialog) {
@@ -287,7 +289,7 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 		switch (item.getItemId()) {
 		case R.string.create:
 			if (Prefs.getUsername(this).length() == 0 || Prefs.getPassword(this).length() ==0) {
-				Toast.makeText(this, "Enter your credentials on the settings page", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "First enter your premium geocaching.com account credentials on the settings page", Toast.LENGTH_LONG).show();
 				return true;
 			}
 			if (serviceStatus != ServiceStatus.Connected)
@@ -297,7 +299,7 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 			break;
 		case R.string.get_pq_list:
 			if (Prefs.getUsername(this).length() == 0 || Prefs.getPassword(this).length() ==0) {
-				Toast.makeText(this, "Enter your credentials on the settings page", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "First enter your premium geocaching.com account credentials on the settings page", Toast.LENGTH_LONG).show();
 				return true;
 			}
 			if (serviceStatus != ServiceStatus.Connected)

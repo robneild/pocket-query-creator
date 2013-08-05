@@ -23,7 +23,7 @@ import org.pquery.util.GPS;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 import org.pquery.webdriver.CancelledListener;
-import org.pquery.webdriver.CreateOutputFileTask;
+import org.pquery.webdriver.CreateOutputDirectoryTask;
 import org.pquery.webdriver.DownloadTask;
 import org.pquery.webdriver.FailurePermanentException;
 import org.pquery.webdriver.ProgressInfo;
@@ -179,13 +179,13 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
 
 			// Download PQ
 
-			CreateOutputFileTask createTask = new CreateOutputFileTask(retryCount, 70, 75, this, this, cxt, pq.name);
-			File outputFile = createTask.call();
+			CreateOutputDirectoryTask createTask = new CreateOutputDirectoryTask(retryCount, 70, 75, this, this, cxt);
+			File outputDirectory = createTask.call();
 
-			DownloadTask downloadTask = new DownloadTask(retryCount, 75, 100, this, this, cxt, pq.url, outputFile);
-			Integer bytesDownloaded = downloadTask.call();
+			DownloadTask downloadTask = new DownloadTask(retryCount, 75, 100, this, this, cxt, pq.url, outputDirectory, Prefs.getDownloadPrefix(cxt)+pq.name+".zip");
+			File downloadedFile = downloadTask.call();
 
-			return new CreatePQResult(new DownloadPQResult(bytesDownloaded, outputFile));
+			return new CreatePQResult(new DownloadPQResult(downloadedFile));
 
 		} catch (InterruptedException e) {
 			// Probably user cancelled and async.stop has been called

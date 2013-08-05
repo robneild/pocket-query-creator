@@ -65,6 +65,27 @@ public class Util {
         return file;
     }
     
+    /**
+     * Create a sane, unique file
+     * Strips illegal characters and adds numbers on end to make unique (if necessary)
+     */
+    public static File getUniqueFile(String path, String name) {
+        	return getUniqueFile(path, removeExtension(name), "zip");
+    }
+    
+    /**
+     * Extract extension from a file
+     */
+    public static String removeExtension(String s) {
+        String ret = s;
+        int i = s.lastIndexOf('.');
+
+        if (i > 0 && i < s.length() - 1) {
+            ret = s.substring(0, i);
+        }
+        return ret;
+    }
+    
     public static String getDefaultDownloadDirectory() {
         return Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
         + "Download";

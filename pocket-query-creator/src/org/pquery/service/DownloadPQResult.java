@@ -7,16 +7,13 @@ import org.pquery.webdriver.FailurePermanentException;
 public class DownloadPQResult {
     
     public FailurePermanentException failure;
-    
-    public int bytesDownloaded;
     public File fileNameDownloaded;
     
     public DownloadPQResult(FailurePermanentException failure) {
         this.failure = failure;
     }
     
-    public DownloadPQResult(int bytesDownloaded, File fileNameDownloaded) {
-        this.bytesDownloaded = bytesDownloaded;
+    public DownloadPQResult(File fileNameDownloaded) {
         this.fileNameDownloaded = fileNameDownloaded;
     }
     

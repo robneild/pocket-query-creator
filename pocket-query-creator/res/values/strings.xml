@@ -137,7 +137,7 @@
 	 <string name="actionbar_view_details">Detail</string>
 	 <string name="downloading">Downloading</string>
 	 <string-array name="create_categories">
-	     <item >Name</item>
+	     <item >Name/Radius</item>
 	     <item >Location</item>
 	     <item >Filters</item>
 	 </string-array>
