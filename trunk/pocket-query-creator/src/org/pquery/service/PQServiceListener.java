@@ -6,7 +6,7 @@ public interface PQServiceListener {
     
 	public void onServiceOperationResult(String title, String message, int notificationId);
 	
-    //public void onServicePQDownloaded(DownloadPQResult downloadPQResult);
+    //public void onServicePQDownloaded(); // DownloadPQResult downloadPQResult);
     public void onServiceRetrievePQList(RetrievePQListResult pqListResult);
     //public void onServicePQCreated(CreatePQResult createPQResult);
     

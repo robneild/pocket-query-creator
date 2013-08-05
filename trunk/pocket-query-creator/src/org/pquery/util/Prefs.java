@@ -22,6 +22,7 @@ import android.preference.PreferenceManager;
 
 public class Prefs {
 
+	public static final String CGEO = "cgeo_preference";
     public static final String MAX_CACHES = "maxcaches_preference";
     public static final String PREFIX = "nameprefix_preference";
     public static final String GEOCODER_PROVIDER = "geocoding_provider_preference";
@@ -110,7 +111,9 @@ public class Prefs {
     public static String getDefaultRadius(Context cxt) {
         return PreferenceManager.getDefaultSharedPreferences(cxt).getString(RADUIS, "5");
     }
-    
+    public static boolean getCgeoCompatability(Context cxt) {
+    	return PreferenceManager.getDefaultSharedPreferences(cxt).getBoolean(CGEO, false);
+    }
     public static void saveDefaultRadius(Context cxt, String radius) {
         Editor edit = PreferenceManager.getDefaultSharedPreferences(cxt).edit();
         edit.putString(RADUIS, radius);

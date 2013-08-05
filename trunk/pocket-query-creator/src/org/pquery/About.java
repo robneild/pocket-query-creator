@@ -43,15 +43,21 @@ public class About extends SherlockActivity {
         final String encoding = "utf-8";
 
         WebView wv;
-
+     // background-image: -webkit-linear-gradient(left, #000000, #FFFFFF);padding: 4px;font-size: 15px; margin-top: 24px; " +
+        //"background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, #444444), color-stop(1, #000000));" +	
+        
+        
         String html = "<font color='#ffffff'>" + 
 
 		"<style type='text/css'>" +
+		
 		"a:link {color: #0066FF; text-decoration: underline; }" +
 		"a:active {color: #0066FF; text-decoration: underline; }" +
 		"a:visited {color: #0066FF; text-decoration: underline; }" +
 		"a:hover {color: #0066FF; text-decoration: underline; }" +
+		"h2 {margin-top:25px;font-size: 18px;}" +
 		"li {margin: 5px}" +
+		"body {font: 15px/1.3em 'Helvetica Neue','HelveticaNeue',Helvetica,sans-serif }" +
 		"</style> " +
 		
 		"Written by Rob Neild<p>Don't hesitate to <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>contact me</a> with comments or errors" +

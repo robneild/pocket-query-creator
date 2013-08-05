@@ -15,7 +15,15 @@
         android:summary="After Pocket Query runs, download output"
         android:title="Download results" />
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:disableDependentsState="true"
+        android:key="cgeo_preference"
+        android:summary="Downloaded PQs use c:geo compatible filenames"
+        android:title="c:geo compatiblity" />
+        
     <EditTextPreference
+        android:dependency="cgeo_preference"
         android:defaultValue="pocketquery_"
         android:dialogTitle="Filename Prefix"
         android:inputType=""

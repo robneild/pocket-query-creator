@@ -3,8 +3,9 @@ package org.pquery.service;
 import java.io.File;
 
 import org.pquery.dao.PQ;
+import org.pquery.util.Prefs;
 import org.pquery.webdriver.CancelledListener;
-import org.pquery.webdriver.CreateOutputFileTask;
+import org.pquery.webdriver.CreateOutputDirectoryTask;
 import org.pquery.webdriver.DownloadTask;
 import org.pquery.webdriver.FailurePermanentException;
 import org.pquery.webdriver.ProgressInfo;
@@ -43,13 +44,13 @@ public class DownloadPQAsync extends AsyncTask<Void, ProgressInfo, DownloadPQRes
             // errors
             int retryCount = 0;
             
-            CreateOutputFileTask createTask = new CreateOutputFileTask(retryCount, 0, 5, this, this, cxt, pq.name);
-            File outputFile = createTask.call();
+            CreateOutputDirectoryTask createTask = new CreateOutputDirectoryTask(retryCount, 0, 5, this, this, cxt);
+            File outputDirectory = createTask.call();
             
-            DownloadTask downloadTask = new DownloadTask(retryCount, 5, 100, this, this, cxt, pq.url, outputFile);
-            Integer bytesDownloaded = downloadTask.call();
+            DownloadTask downloadTask = new DownloadTask(retryCount, 5, 100, this, this, cxt, pq.url, outputDirectory, Prefs.getDownloadPrefix(cxt)+pq.name+".zip");
+            File fileDownloaded = downloadTask.call();
 
-            return new DownloadPQResult(bytesDownloaded, outputFile);
+            return new DownloadPQResult(fileDownloaded);
 
         } catch (InterruptedException e) {
             return null;

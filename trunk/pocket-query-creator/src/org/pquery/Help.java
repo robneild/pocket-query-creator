@@ -45,13 +45,16 @@ public class Help extends SherlockActivity {
 		String html = "<font color='#ffffff'>" + 
 
 		"<style type='text/css'>" +
+		
 		"a:link {color: #0066FF; text-decoration: underline; }" +
 		"a:active {color: #0066FF; text-decoration: underline; }" +
 		"a:visited {color: #0066FF; text-decoration: underline; }" +
 		"a:hover {color: #0066FF; text-decoration: underline; }" +
+		"h2 {margin-top:25px;font-size: 18px;}" +
 		"li {margin: 5px}" +
+		"body {font: 15px/1.3em 'Helvetica Neue','HelveticaNeue',Helvetica,sans-serif }" +
 		"</style> " +
-
+		
 		"This app allows the quick creation and downloading of " +
 		"<a href='http://www.geocaching.com/pocket/'>Pocket Queries</a>. " +
 		"They are provided to premium members of the website " +
@@ -64,16 +67,23 @@ public class Help extends SherlockActivity {
 		"<br><h2>Howto Create a Pocket Query</h2>" +
 
 		"<ul><li>Ensure your geocaching.com credentials have been entered into settings page" +
-		"<li>Press <img width='20px' src='content_new.png'>" +
+		"<li>Press <img style='vertical-align: middle' width='20px' src='content_new.png'>" +
 		"<li>Tailor creation options" +
-		"<li>Press <img width='20px' src='content_new.png'> again to create and download the Pocket Query" +
+		"<li>Press <img style='vertical-align: middle' width='20px' src='content_new.png'> again to create and download the Pocket Query" +
 		"</ul>" +
 		
 		"<h2>Howto Download a Pocket Query</h2>" +
 
-		"<ul><li>Press <img width='20px' src='navigation_refresh.png'>" +
+		"<ul><li>Press <img style='vertical-align: middle' width='20px' src='navigation_refresh.png'>" +
 		"<li>A list will be shown of Pocket Query that are ready to download" +
-		"<li>Select a Pocket Query then <img width='20px' src='av_download.png'> to download it" +
+		"<li>Select a Pocket Query then <img style='vertical-align: middle' width='20px' src='av_download.png'> to download it" +
+		"</ul>" +
+		
+		"<h2>Working with c:geo</h2>" +
+
+		"c:geo can import zipped pocket queries if they are named a certain way and placed in the correct location" +
+		"<ul><li>name - the pocket query zip file must start with numbers. Enable 'c:geo compatability' on the Download settings page to ensure this is always the case" +
+		"<li>location - the pocket query is best put into the c:geo 'gpx' import directory (configurable)" +
 		"</ul>" +
 		
 		"<h2>Hints</h2>" +
@@ -85,10 +95,10 @@ public class Help extends SherlockActivity {
 		"<h2>FAQ</h2>" +
 		"Q. What can I do with the zip files?<br>" +
 		"<i>A. This app can't use them. You need another app to use them, like GeoBeagle</i><p>" +
-		"Q. Can I use Pocket Queries in c:geo?<br>" +
-		"<i>A. Yes, however, not zipped ones. Un-zip them using another app</i><p>" +
 		"Q. Can I extract the PQ attachment from emails?<br>" +
-		"<i>A. Use an email client that can (K-9 Mail) or use this app to download the PQ</i>" +
+		"<i>A. Use an email client that can (K-9 Mail) or use this app to download the PQ</i><p>" +
+		"Q. Can I clear the list of downloadable PQs?<br>" +
+		"<i>A. Not using this app. You can delete them at geocaching.com</i>" +
 		"</font>";
 
 		wv = (WebView) findViewById(R.id.webview1);
