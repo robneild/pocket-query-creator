@@ -220,10 +220,10 @@ public class MapsActivity extends SherlockMapActivity
 
         mc = mapView.getController();
 
-        double lat = getIntent().getDoubleExtra("lat",Double.MAX_VALUE);
-        double lng = getIntent().getDoubleExtra("lon", Double.MAX_VALUE);
+        double lat = getIntent().getDoubleExtra("lat",0.0);
+        double lng = getIntent().getDoubleExtra("lon", 0.0);
 
-        if (lat == Double.MAX_VALUE) {
+        if (lat == 0) {
             lat = 46.4;
             lng = -35;
             mc.setZoom(3); 

@@ -1,148 +1,209 @@
-package org.pquery.fragments;
-
-import org.pquery.CreateFiltersActivity;
-import org.pquery.CreateLocationActivity;
-import org.pquery.CreateNameActivity;
-import org.pquery.R;
-import android.content.Intent;
-import android.location.Location;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import com.actionbarsherlock.app.SherlockListFragment;
-
-public class CreateCategoriesFragment extends SherlockListFragment {
-    
-    private boolean mDualPane;
-    private int selectedIndex;
-    private String initialName;
-    private Location initialLocation;
-    
-    public void setInitialName(String initialName) {
-        this.initialName = initialName;
-    }
-    public void setInitialLocation(Location initialLocation) {
-        this.initialLocation = initialLocation;
-    }
-    
-    
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup vg, Bundle data) {
-        return inflater.inflate(R.layout.list_fragment, null);
-    }
-    
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        // simple_list_item_activated_1 API Level 11
-        // Populate list with our static array of titles.
-        //setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, getResources().getStringArray(R.array.create_categories)));
-
-        setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.create_categories)));
-
-
-        // Check to see if we have a frame in which to embed the details
-        // fragment directly in the containing UI.
-        View detailsFrame = getActivity().findViewById(R.id.details);
-        mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
-            selectedIndex = savedInstanceState.getInt("selectedIndex", 0);
-        }
-
-        if (mDualPane && android.os.Build.VERSION.SDK_INT>=11)
-        	setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_activated_1, getResources().getStringArray(R.array.create_categories)));
-        else
-        	setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.create_categories)));
-        
-        if (mDualPane) {
-            // In dual-pane mode, the list view highlights the selected item.
-            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-            // Make sure our UI is in the correct state.
-            showDetails(selectedIndex);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("selectedIndex", selectedIndex);
-    }
-
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        showDetails(position);
-    }
-
-    /**
-     * Helper function to show the details of a selected item, either by
-     * displaying a fragment in-place in the current UI, or starting a
-     * whole new activity in which it is displayed.
-     */
-    void showDetails(int index) {
-        selectedIndex = index;
-
-        if (mDualPane) {
-            // We can display everything in-place with fragments, so update
-            // the list to highlight the selected item and show the data.
-            getListView().setItemChecked(index, true);
-
-            // Check what fragment is currently shown, replace if needed.
-            Fragment currentFrag = getFragmentManager().findFragmentById(R.id.details);
-            Fragment newFrag = null;
-            
-            switch(index) {
-            case 0:
-                if (!(currentFrag instanceof CreateNameFragment))
-                    newFrag = new CreateNameFragment(initialName);
-                break;
-            case 1:
-                if (!(currentFrag instanceof CreateLocationFragment))
-                    newFrag = new CreateLocationFragment(initialLocation);
-                break;
-            case 2:
-                if (!(currentFrag instanceof CreateFiltersFragment))
-                    newFrag = new CreateFiltersFragment();
-                break;
-            }
-            
-            if (newFrag!=null) {
-                // Execute a transaction, replacing any existing fragment
-                // with this one inside the frame.
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.details, newFrag);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                ft.commit();
-            }
-
-        } else {
-            // Otherwise we need to launch a new activity to display
-            // the dialog fragment with selected text.
-            Intent intent = new Intent();
-            if(index==0) {
-                intent.setClass(getActivity(), CreateNameActivity.class);
-                intent.putExtra("initialName", initialName);
-            }
-            if(index==1) {
-                intent.putExtra("initialLocation", initialLocation);
-                intent.setClass(getActivity(), CreateLocationActivity.class);
-            }
-            if (index==2)
-                intent.setClass(getActivity(), CreateFiltersActivity.class);
-            startActivityForResult(intent, 0);
-        }
-    }
-    
-    
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        
-    }
-}
+//package org.pquery.fragments;
+//
+//import org.pquery.CreateFiltersActivity;
+//import org.pquery.CreateLocationActivity;
+//import org.pquery.CreateNameActivity;
+//import org.pquery.R;
+//import org.pquery.dao.PQ;
+//
+//import android.app.Activity;
+//import android.content.Intent;
+//import android.location.Location;
+//import android.os.Bundle;
+//import android.support.v4.app.Fragment;
+//import android.support.v4.app.FragmentTransaction;
+//import android.view.LayoutInflater;
+//import android.view.View;
+//import android.view.ViewGroup;
+//import android.widget.ArrayAdapter;
+//import android.widget.ListView;
+//import android.widget.TextView;
+//
+//import com.actionbarsherlock.app.SherlockListFragment;
+//
+//public class CreateCategoriesFragment extends SherlockListFragment {
+//    
+//    private boolean mDualPane;
+//    private int selectedIndex;
+//    private String initialName;
+//    private Location initialLocation;
+//    
+//    public void setInitialName(String initialName) {
+//        this.initialName = initialName;
+//    }
+//    public void setInitialLocation(Location initialLocation) {
+//        this.initialLocation = initialLocation;
+//    }
+//    
+//    
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup vg, Bundle data) {
+//        return inflater.inflate(R.layout.list_fragment, null);
+//    }
+//    
+//    @Override
+//    public void onActivityCreated(Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        // simple_list_item_activated_1 API Level 11
+//        // Populate list with our static array of titles.
+//        //setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, getResources().getStringArray(R.array.create_categories)));
+//
+//        setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.create_categories)));
+//
+//
+//        // Check to see if we have a frame in which to embed the details
+//        // fragment directly in the containing UI.
+//        View detailsFrame = getActivity().findViewById(R.id.details);
+//        mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+//
+//        if (savedInstanceState != null) {
+//            // Restore last state for checked position.
+//            selectedIndex = savedInstanceState.getInt("selectedIndex", 0);
+//        }
+//
+//        if (mDualPane && android.os.Build.VERSION.SDK_INT>=11)
+//        	setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_activated_1, getResources().getStringArray(R.array.create_categories)));
+//        else
+//        	setListAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.create_categories)));
+//        
+//        
+//        CategoryListItem bob [] = new CategoryListItem[getResources().getStringArray(R.array.create_categories).length];
+//        for (int i=0; i<bob.length; i++) {
+//        	bob[i] = new CategoryListItem();
+//        	bob[i].name = getResources().getStringArray(R.array.create_categories)[i];
+//        	bob[i].detail = "this is a test string";
+//        }
+//
+//        
+//    	setListAdapter(new IconicAdapter(getActivity(), bob));		// have to set empty list so help is displayed
+//        
+//        
+//        if (mDualPane) {
+//            // In dual-pane mode, the list view highlights the selected item.
+//            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+//            // Make sure our UI is in the correct state.
+//            showDetails(selectedIndex);
+//        }
+//    }
+//
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        outState.putInt("selectedIndex", selectedIndex);
+//    }
+//
+//    @Override
+//    public void onListItemClick(ListView l, View v, int position, long id) {
+//        showDetails(position);
+//    }
+//
+//    /**
+//     * Helper function to show the details of a selected item, either by
+//     * displaying a fragment in-place in the current UI, or starting a
+//     * whole new activity in which it is displayed.
+//     */
+//    void showDetails(int index) {
+//        selectedIndex = index;
+//
+//        if (mDualPane) {
+//            // We can display everything in-place with fragments, so update
+//            // the list to highlight the selected item and show the data.
+//            getListView().setItemChecked(index, true);
+//
+//            // Check what fragment is currently shown, replace if needed.
+//            Fragment currentFrag = getFragmentManager().findFragmentById(R.id.details);
+//            Fragment newFrag = null;
+//            
+//            switch(index) {
+//            case 0:
+//                if (!(currentFrag instanceof CreateNameFragment))
+//                    newFrag = new CreateNameFragment(initialName);
+//                break;
+//            case 1:
+//                if (!(currentFrag instanceof CreateLocationFragment))
+//                    newFrag = new CreateLocationFragment(initialLocation);
+//                break;
+//            case 2:
+//                if (!(currentFrag instanceof CreateFiltersFragment))
+//                    newFrag = new CreateFiltersFragment();
+//                break;
+//            }
+//            
+//            if (newFrag!=null) {
+//                // Execute a transaction, replacing any existing fragment
+//                // with this one inside the frame.
+//                FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                ft.replace(R.id.details, newFrag);
+//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//                ft.commit();
+//            }
+//
+//        } else {
+//            // Otherwise we need to launch a new activity to display
+//            // the dialog fragment with selected text.
+//            Intent intent = new Intent();
+//            if(index==0) {
+//                intent.setClass(getActivity(), CreateNameActivity.class);
+//                intent.putExtra("initialName", initialName);
+//            }
+//            if(index==1) {
+//                intent.putExtra("initialLocation", initialLocation);
+//                intent.setClass(getActivity(), CreateLocationActivity.class);
+//            }
+//            if (index==2)
+//                intent.setClass(getActivity(), CreateFiltersActivity.class);
+//            startActivityForResult(intent, 0);
+//        }
+//    }
+//    
+//    
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        
+//    }
+//    
+//    
+//	private class IconicAdapter extends ArrayAdapter<CategoryListItem> {
+//
+//		Activity context;
+//
+//		IconicAdapter(Activity context, CategoryListItem[] items) {
+//			super(context, android.R.id.list, items);
+//			this.context = context;
+//		}
+//
+//		public View getView(int position, View convertView, ViewGroup parent) {
+//			LayoutInflater inflater = context.getLayoutInflater();
+//
+//			View row = inflater.inflate(R.layout.create_categories_list_row, parent, false);
+//			CategoryListItem pq = getItem(position);
+//
+//			TextView name = (TextView) row.findViewById(R.id.name);
+//			name.setText(pq.name);
+//			
+//			TextView detail = (TextView) row.findViewById(R.id.details);
+//			detail.setText(pq.detail);
+//			
+//			/*
+//			TextView size = (TextView) row.findViewById(R.id.size);
+//			size.setText(pq.size);
+//
+//			TextView waypoints = (TextView) row.findViewById(R.id.waypoints);
+//			waypoints.setText(pq.waypoints);
+//
+//			TextView generated = (TextView) row.findViewById(R.id.generated);
+//			generated.setText(pq.age);
+//			*/
+//			
+//			return row;
+//		}
+//	}
+//	
+//	private class CategoryListItem
+//	{
+//		private String name;
+//		private String detail;
+//	}
+//    
+//}

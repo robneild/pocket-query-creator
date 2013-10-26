@@ -20,7 +20,7 @@ public class ProgressBoxFragment extends Fragment {
         public void onProgressBoxFragmentClicked();
     }
     
-    private String htmlText;
+    private String htmlText = "";
     private ProgressBoxFragmentListener listener;
     
     @Override
@@ -39,7 +39,7 @@ public class ProgressBoxFragment extends Fragment {
         
         View view = inflater.inflate(R.layout.progress_box_fragment, container, false);
         TextView tv = (TextView) view.findViewById(R.id.progress_text);
-        tv.setText(htmlText);
+        tv.setText(Html.fromHtml(htmlText));
         
         view.setClickable(true);
         view.setOnClickListener(new View.OnClickListener() {

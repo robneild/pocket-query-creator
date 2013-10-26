@@ -73,6 +73,9 @@ public class About extends SherlockActivity {
  		"<a href='http://openclipart.org/detail/10940/red-+-green-ok-not-ok-icons-by-tzeeniewheenie-10940'>Green cross</a> - openclipart.org<br/>" +
 	    "<a href='http://openclipart.org/detail/9457/rpg-map-symbols:-mountains-by-nicubunu-9457'>Mountains</a> - openclipart.org<br/>" +
 	    "<a href='http://openclipart.org/detail/11476/rpg-map-symbols:-maze-by-nicubunu'>Maze</a> - openclipart.org<br/>" +
+	    "<a href='http://openclipart.org/detail/48673/abc-blocks-petri-lummema-01-by-anonymous'>abc blocks petri lummema 01</a> - openclipart.org<br/>" +
+	    "<a href='http://openclipart.org/detail/96391/target-black-and-white-by-10binary'>target black and white</a> - openclipart.org<br/>" +
+	    
 	    "<br>" +
 	    "<a href='http://code.google.com/p/range-seek-bar'>range-seek-bar</a><br>" +
 	    "<a href='http://www.bgreco.net/directorypicker/'>Android Directory Picker</a><br>"+
