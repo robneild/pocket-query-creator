@@ -4,6 +4,8 @@ import org.pquery.R;
 import org.pquery.dao.PQ;
 import org.pquery.util.Logger;
 
+import com.actionbarsherlock.app.SherlockListFragment;
+
 import android.R.color;
 import android.app.Activity;
 import android.graphics.Color;
@@ -23,7 +25,7 @@ import android.widget.TextView;
  * 
  * It shows some help when first opened
  */
-public class PQListFragment extends ListFragment {
+public class PQListFragment extends SherlockListFragment {
 
 	public interface PQClickedListener {
 		public void onPQClicked(PQ pq);
@@ -96,7 +98,7 @@ public class PQListFragment extends ListFragment {
 	        wv.loadDataWithBaseURL("file:///android_asset/", html2, "text/html", "utf-8", "");
 			
 			
-			setListAdapter(new IconicAdapter(getActivity(), new PQ[0]));		// have to set empty list so help is displayed
+			setListAdapter(new IconicAdapter(getSherlockActivity(), new PQ[0]));		// have to set empty list so help is displayed
 			
 		} else {
 			
@@ -104,7 +106,7 @@ public class PQListFragment extends ListFragment {
 			// else display list
 			
 			((WebView) getListView().getEmptyView()).loadDataWithBaseURL("file:///android_asset/","<html><table style='height:100%;width:100%;'><tr><td align='center'><font color='white'>No downloadable PQ</font></td></tr></table></html>", "text/html", "utf-8", ""); 
-			setListAdapter(new IconicAdapter(getActivity(), pqs));
+			setListAdapter(new IconicAdapter(getSherlockActivity(), pqs));
 		}
 	}
 

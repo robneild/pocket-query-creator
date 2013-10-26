@@ -295,7 +295,7 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 			if (serviceStatus != ServiceStatus.Connected)
 				return true;
 
-			startActivity(new Intent(this, CreateActivity.class));
+			startActivity(new Intent(this, CreateFiltersActivity.class));
 			break;
 		case R.string.get_pq_list:
 			if (Prefs.getUsername(this).length() == 0 || Prefs.getPassword(this).length() ==0) {

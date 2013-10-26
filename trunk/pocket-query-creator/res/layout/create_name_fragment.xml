@@ -5,9 +5,6 @@
 	android:id="@+id/linearLayout1" android:layout_height="wrap_content"
 	android:layout_width="fill_parent" android:orientation="vertical">
 
-	<TextView android:textAppearance="@style/MyFont" android:text="Pocket Query Name"
-		android:id="@+id/textView1" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_margin="5dp" />
 		
 	<EditText android:textAppearance="@style/MyFont"
 		android:maxLength="50" android:text="" android:id="@+id/editText_name"
@@ -20,20 +17,6 @@
         android:layout_height="wrap_content"
         android:text="@string/auto_name" />
 	   
-		
-   	<Button android:text="Set from location now" android:id="@+id/button_autoname" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
-      
-   
-	<TextView android:textAppearance="@style/MyFont" android:text="Radius"
-		android:id="@+id/text_radius" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:gravity="bottom"
-		android:layout_margin="5dp" />
-
-	<EditText android:textAppearance="@style/MyFont"
-		android:maxLength="3" android:layout_height="wrap_content" android:id="@+id/editText_radius"
-		android:text="" android:layout_width="fill_parent" android:inputType="number"
-		android:layout_margin="5dp" />
-
 
 </LinearLayout>
 </ScrollView>

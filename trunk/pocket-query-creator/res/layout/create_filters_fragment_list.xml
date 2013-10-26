@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:paddingTop="16dip"
-    android:paddingBottom="16dip">
+    android:paddingTop="14dip"
+    android:paddingBottom="14dip">
     <ImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
@@ -20,6 +20,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="#ffffff"
             android:gravity="center_vertical"
              android:textSize="20sp"
         />
@@ -29,7 +30,7 @@
             android:layout_weight="1"
             android:id="@+id/bottomtext"
             android:singleLine="false"
-            android:textSize="12sp"
+            android:textSize="13sp"
             android:maxLines="100"
         />
     </LinearLayout>
