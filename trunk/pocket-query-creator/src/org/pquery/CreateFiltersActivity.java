@@ -32,6 +32,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.TypedValue;
@@ -145,6 +146,12 @@ public class CreateFiltersActivity extends SherlockListActivity implements  Loca
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         queryStore.saveToBundle(outState);
+        
+        //Parcel parcel = Parcel.obtain();
+        //gpsLocation.writeToParcel(parcel, 0);
+        //parcel.setDataPosition(0);
+        
+        outState.putParcelable("gpsLocation", gpsLocation);
     }
     
 
@@ -159,38 +166,16 @@ public class CreateFiltersActivity extends SherlockListActivity implements  Loca
         	queryStore.lat = lat;
         	queryStore.lon = lon;
 
-        	_filterList.get(1).setCurrentValue(queryStore.lat, queryStore.lon);
+        	_filterList.get(1).setCurrentValue(queryStore.lat, queryStore.lon, gpsLocation);
         	
         	m_adapter.notifyDataSetChanged();
         }
     }
 
-    private void processBundle(Bundle bundle) {
-        Location location = bundle.getParcelable("location");
-        QueryName queryName = bundle.getParcelable("queryName");
-        
-        if (queryName!=null) {
-            queryStore.name = queryName.name;
-        }
-        if (location!=null) {
-            queryStore.lat = location.getLatitude();
-            queryStore.lon = location.getLongitude();
-        }
-        
-//        CreateFiltersFragment f = (CreateFiltersFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
-//        Assert.assertNotNull(f);
-//        f.setInitialName(queryStore.name);
-//        f.setInitialLocation(queryStore.getLocation());
-    }
     
     
     
-    
-    
-    
-    
-    
-    
+
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,7 +185,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements  Loca
         
         if (savedInstanceState!=null) {
             queryStore = new QueryStore(savedInstanceState);
-            gpsLocation = new Location("bob");
+            gpsLocation = savedInstanceState.getParcelable("gpsLocation");
         }
         else {
             queryStore = new QueryStore();
@@ -228,7 +213,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements  Loca
 		_filterList.add(filterOption);
 		
 		filterOption = new CreationOption("Origin", getResources());
-		filterOption.setCurrentValue(queryStore.lat, queryStore.lon);
+		filterOption.setCurrentValue(queryStore.lat, queryStore.lon, gpsLocation);
 		_filterList.add(filterOption);
 		
 		filterOption = new CreationOption("Radius", R.drawable.target, getResources());
@@ -336,7 +321,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements  Loca
             } else {
             	queryStore.lat = 0;
             	queryStore.lon = 0;
-            	_filterList.get(1).setCurrentValue(queryStore.lat, queryStore.lon);
+            	_filterList.get(1).setCurrentValue(queryStore.lat, queryStore.lon, gpsLocation);
             	
             	m_adapter.notifyDataSetChanged();
             }
@@ -729,11 +714,29 @@ public class CreateFiltersActivity extends SherlockListActivity implements  Loca
 			} else
 				this.color = Color.MAGENTA;
 		}
-		public void setCurrentValue(double lat, double lon) {
-			if (lat == 0 && lon == 0) {
-				this.color = 0xffaaaaaa;
+		public void setCurrentValue(double mapPositionLat, double mapPositionLon, Location gpsLocation) {
+			if (mapPositionLat == 0 && mapPositionLon == 0) {
+
 				this.currentValue = "GPS";
+				
 				this.iconRes = R.drawable.ivak_satellite;
+				int accuracy = (int) gpsLocation.getAccuracy();
+				
+				if (accuracy == 0) {
+					this.color = 0xffFF4500;		// orange. no fix yet at all
+					this.currentValue += "  (no fix yet)";
+				}
+				else if (accuracy < 80) {
+					this.color = Color.GREEN;
+					this.currentValue += "  (accuracy " + accuracy + "m)";
+				}
+				else {
+					this.color = Color.YELLOW;
+					this.currentValue += "  (accuracy " + accuracy + "m)";
+				}
+				
+				
+				
 			} else {
 				this.color = 0xffaaaaaa;
 				this.currentValue = "Map point";
@@ -770,6 +773,10 @@ public class CreateFiltersActivity extends SherlockListActivity implements  Loca
             // don't over write GPS with network provider
         } else {
             this.gpsLocation = gpsLocation;
+            
+            // Update displayed accuracy in the "Origin" list item
+        	_filterList.get(1).setCurrentValue(queryStore.lat, queryStore.lon, gpsLocation);
+        	m_adapter.notifyDataSetChanged();
         }
 
     }
