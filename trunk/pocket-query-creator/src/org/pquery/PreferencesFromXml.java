@@ -136,4 +136,11 @@ public class PreferencesFromXml extends SherlockPreferenceActivity  implements O
 	}
 
 
+	protected boolean isValidFragment (String fragmentName)
+	{
+	  if(StockPreferenceFragment.class.getName().equals(fragmentName))
+	      return true;
+	  return false;
+
+	}
 }

@@ -36,7 +36,7 @@
 		android:textSize="14sp"
 		android:paddingLeft="5dp"
 				android:text="Size: "
-						android:textColor="@color/abs__holo_blue_light"
+						android:textColor="#ff33b5e5"
 				
 		/>
 		
@@ -62,7 +62,7 @@
 		android:textSize="14sp"
 		android:paddingLeft="5dp"
 				android:text="Waypoints: "
-						android:textColor="@color/abs__holo_blue_light"
+						android:textColor="#ff33b5e5"
 		/>
 			
 						<TextView
@@ -86,7 +86,7 @@
 		android:textSize="14sp"
 		android:paddingLeft="5dp"
 				android:text="Generated: "
-						android:textColor="@color/abs__holo_blue_light"
+						android:textColor="#ff33b5e5"
 		/>
 				
 	    				<TextView
