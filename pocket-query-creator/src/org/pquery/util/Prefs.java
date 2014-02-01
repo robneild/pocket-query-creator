@@ -47,6 +47,8 @@ public class Prefs {
     private static final String FOUND_7DAYS_FILTER = "found_7days_filter";
     private static final String NOT_FOUND_FILTER = "not_found_filter";
     private static final String I_DONT_OWN_FILTER = "i_dont_own_filter";
+    private static final String NOT_BEEN_FOUND_FILTER = "not_been_found_filter";
+    
     private static final String LOCATION_ACCURACY = "location_accuracy_preference";
     
     private static final String COMMA = "\u001F";
@@ -71,6 +73,7 @@ public class Prefs {
         boolean found7days = prefs.getBoolean(FOUND_7DAYS_FILTER, false);
         boolean notFound = prefs.getBoolean(NOT_FOUND_FILTER, false);
         boolean idontown = prefs.getBoolean(I_DONT_OWN_FILTER, false);
+        boolean notBeenFound = prefs.getBoolean(NOT_BEEN_FOUND_FILTER,false);
         
         CheckBoxesFilter ret = new CheckBoxesFilter();
         ret.enabled = enabled;
@@ -79,6 +82,7 @@ public class Prefs {
         ret.found7days = found7days;
         ret.notFound = notFound;
         ret.idontown = idontown;
+        ret.notBeenFound = notBeenFound;
         return ret;
     }
     public static String getMaxCaches(Context cxt) {
@@ -280,6 +284,7 @@ public class Prefs {
         edit.putBoolean(FOUND_7DAYS_FILTER, checkBoxesFilter.found7days);
         edit.putBoolean(NOT_FOUND_FILTER, checkBoxesFilter.notFound);
         edit.putBoolean(I_DONT_OWN_FILTER, checkBoxesFilter.idontown);
+        edit.putBoolean(NOT_BEEN_FOUND_FILTER, checkBoxesFilter.notBeenFound);
         edit.commit();
     }
 

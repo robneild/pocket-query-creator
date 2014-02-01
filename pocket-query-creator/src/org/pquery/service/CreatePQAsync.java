@@ -456,7 +456,10 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
 			
 			if (checkBoxesFilter.idontown)
 				loginFormExtra.setValueChecked("ctl00$ContentBody$cbOptions$2", "on");
-			
+
+			if (checkBoxesFilter.notBeenFound)
+				loginFormExtra.setValueChecked("ctl00$ContentBody$cbOptions$9","on");
+
 			OneToFiveFilter difficultyFilter = Prefs.getDifficultyFilter(cxt);
 			if (difficultyFilter.isAll()) {
 				// Just put some default values in

@@ -106,6 +106,7 @@
 	 <string name="filter_travelbug">Has travel bugs</string>
 	 <string name="filter_checkboxes">Misc checkboxes</string>
 	 <string name="filter_idontown">I don\'t own</string>
+	 <string name="filter_notbeenfound">Not been found</string>
 	 <string name="download_in_progress">Downloading Pocket Query</string>
 	 <string name="external_storage_unavailable">Unable to download pocket query as external storage currently unavailable</string>
 	 <string name="file_creation_error">Unable to create output file</string>
