@@ -2,11 +2,8 @@ package org.pquery.webdriver.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-
 import net.htmlparser.jericho.FormFields;
 
-import org.apache.http.message.BasicNameValuePair;
 import org.pquery.util.Util;
 import org.pquery.webdriver.parser.GeocachingPage.ParseException;
 

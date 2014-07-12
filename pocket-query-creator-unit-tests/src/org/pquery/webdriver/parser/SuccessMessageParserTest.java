@@ -1,6 +1,5 @@
 package org.pquery.webdriver.parser;
 
-import org.pquery.util.Util;
 import org.pquery.webdriver.FailurePermanentException;
 
 import android.test.AndroidTestCase;
@@ -14,7 +13,7 @@ public class SuccessMessageParserTest extends AndroidTestCase {
      * @throws FailurePermanentException 
      */
     public void testExtractDownloadLink() throws FailurePermanentException {
-        assertEquals("pocket/downloadpq.ashx?g=dd2e3f12-2c04-4090-bd1b-4e601f521fe5", new SuccessMessageParser(GOOD).extractDownloadGuid());
+        assertEquals("dd2e3f12-2c04-4090-bd1b-4e601f521fe5", new SuccessMessageParser(GOOD).extractDownloadGuid());
     }
     
     /**

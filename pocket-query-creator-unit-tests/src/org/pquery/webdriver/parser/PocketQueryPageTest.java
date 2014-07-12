@@ -9,7 +9,6 @@ import org.pquery.dao.PQ;
 import org.pquery.util.Util;
 
 import android.test.AndroidTestCase;
-import android.util.Log;
 
 public class PocketQueryPageTest extends AndroidTestCase {
 
@@ -29,7 +28,7 @@ public class PocketQueryPageTest extends AndroidTestCase {
         return ret;
     }
     
-    public void testDownload() {
+    public void testDownload() throws ParseException {
         PQ[] download = pocketQueryPage.getReadyForDownload();
         assertEquals(1, download.length);
         
@@ -40,7 +39,7 @@ public class PocketQueryPageTest extends AndroidTestCase {
         
     }
     
-    public void testDownload2() throws IOException {
+    public void testDownload2() throws IOException, ParseException {
         
         String html = loadFromResource("pocket_query_2.htm");
         PocketQueryPage pocketQueryPage2 = new PocketQueryPage(new Source(html));
@@ -53,4 +52,13 @@ public class PocketQueryPageTest extends AndroidTestCase {
         assertEquals("Bobby1234", download[1].name);
     }
 
+    public void testDownload_no_downloads() throws IOException, ParseException {
+        
+        String html = loadFromResource("pocket_query_no_downloads.htm");
+        PocketQueryPage pqp = new PocketQueryPage(new Source(html));
+        
+        PQ[] download = pqp.getReadyForDownload();
+        
+        assertEquals(0, download.length);
+    }
 }
