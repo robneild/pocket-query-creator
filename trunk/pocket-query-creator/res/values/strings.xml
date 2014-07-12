@@ -67,6 +67,7 @@
 	 <string name="gps_wait">Waiting for GPS fix</string>
 	 <string name="gps_timeout">Timed out getting GPS fix</string>
 	 <string name="retrieve_page">Retrieving page</string>
+	 <string name="refresh_page">Refreshing page</string>
 	 <string name="creating">Submitting creation page</string>
 	 <string name="creation_pending">View creation progress</string>
 	 <string name="cancel_creation">Cancel Creation</string>
