@@ -70,6 +70,7 @@ public class PQListFragment extends SherlockListFragment {
 	 */
 	public void updateList(PQ[] pqs) {
 
+
 		if (pqs == null) {
 
 			// We have don't have a pocket query list to display
@@ -78,6 +79,7 @@ public class PQListFragment extends SherlockListFragment {
 			WebView wv = ((WebView) getListView().getEmptyView());
 			
 			String html2 = "<html>" +
+					"<body bgcolor='#000000'>" +
 					"<table style='height:100%;width:100%;'>" +
 					"<tr>" +
 					"<td align='center' valign='center'>" +
@@ -92,6 +94,7 @@ public class PQListFragment extends SherlockListFragment {
 	 				"</td>" +
 					"</tr>" +
 					"</table>" +
+					"</body>" +
 					"</html>";
 			
 	        wv.setBackgroundColor(getResources().getColor(color.black));
@@ -105,7 +108,9 @@ public class PQListFragment extends SherlockListFragment {
 			// If list is empty, display a message
 			// else display list
 			
-			((WebView) getListView().getEmptyView()).loadDataWithBaseURL("file:///android_asset/","<html><table style='height:100%;width:100%;'><tr><td align='center'><font color='white'>No downloadable PQ</font></td></tr></table></html>", "text/html", "utf-8", ""); 
+			((WebView) getListView().getEmptyView()).setBackgroundColor(getResources().getColor(color.black));
+			((WebView) getListView().getEmptyView()).loadDataWithBaseURL("file:///android_asset/","<html><body bgcolor='#000000'><table style='height:100%;width:100%;'><tr><td align='center'><font color='white'>No downloadable PQ</font></td></tr></table></body></html>", "text/html", "utf-8", ""); 
+
 			setListAdapter(new IconicAdapter(getSherlockActivity(), pqs));
 		}
 	}

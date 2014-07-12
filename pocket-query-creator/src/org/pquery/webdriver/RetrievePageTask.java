@@ -10,6 +10,7 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.pquery.R;
+import org.pquery.util.HTTPStatusCodeException;
 import org.pquery.util.IOUtils;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
@@ -69,6 +70,13 @@ public class RetrievePageTask extends RetriableTask<Source> {
             // 0 - 50%
 
             try {
+            	
+            	
+
+            	
+            		try
+            		{
+            			
                 html = IOUtils.httpGet(client, urlPath, cancelledListener, new Listener() {
 
                     @Override
@@ -80,15 +88,45 @@ public class RetrievePageTask extends RetriableTask<Source> {
                     }
                 });
 
-                // Retrieve and store cookies in reply
+            		}
+            		catch (HTTPStatusCodeException e) {
 
-                cookies = client.getCookieStore().getCookies();
+            			cookies = client.getCookieStore().getCookies();
+            			
+            			if (e.code == 302) {
+            				
+                            html = IOUtils.httpGet(client, urlPath, cancelledListener, new Listener() {
 
-            } catch (IOException e) {
-                Logger.e("Exception downloading login page", e);
+                                @Override
+                                public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
+                                    progressReport(
+                                            percent0to100/2,    // convert to 0-50%
+                                            res.getString(R.string.refresh_page),
+                                            Util.humanDownloadCounter(bytesReadSoFar, expectedLength));
+                                }
+                            });
+                            
+            				
+            			}
+            			else
+            				throw e;
+            		}
+
+            		
+           
+            	
+            } catch (IOException e) {            	
+            	cookies = client.getCookieStore().getCookies();
+
+            	Logger.e("Exception downloading login page", e);
                 throw new FailureException(res.getString(R.string.login_download_fail), e);
             }
 
+            
+            // Make sure cookies are upto date
+            cookies = client.getCookieStore().getCookies();
+            
+            
             //
             // Parse the response
             //

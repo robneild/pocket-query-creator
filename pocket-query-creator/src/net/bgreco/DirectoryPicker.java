@@ -56,6 +56,8 @@ public class DirectoryPicker extends SherlockListActivity {
 	public static final String SHOW_HIDDEN = "showHidden";
 	public static final String CHOSEN_DIRECTORY = "chosenDir";
 	public static final int PICK_DIRECTORY = 43522432;
+	public static final int PICK_CANCELLED = 43522433;
+	
 	private File dir;
 	private boolean showHidden = false;
 	private boolean onlyDirs = true ;
@@ -84,6 +86,15 @@ public class DirectoryPicker extends SherlockListActivity {
         // Make current directory visible in ActionBar at top
         setTitle(dir.getAbsolutePath());
         
+        // Cancel Button
+        Button btnCancel = (Button) findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	setResult(PICK_CANCELLED);
+            	finish();
+            }
+        });
+        
         // Select Button
         Button btnChoose = (Button) findViewById(R.id.btnChoose);
         String name = dir.getName();
@@ -92,7 +103,15 @@ public class DirectoryPicker extends SherlockListActivity {
         btnChoose.setText("Choose " + "'" + name + "'");
         btnChoose.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	returnDir(dir.getAbsolutePath());
+            	  if(!dir.canWrite()) {
+                  	Context context = getApplicationContext();
+                  	String msg = "Can not write into this directory";
+                  	Toast toast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
+                  	toast.show();
+                  	return;
+                  } else {
+                	  returnDir(dir.getAbsolutePath());
+                  }
             }
         });
        
@@ -104,12 +123,13 @@ public class DirectoryPicker extends SherlockListActivity {
         	// User has gone into directory that we can't read
         	// We immediately close this activity to return to directory above
         	Context context = getApplicationContext();
-        	String msg = "Could not read folder contents.";
+        	String msg = "Could not read folder contents";
         	Toast toast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
         	toast.show();
         	finish();
         	return;
         }
+        
         
         // We now know can read directory so get list of directories
         final List<File> files = filter(dir.listFiles(), onlyDirs, showHidden);
@@ -142,6 +162,11 @@ public class DirectoryPicker extends SherlockListActivity {
 	    	Bundle extras = data.getExtras();
 	    	String path = (String) extras.get(DirectoryPicker.CHOSEN_DIRECTORY);
 	        returnDir(path);
+    	}
+    	
+    	if (resultCode == PICK_CANCELLED) {
+        	setResult(PICK_CANCELLED);
+        	finish();
     	}
     }
 	
