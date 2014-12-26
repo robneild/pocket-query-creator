@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:textSize="20sp"
+        android:paddingLeft="20dp"
+        android:text="name"
+        android:textIsSelectable="false"
+        android:textStyle="bold"
+        android:clickable="false"
+        android:background="#555555"
+        />
+
+</RelativeLayout><!-- From: file:/home/peter/AndroidstudioProjects/pocket-query-creator/app/src/main/res/layout/spq_list_row.xml -->

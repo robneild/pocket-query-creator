@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:disableDependentsState="true"
+        android:key="disabled_preference"
+        android:summary="Create Query in state such that it won&apos;t autorun. Allows manual modification after creation"
+        android:title="Create disabled" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:dependency="disabled_preference"
+        android:key="download_preference"
+        android:summary="After Pocket Query runs, download output"
+        android:title="Download results" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:disableDependentsState="true"
+        android:key="cgeo_preference"
+        android:summary="Downloaded PQs use c:geo compatible filenames"
+        android:title="c:geo compatiblity" />
+
+    <EditTextPreference
+        android:dependency="cgeo_preference"
+        android:defaultValue="pocketquery_"
+        android:dialogTitle="Filename Prefix"
+        android:inputType=""
+        android:key="nameprefix_preference"
+        android:summary="...put on front of downloaded Pocket Query filename"
+        android:title="Filename Prefix" />
+
+    <!--  summary is set in code -->
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:disableDependentsState="true"
+        android:key="default_download_dir_preference"
+        android:summary=""
+        android:title="Default download directory" />
+
+    <!--  summary is set in code -->
+    <Preference
+        android:dependency="default_download_dir_preference"
+        android:key="user_download_dir_preference"
+        android:summary=""
+        android:title="Choose download directory">
+        <intent android:action="your.action.string" />
+    </Preference>
+
+
+</PreferenceScreen><!-- From: file:/home/peter/AndroidstudioProjects/pocket-query-creator/app/src/main/res/xml/download_preferences.xml -->
