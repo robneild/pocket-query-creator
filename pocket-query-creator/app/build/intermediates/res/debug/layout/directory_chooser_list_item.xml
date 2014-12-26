@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+
+    <ImageView
+        android:layout_alignParentLeft="true"
+        android:id="@+id/fdrowimage"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:src="@drawable/folder"
+        android:layout_alignTop="@+id/fdrowtext"
+        android:layout_alignBottom="@+id/fdrowtext"></ImageView>
+
+    <TextView
+        android:text="@+id/fdrowtext"
+        android:layout_width="fill_parent"
+        android:layout_toRightOf="@+id/fdrowimage"
+        android:id="@+id/fdrowtext"
+        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"></TextView>
+
+</RelativeLayout>
+<!-- From: file:/home/peter/AndroidstudioProjects/pocket-query-creator/app/src/main/res/layout/directory_chooser_list_item.xml -->

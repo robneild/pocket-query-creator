@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="create_new_query">Créer un nouveau pocket query</string>
+    <string name="next">Suivant</string>
+    <string name="cancel">Annuler</string>
+    <string name="settings">Paramètres</string>
+    <string name="about">À propos</string>
+
+</resources>

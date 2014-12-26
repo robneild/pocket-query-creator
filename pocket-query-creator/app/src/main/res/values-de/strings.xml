@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="create_new_query">Neue Pocket Query erstellen</string>
+    <string name="next">Weiter</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="settings">Einstellungen</string>
+    <string name="about">Über</string>
+
+    <string name="sunday">Sonntag</string>
+    <string name="monday">Montag</string>
+    <string name="tuesday">Dienstag</string>
+    <string name="wednesday">Mittwoch</string>
+    <string name="thursday">Donnerstag</string>
+    <string name="friday">Freitag</string>
+    <string name="saturday">Samstag</string>
+
+    <string-array name="shortWeekdayNames">
+        <item>So</item>
+        <item>Mo</item>
+        <item>Di</item>
+        <item>Mi</item>
+        <item>Do</item>
+        <item>Fr</item>
+        <item>Sa</item>
+    </string-array>
+
+    <string name="any">Jedes</string>
+    <string name="auto_name">Versuche den Standortnamen zu setzen</string>
+    <string name="bad_credentials">Login in Geocaching.com fehlgeschlagen. Prüfe Deine Zugangsdaten in den Einstellungen.</string>
+    <string name="cancel_creation">Erstellung abbrechen</string>
+    <string name="change_schedule">Ausführungsplan ändern</string>
+    <string name="container_large">Groß</string>
+    <string name="container_micro">Micro</string>
+    <string name="container_other">Andere</string>
+    <string name="container_regular">Normal</string>
+    <string name="container_small">Klein</string>
+    <string name="container_unknown">Unbekannt</string>
+    <string name="container_virtual">Virtuell</string>
+    <string name="create">Neu</string>
+    <string name="created_ok">Pocket Query wurde erstellt und Treffer gefunden</string>
+    <string name="creating">Seite wird übertragen</string>
+    <string name="creation_pending">Verlauf der Erstellung anzeigen</string>
+    <string name="creation_zero_pqs">Pocket Query wurde erstellt, aber es wurden keine Geocaches gefunden</string>
+    <string name="dialog_title_password_preference">Eingabe Passwort</string>
+    <string name="dialog_title_username_preference">Eingabe Benutzername</string>
+    <string name="directory_picker_title">Wähle Verzeichnis</string>
+    <string name="download_failed">Download der Pocket Query fehlgeschlagen</string>
+    <string name="download_in_progress">Lade Pocket Query</string>
+    <string name="download_not_ready">Pocket Query wurde noch nicht ausgeführt</string>
+    <string name="downloading">Download läuft</string>
+    <string name="email_bad_response">Email Logdatei</string>
+    <string name="error_parsing">Problem beim Lesen der Geocaching Webseite</string>
+    <string name="external_storage_unavailable">Fehler beim Herunterladen der Pocket Query, das externe Dateisystem ist nicht verfügbar</string>
+    <string name="file_creation_error">Konnte Ausgabedatei nicht schreiben</string>
+    <string name="filter_cache_type">Cachetyp</string>
+    <string name="filter_checkboxes">Verschiedene Filter</string>
+    <string name="filter_container">Behälter</string>
+    <string name="filter_difficulty">Schwierigkeit</string>
+    <string name="filter_enabled">Cache aktiv</string>
+    <string name="filter_found7days">Wurde in den letzten 7 Tagen gefunden</string>
+    <string name="filter_idontown">Die mir nicht gehören</string>
+    <string name="filter_ignorelist">Die nicht auf der Ignorelist sind</string>
+    <string name="filter_notbeenfound">Die bisher nicht gefunden wurden</string>
+    <string name="filter_notfound">Die ich nicht gefunden habe</string>
+    <string name="filter_terrain">Gelände</string>
+    <string name="filter_travelbug">Enthält Travel Bugs</string>
+    <string name="get_pq_list">Lade PQ Liste</string>
+    <string name="gps_timeout">Zeitüberschreibung beim GPS Fix</string>
+    <string name="gps_wait">Warte auf den GPS Fix</string>
+    <string name="help">Hilfe</string>
+    <string name="login_download_fail">Konnte Loginseite nicht laden</string>
+    <string name="login_geocaching_com">Anmeldung bei Geocaching.com</string>
+    <string name="not_geocaching_page">Geladene Webseite ist keine Geocaching-Seite. WLAN Anmeldung?</string>
+    <string name="not_premium">Du bist kein Premium Mitglied. Erweitere Dein Konto auf Geocaching.com</string>
+    <string name="parsing">Lesen</string>
+    <string name="prefs_advanced">Erweitert</string>
+    <string name="prefs_creation">Erstellung</string>
+    <string name="prefs_login">Zugangsdaten</string>
+    <string name="refresh">Aktualisieren</string>
+    <string name="refresh_page">Aktualisiere Seite</string>
+    <string name="retrieve_page">Lade Seite</string>
+    <string name="retrieving_creation_page">Lade Pocket Query Seite</string>
+    <string name="retrieving_page">Lade Seite</string>
+    <string name="service_cancelled">Abbruch durch Benutzer</string>
+    <string name="service_creation_failed">Erstellung fehlgeschlagen</string>
+    <string name="service_creation_success">Erstellung erfolgreich</string>
+    <string name="summary_password_preference">Geocaching Passwort</string>
+    <string name="title_password_preference">Passwort</string>
+    <string name="title_username_preference">Benutzername</string>
+    <string name="view_bad_response">Logdatei ansehen</string>
+
+    <string name="working">Arbeite</string>
+    <string name="filter_name">Name</string>
+    <string name="filter_origin">Koordinaten-Herkunft</string>
+    <string name="filter_radius">Radius</string>
+    <string name="filter_radius_km">" km"</string>
+    <string name="filter_radius_miles">" Meilen"</string>
+    <string name="pocket_query_name">Pocket Query Name</string>
+    <string name="no_fix_yet">" (noch kein Fix)"</string>
+    <string name="map_point">Punkt von der Karte</string>
+    <string name="accuracy">" (Genauigkeit %1$dm)"</string>
+    <string name="gps">GPS</string>
+    <string name="waiting_for_pq_to_run">Warte 30 Sekunden, bis die Pocket Query ausgeführt wurde</string>
+    <string name="enter_gc_credentials">Trage zuerst Deine geocaching.com Premium Account Zugangsdaten ein</string>
+    <string name="unable_to_create_maps">Konnte keine Karte erstellen</string>
+    <string name="downloadable_pqs">PQs fertig zum Herunterladen</string>
+    <string name="repeatable_pqs">Gespeicherte PQs</string>
+    <string name="no_pqs_found">Keine Pocket Queries gefunden</string>
+    <string name="size_label">"Größe: "</string>
+    <string name="waypoints_label">"Wegpunkte: "</string>
+    <string name="generated_label">"Erzeugt am: "</string>
+    <string name="scheduled_on">"Geplant am: "</string>
+
+
+</resources>

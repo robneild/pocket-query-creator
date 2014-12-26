@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main2_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/fragment_content"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- <fragment android:name="org.pquery.fragments.ProgressBox"
+        android:visibility="invisible"
+         android:id="@+id/progress_fragment"
+         android:layout_weight="0"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content" /> -->
+
+    <fragment
+        android:name="org.pquery.fragments.PQListFragment"
+        android:id="@+id/pq_list_fragment"
+        android:layout_weight="0"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+
+</LinearLayout>

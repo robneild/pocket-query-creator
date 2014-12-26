@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.pquery"
+    android:versionCode="25"
+    android:versionName="4.0.1">
+
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- Required OpenGL ES 2.0. for Maps V2 -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <!-- hardwareAccelerated="false" is to stop an annoying white flash when WebView loads on >=3 -->
+    <application
+        android:icon="@drawable/icon"
+        android:label="@string/app_name"
+        android:hardwareAccelerated="false"
+        android:theme="@style/Theme.Sherlock">
+
+        <uses-library android:name="com.google.android.maps" />
+
+        <activity
+            android:name="PreferencesFromXml"
+            android:label="@string/settings"/>
+        <activity
+            android:name="MapsActivity"
+            android:label="Long press to select point then press back"/>
+        <activity
+            android:name="Help"
+            android:label="@string/help"/>
+        <activity
+            android:name="About"
+            android:label="@string/about"/>
+        <activity
+            android:name=".CreateFiltersActivity"
+            android:label="Creation Options"/>
+
+        <activity
+            android:name="net.bgreco.DirectoryPicker"
+            android:label="@string/directory_picker_title">
+            <intent-filter>
+                <action android:name="your.action.string" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:label="Pocket Query Creator"
+            android:name=".Main"
+            android:theme="@style/Theme.Sherlock"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyBkBm9H7l6MQsZLbOyHOlg6Rm_c2GMzWOQ" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <service
+            android:name="org.pquery.service.PQService"
+            android:label="PQService"/>
+
+
+    </application>
+
+</manifest>
