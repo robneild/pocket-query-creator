@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="next">Next</string>
+    <string name="cancel">Cancel</string>
+
+	<string name="dialog1">Click \'Next\' to login to Geocaching.com and start creation of a new Pocket Query\n</string>
+    <string name="dialog2">
+		Ensure that you have\n
+		&#8226; A network connection\n
+		&#8226; Valid credentials entered on settings page\n
+		&#8226; A premium Geocaching.com account\n	
+	</string>
+	
+    <string name="create_new_query">Create new pocket query</string>
+    <string name="app_name">Pocket Query Creator</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
+     <string name="view_bad_response">View log file</string>
+     <string name="email_bad_response">Email log file</string>
+
+    
+    <string name="title_username_preference">Username</string>
+	<string name="dialog_title_username_preference">Enter username</string>
+
+    <string name="title_password_preference">Password</string>
+    <string name="summary_password_preference">geocaching password</string>
+	<string name="dialog_title_password_preference">Enter password</string>
+	
+    <string name="filter_cache_type">Cache type</string>
+    <string name="filter_container">Container</string>
+    
+     <string name="type_wherigo">Wherigo</string>
+     <string name="type_adventures">GPS Adventures Exhibit</string>
+     <string name="type_traditional">Traditional</string>
+     <string name="type_multi">Multi-cache</string>
+     <string name="type_virtual">Virtual</string>
+     <string name="type_letterbox">Letterbox Hybrid</string>
+     <string name="type_event">Event</string>      
+     <string name="type_unknown">Unknown</string>
+     <string name="type_project">Project APE</string>
+     <string name="type_webcam">Webcam</string>         
+     <string name="type_earthcache">Earthcache</string>        
+
+     <string name="container_small">Small</string>   
+     <string name="container_large">Large</string>   
+     <string name="container_micro">Micro</string>   
+     <string name="container_other">Other</string>   
+     <string name="container_regular">Regular</string>   
+     <string name="container_unknown">Unknown</string>   
+     <string name="container_virtual">Virtual</string>   
+                              
+     <string name="ok">OK</string>   
+  	 <string name="any">Any</string>
+  	 
+  	 
+  	 <!--  Dialog 2 -->
+  	 <string name="login_geocaching_com">Logging into Geocaching.com</string>
+	 <string name="retrieving_creation_page">Retrieving Pocket Query creation page…</string>
+	 <string name="bad_credentials">Login to Geocaching.com failed. Verify your credentials are correct"</string>
+	 <string name="not_premium">You aren\'t a premium member. Goto Geocaching.com and upgrade</string>
+	 <string name="local_service_started">Creation started</string>
+	 <string name="local_service_stopped">local_service_stopped_REMOVE</string>
+	 <string name="local_service_label">local_service_label</string>
+	 <string name="login_download_fail">Couldn\'t download login page</string>
+	 <string name="service_creation_failed">Creation failed</string>
+	 <string name="service_creation_success">Created ok</string>
+	 <string name="gps_wait">Waiting for GPS fix</string>
+	 <string name="gps_timeout">Timed out getting GPS fix</string>
+	 <string name="retrieve_page">Retrieving page</string>
+	 <string name="refresh_page">Refreshing page</string>
+	 <string name="creating">Submitting creation page</string>
+	 <string name="creation_pending">View creation progress</string>
+	 <string name="cancel_creation">Cancel Creation</string>
+	 <string name="create">Create</string>
+	 <string name="error_parsing">Problem parsing the geocaching webpage</string>
+	 <string name="retrieving_page">Retrieving page</string>
+	 <string name="parsing">Parsing</string>
+	 <string-array name="retry">
+	     <item >Don\'t retry</item>
+	     <item >Retry a few times</item>
+	     <item >Retry for a long time</item>
+	 </string-array>
+	 <string-array name="retry_values">
+	     <item >0</item>
+	     <item >3</item>
+	     <item >30</item>
+	 </string-array>
+	 	 <string-array name="location_accuracy">
+	     <item >30m</item>
+	     <item >150m</item>
+	     <item >1500m</item>
+	 </string-array>
+	 <string-array name="location_accuracy_values">
+	     <item >30</item>
+	     <item >150</item>
+	     <item >1500</item>
+	 </string-array>
+	 <string name="download_failed">Unable to download Pocket Query</string>
+	 <string name="service_cancelled">User cancelled</string>
+	 <string name="filter_terrain">Terrain</string>
+	 <string name="filter_difficulty">Difficulty</string>
+	 <string name="help">Help</string>
+	 <string name="filter_ignorelist">Not in ignore list</string>
+	 <string name="filter_enabled">Cache enabled</string>
+	 <string name="filter_notfound">I haven\'t found</string>
+	 <string name="filter_found7days">Updated in last 7 days</string>
+	 <string name="filter_travelbug">Has travel bugs</string>
+	 <string name="filter_checkboxes">Misc checkboxes</string>
+	 <string name="filter_idontown">I don\'t own</string>
+	 <string name="filter_notbeenfound">Not been found</string>
+	 <string name="download_in_progress">Downloading Pocket Query</string>
+	 <string name="external_storage_unavailable">Unable to download pocket query as external storage currently unavailable</string>
+	 <string name="file_creation_error">Unable to create output file</string>
+	 <string name="creation_zero_pqs">Pocket Query created but didn\'t find any matching geocaches</string>
+	 <string name="created_ok">Pocket Query created and currently matches</string>
+	 <string name="not_geocaching_page">Retrieved web page doesn\'t mention geocaching. A wifi login page?</string>
+	 <string name="download_not_ready">PocketQuery hasn\'t been run yet</string>
+	 <string name="auto_name">During creation, try to set from location name</string>
+	 <string name="directory_picker_title">Choose directory</string>
+	<string-array name="geocoder_provider">
+	     <item >Google</item>
+	     <item >Gisgraphy</item>
+	     <item >GeoNames</item>
+	 </string-array>
+	 <string-array name="geocoder_provider_values">
+	     <item >Google</item>
+	     <item >Gisgraphy</item>
+	     <item >GeoNames</item>
+	 </string-array>
+	 <string-array name="action_bar_list">
+	     <item >Active</item>
+	     <item >Downloadable</item>
+	 </string-array>
+	 <string name="refresh">Refresh</string>
+	 <string name="prefs_advanced">Advanced</string>
+	 <string name="prefs_creation">Creation</string>
+	 <string name="prefs_download">Download</string>
+	 <string name="prefs_login">Login credentials</string>
+	 <string name="actionbar_view_details">Detail</string>
+	 <string name="downloading">Downloading</string>
+	 <string-array name="create_categories">
+	     <item >Name/Radius</item>
+	     <item >Location</item>
+	     <item >Filters</item>
+	 </string-array>
+	 <string name="get_pq_list">Get Downloadable PQ List</string>
+	 
+
+</resources>

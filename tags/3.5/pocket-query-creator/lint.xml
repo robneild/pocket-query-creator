@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="HardcodedText" severity="ignore" />
+    <issue id="MissingTranslation" severity="ignore">
+        <ignore path="res/values-de" />
+        <ignore path="res/values-fr" />
+    </issue>
+    <issue id="NewApi">
+        <ignore path="src/org/pquery/PreferencesFromXml.java" />
+    </issue>
+</lint>
