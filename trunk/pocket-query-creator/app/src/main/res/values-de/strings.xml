@@ -85,10 +85,17 @@
     <string name="service_cancelled">Abbruch durch Benutzer</string>
     <string name="service_creation_failed">Erstellung fehlgeschlagen</string>
     <string name="service_creation_success">Erstellung erfolgreich</string>
-    <string name="summary_password_preference">Geocaching Passwort</string>
+    <string name="summary_password_preference">geocaching.com Passwort</string>
     <string name="title_password_preference">Passwort</string>
+    <string name="summary_username_preference">geocaching.com Benutzername</string>
     <string name="title_username_preference">Benutzername</string>
     <string name="view_bad_response">Logdatei ansehen</string>
+
+    <string name="title_max_caches">Maximale Anzahl an Caches</string>
+    <string name="summary_max_caches">Maximale Anzahl an Caches, die über die Pocket Query selektiert werden. Höchster erlaubter Wert ist 1000.</string>
+
+    <string name="title_metric_preferences">Metrische Entfernung</string>
+    <string name="summary_metric_preferences">Benutze Km statt Meilen.</string>
 
     <string name="working">Arbeite</string>
     <string name="filter_name">Name</string>
@@ -111,6 +118,9 @@
     <string name="waypoints_label">"Wegpunkte: "</string>
     <string name="generated_label">"Erzeugt am: "</string>
     <string name="scheduled_on">"Geplant am: "</string>
+
+    <string name="help_url">file:///android_asset/help_de.html</string>
+    <string name="pqlist_info_url">file:///android_asset/pqlist_de.html</string>
 
 
 </resources>

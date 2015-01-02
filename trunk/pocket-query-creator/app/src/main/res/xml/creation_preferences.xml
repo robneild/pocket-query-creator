@@ -3,17 +3,17 @@
 
     <EditTextPreference
         android:defaultValue="500"
-        android:dialogTitle="Maximum caches"
+        android:dialogTitle="@string/title_max_caches"
         android:inputType="number"
         android:key="maxcaches_preference"
-        android:summary="Maximum number of caches to return. Highest allowed value 1000"
-        android:title="Max caches" />
+        android:summary="@string/summary_max_caches"
+        android:title="@string/title_max_caches" />
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="metric_preference"
-        android:summary="Use km instead of miles"
-        android:title="Metric distances" />
+        android:summary="@string/summary_metric_preferences"
+        android:title="@string/title_metric_preferences" />
 
 
 </PreferenceScreen>

@@ -92,27 +92,8 @@ public class PQListFragment extends SherlockListFragment {
 
             WebView wv = ((WebView) getListView().getEmptyView());
 
-            String html2 = "<html>" +
-                    "<body bgcolor='#000000'>" +
-                    "<table style='height:100%;width:100%;'>" +
-                    "<tr>" +
-                    "<td align='center' valign='center'>" +
-                    "<font color='grey'>" +
-                    "This app allows the easy creation of Pocket Queries<p>" +
-                    "It requires a premium geocaching.com account<p>" +
-                    "Press <img style='vertical-align: middle' width='20px' src='content_new.png'> to create new pocket query<br>" +
-                    "Press <img style='vertical-align: middle' width='20px' src='navigation_refresh.png'> to list existing downloadable or saved pocket queries" +
-                    "<p>" +
-                    "Press <img style='vertical-align: middle' width='20px' src='action_help.png'> to get more help" +
-                    "</font>" +
-                    "</td>" +
-                    "</tr>" +
-                    "</table>" +
-                    "</body>" +
-                    "</html>";
-
             wv.setBackgroundColor(getResources().getColor(color.black));
-            wv.loadDataWithBaseURL("file:///android_asset/", html2, "text/html", "utf-8", "");
+            wv.loadUrl(getString(R.string.pqlist_info_url));
 
 
             setListAdapter(new IconicAdapter(getSherlockActivity(), new PQListItem[0]));        // have to set empty list so help is displayed
