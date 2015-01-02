@@ -4,13 +4,13 @@
     <EditTextPreference
         android:key="username_preference"
         android:title="@string/title_username_preference"
-        android:summary="geocaching.com username"
+        android:summary="@string/summary_username_preference"
         android:dialogTitle="@string/dialog_title_username_preference" />
 
     <EditTextPreference
         android:key="password_preference"
         android:title="@string/title_password_preference"
-        android:summary="geocaching.com password"
+        android:summary="@string/summary_password_preference"
         android:dialogTitle="@string/dialog_title_password_preference"
         android:inputType="textPassword" />
 

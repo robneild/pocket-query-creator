@@ -10,12 +10,18 @@
     <string name="view_bad_response">View log file</string>
     <string name="email_bad_response">Email log file</string>
 
+    <string name="title_max_caches">Maximum caches</string>
+    <string name="summary_max_caches">Maximum number of caches to return. Highest allowed value 1000</string>
+
+    <string name="title_metric_preferences">Metric distances</string>
+    <string name="summary_metric_preferences">Use km instead of miles</string>
 
     <string name="title_username_preference">Username</string>
+    <string name="summary_username_preference">geocaching.com username</string>
     <string name="dialog_title_username_preference">Enter username</string>
 
     <string name="title_password_preference">Password</string>
-    <string name="summary_password_preference">geocaching password</string>
+    <string name="summary_password_preference">geocaching.com password</string>
     <string name="dialog_title_password_preference">Enter password</string>
 
     <string name="filter_cache_type">Cache type</string>
@@ -185,5 +191,8 @@
     <string name="waypoints_label">"Waypoints: "</string>
     <string name="generated_label">"Generated: "</string>
     <string name="scheduled_on">"Scheduled on: "</string>
+
+    <string name="help_url">file:///android_asset/help_en.html</string>
+    <string name="pqlist_info_url">file:///android_asset/pqlist_en.html</string>
 
 </resources>
