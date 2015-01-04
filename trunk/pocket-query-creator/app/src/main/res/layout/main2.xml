@@ -10,12 +10,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
-    <!-- <fragment android:name="org.pquery.fragments.ProgressBox"
-        android:visibility="invisible"
-         android:id="@+id/progress_fragment"
-         android:layout_weight="0"
-         android:layout_width="fill_parent"
-         android:layout_height="wrap_content" /> -->
 
     <fragment
         android:name="org.pquery.fragments.PQListFragment"

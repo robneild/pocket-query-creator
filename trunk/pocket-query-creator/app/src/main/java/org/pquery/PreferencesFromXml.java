@@ -92,7 +92,7 @@ public class PreferencesFromXml extends SherlockPreferenceActivity implements On
             userDownload.setSummary(Prefs.getUserSpecifiedDownloadDir(this));
         Preference defaultDownload = findPreference(Prefs.DEFAULT_DOWNLOAD_DIR);
         if (defaultDownload != null)
-            defaultDownload.setSummary("Output to default 'Download' directory (" + Util.getDefaultDownloadDirectory() + ")");
+            defaultDownload.setSummary(String.format(getResources().getString(R.string.summary_default_download_dir_preference), Util.getDefaultDownloadDirectory()));
 
 
         if (getPreferenceScreen() != null)
@@ -115,8 +115,8 @@ public class PreferencesFromXml extends SherlockPreferenceActivity implements On
             boolean logOn = sharedPreferences.getBoolean(key, false);
             if (logOn) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Debug logs")
-                        .setMessage("Logs into LogCat and (if directory available) 'sdcard/Android/data/org.pquery/files/log.html'. Warning - logs may contain some personal info like your username, although your password should be masked. Cookies will be logged which could potentially be replayed by someone to log into geocaching.com as you");
+                builder.setTitle(R.string.title_debug_preference)
+                        .setMessage(R.string.message_debug_preference);
                 builder.setPositiveButton(R.string.ok, null);
                 AlertDialog dialog = builder.create();
                 dialog.show();

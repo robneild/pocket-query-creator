@@ -95,13 +95,12 @@ public class DirectoryPicker extends SherlockListActivity {
         String name = dir.getName();
         if (name.length() == 0)
             name = "/";
-        btnChoose.setText("Choose " + "'" + name + "'");
+        btnChoose.setText(getResources().getString(R.string.choose) + " '" + name + "'");
         btnChoose.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (!dir.canWrite()) {
                     Context context = getApplicationContext();
-                    String msg = "Can not write into this directory";
-                    Toast toast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(context, R.string.cant_write_directory, Toast.LENGTH_LONG);
                     toast.show();
                     return;
                 } else {
@@ -118,8 +117,7 @@ public class DirectoryPicker extends SherlockListActivity {
             // User has gone into directory that we can't read
             // We immediately close this activity to return to directory above
             Context context = getApplicationContext();
-            String msg = "Could not read folder contents";
-            Toast toast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(context, R.string.could_not_read_folder, Toast.LENGTH_LONG);
             toast.show();
             finish();
             return;
