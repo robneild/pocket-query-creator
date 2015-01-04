@@ -5,31 +5,31 @@
         android:defaultValue="false"
         android:disableDependentsState="true"
         android:key="disabled_preference"
-        android:summary="Create Query in state such that it won&apos;t autorun. Allows manual modification after creation"
-        android:title="Create disabled" />
+        android:summary="@string/summary_disabled_preference"
+        android:title="@string/title_disabled_preference" />
 
     <CheckBoxPreference
         android:defaultValue="true"
         android:dependency="disabled_preference"
         android:key="download_preference"
-        android:summary="After Pocket Query runs, download output"
-        android:title="Download results" />
+        android:summary="@string/summary_download_preference"
+        android:title="@string/title_download_preference" />
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:disableDependentsState="true"
         android:key="cgeo_preference"
-        android:summary="Downloaded PQs use c:geo compatible filenames"
-        android:title="c:geo compatiblity" />
+        android:summary="@string/summary_cgeo_preference"
+        android:title="@string/title_cgeo_preference" />
 
     <EditTextPreference
         android:dependency="cgeo_preference"
         android:defaultValue="pocketquery_"
-        android:dialogTitle="Filename Prefix"
+        android:dialogTitle="@string/title_nameprefix_preference"
         android:inputType=""
         android:key="nameprefix_preference"
-        android:summary="...put on front of downloaded Pocket Query filename"
-        android:title="Filename Prefix" />
+        android:summary="@string/summary_nameprefix_preference"
+        android:title="@string/title_nameprefix_preference" />
 
     <!--  summary is set in code -->
     <CheckBoxPreference
@@ -37,14 +37,14 @@
         android:disableDependentsState="true"
         android:key="default_download_dir_preference"
         android:summary=""
-        android:title="Default download directory" />
+        android:title="@string/title_default_download_dir_preference" />
 
     <!--  summary is set in code -->
     <Preference
         android:dependency="default_download_dir_preference"
         android:key="user_download_dir_preference"
         android:summary=""
-        android:title="Choose download directory">
+        android:title="@string/title_user_download_dir_preference">
         <intent android:action="your.action.string" />
     </Preference>
 

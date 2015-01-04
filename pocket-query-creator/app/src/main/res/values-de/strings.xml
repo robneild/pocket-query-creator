@@ -4,8 +4,12 @@
     <string name="create_new_query">Neue Pocket Query erstellen</string>
     <string name="next">Weiter</string>
     <string name="cancel">Abbrechen</string>
+    <string name="choose">Wähle</string>
     <string name="settings">Einstellungen</string>
     <string name="about">Über</string>
+
+    <string name="cant_write_directory">Schreiben in dieses Verzeichnis nicht möglich.</string>
+    <string name="could_not_read_folder">Konnte dieses Verzeichnis nicht lesen</string>
 
     <string name="sunday">Sonntag</string>
     <string name="monday">Montag</string>
@@ -74,6 +78,11 @@
     <string name="not_geocaching_page">Geladene Webseite ist keine Geocaching-Seite. WLAN Anmeldung?</string>
     <string name="not_premium">Du bist kein Premium Mitglied. Erweitere Dein Konto auf Geocaching.com</string>
     <string name="parsing">Lesen</string>
+
+    <string name="retry_dont">Keine Wiederholung</string>
+    <string name="retry_few">Wenige Wiederholungen</string>
+    <string name="retry_long">Mehrmalige Wiederholungen</string>
+
     <string name="prefs_advanced">Erweitert</string>
     <string name="prefs_creation">Erstellung</string>
     <string name="prefs_login">Zugangsdaten</string>
@@ -96,6 +105,36 @@
 
     <string name="title_metric_preferences">Metrische Entfernung</string>
     <string name="summary_metric_preferences">Benutze Km statt Meilen.</string>
+
+    <string name="title_disabled_preference">Erstelle deaktiviert</string>
+    <string name="summary_disabled_preference">Erstelle die Pocket Query so, dass sie nicht automatisch ausgeführt wird. Dies erlaubt manuelle Modifikation.</string>
+
+    <string name="title_download_preference">Automatischer Download</string>
+    <string name="summary_download_preference">Lädt die Pocket Query automatisch herunter, sobald sie ausgeführt wurde.</string>
+
+    <string name="title_cgeo_preference">c:geo Kompatibilität</string>
+    <string name="summary_cgeo_preference">Heruntergeladene PQs erhalten c:geo kompatiblen Dateinamen</string>
+
+    <string name="title_nameprefix_preference">Dateinamenpräfix</string>
+    <string name="summary_nameprefix_preference">...wird vor den Pocket Query Dateinamen geschrieben</string>
+
+    <string name="title_default_download_dir_preference">Standard Downloadverzeichnis</string>
+    <string name="summary_default_download_dir_preference">Ergebnis wird in Standard \'Download\' Verzeichnis (%s) geschrieben</string>
+
+    <string name="title_user_download_dir_preference">Wähle das Downloadverzeichnis</string>
+
+    <string name="summary_retry_preference">Wie oft soll die Erstellung im Fehlerfall wiederholt werden? Nützlich, wenn man eine schlechte Verbindung hat.</string>
+    <string name="title_retry_preference">Wiederholungen im Fehlerfall</string>
+
+    <string name="summary_location_accuracy_preference">We genau soll der Standort bestimmt werden, bevor die Pocket Query erstellt wird?</string>
+    <string name="title_location_accuracy_preference">Standortgenauigkeit</string>
+
+    <string name="summary_geocoding_provider_preference">Anbieter für die Geolokalisierung.</string>
+    <string name="title_geocoding_provider_preference">Geolokalisierung</string>
+
+    <string name="summary_debug_preference">Protokollierung in LogCat und Datei.</string>
+    <string name="title_debug_preference">Debug Logs</string>
+    <string name="message_debug_preference">Protokollierung in LogCat und (wenn Verzeichnis vorhanden) \'sdcard/Android/data/org.pquery/files/log.html\'. Achtung: Logs können persönliche Daten enthalten. Passwort wird allerdings gefiltert. Cookies werden protokolliert, was es potentiell möglich macht, um sich unter deinem Account auf geocaching.com anzumelden.</string>
 
     <string name="working">Arbeite</string>
     <string name="filter_name">Name</string>
@@ -122,5 +161,6 @@
     <string name="help_url">file:///android_asset/help_de.html</string>
     <string name="pqlist_info_url">file:///android_asset/pqlist_de.html</string>
 
+    <string name="maps_activity_title">Lange drücken, um einen Punkt zu selektieren, dann zurück.</string>
 
 </resources>

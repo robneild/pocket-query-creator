@@ -2,6 +2,7 @@
 <resources>
     <string name="next">Next</string>
     <string name="cancel">Cancel</string>
+    <string name="choose">Choose</string>
 
     <string name="create_new_query">Create new pocket query</string>
     <string name="app_name">Pocket Query Creator</string>
@@ -10,11 +11,44 @@
     <string name="view_bad_response">View log file</string>
     <string name="email_bad_response">Email log file</string>
 
+    <string name="cant_write_directory">Can not write into this directory</string>
+    <string name="could_not_read_folder">Could not read folder contents</string>
+
     <string name="title_max_caches">Maximum caches</string>
     <string name="summary_max_caches">Maximum number of caches to return. Highest allowed value 1000</string>
 
     <string name="title_metric_preferences">Metric distances</string>
     <string name="summary_metric_preferences">Use km instead of miles</string>
+
+    <string name="title_disabled_preference">Create disabled</string>
+    <string name="summary_disabled_preference">Create Query in state such that it won\'t autorun. Allows manual modification after creation</string>
+
+    <string name="title_download_preference">Download results</string>
+    <string name="summary_download_preference">After Pocket Query runs, download output</string>
+
+    <string name="title_cgeo_preference">c:geo compatiblity</string>
+    <string name="summary_cgeo_preference">Downloaded PQs use c:geo compatible filenames</string>
+
+    <string name="title_nameprefix_preference">Filename Prefix</string>
+    <string name="summary_nameprefix_preference">...put on front of downloaded Pocket Query filename</string>
+
+    <string name="title_default_download_dir_preference">Default download directory</string>
+    <string name="summary_default_download_dir_preference">Output to default \'Download\' directory (%s)</string>
+
+    <string name="title_user_download_dir_preference">Choose download directory</string>
+
+    <string name="summary_retry_preference">How many times should creation steps be reattempted if errors occur. Useful if network connectivity is intermittent or slow</string>
+    <string name="title_retry_preference">Retry on errors</string>
+
+    <string name="summary_location_accuracy_preference">How accurate a location fix to wait for, before creating Pocket Query</string>
+    <string name="title_location_accuracy_preference">Location accuracy</string>
+
+    <string name="summary_geocoding_provider_preference">Who to use to lookup a name for a location</string>
+    <string name="title_geocoding_provider_preference">Geocoding provider</string>
+
+    <string name="summary_debug_preference">Logs into LogCat and a file</string>
+    <string name="title_debug_preference">Debug logs</string>
+    <string name="message_debug_preference">Logs into LogCat and (if directory available) \'sdcard/Android/data/org.pquery/files/log.html\'. Warning - logs may contain some personal info like your username, although your password should be masked. Cookies will be logged which could potentially be replayed by someone to log into geocaching.com as you</string>
 
     <string name="title_username_preference">Username</string>
     <string name="summary_username_preference">geocaching.com username</string>
@@ -70,10 +104,14 @@
     <string name="error_parsing">Problem parsing the geocaching webpage</string>
     <string name="retrieving_page">Retrieving page</string>
     <string name="parsing">Parsing</string>
+    <string name="retry_dont">Don\'t retry</string>
+    <string name="retry_few">Retry a few times</string>
+    <string name="retry_long">Retry for a long time</string>
+
     <string-array name="retry">
-        <item>Don\'t retry</item>
-        <item>Retry a few times</item>
-        <item>Retry for a long time</item>
+        <item>@string/retry_dont</item>
+        <item>@string/retry_few</item>
+        <item>@string/retry_long</item>
     </string-array>
     <string-array name="retry_values">
         <item>0</item>
@@ -194,5 +232,6 @@
 
     <string name="help_url">file:///android_asset/help_en.html</string>
     <string name="pqlist_info_url">file:///android_asset/pqlist_en.html</string>
+    <string name="maps_activity_title">Long press to select point then press back</string>
 
 </resources>
