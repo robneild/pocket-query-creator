@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -31,6 +30,8 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import junit.framework.Assert;
 
@@ -161,7 +162,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
 
         filterOption = new CreationOption(getResources().getString(R.string.filter_radius), R.drawable.target, getResources());
         filterOption.setCurrentValue(Prefs.getDefaultRadius(this) + (Prefs.isMetric(this) ? getResources().getString(R.string.filter_radius_km) : getResources().getString(R.string.filter_radius_miles)));
-        ;
+
         _filterList.add(filterOption);
 
 
@@ -198,8 +199,6 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
         }
         // m_ProgressDialog.dismiss();
         m_adapter.notifyDataSetChanged();
-
-        return;
     }
 
     @Override
@@ -207,8 +206,15 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
         if (id == 1) {
             // Try to open map at current location (if we have it)
             if (queryStore.lat == 0 && queryStore.lon == 0) {
-                Intent intent = new Intent(this, MapsActivity.class);
+
+                Intent intent;
+                if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS)
+                    intent = new Intent(this, MapsActivity.class);
+                else
+                    intent = new Intent(this, MapsActivityOld.class);
+
                 startActivityForResult(intent, 123);
+
             } else {
                 queryStore.lat = 0;
                 queryStore.lon = 0;

@@ -5,12 +5,12 @@ android {
         config {
         }
     }
-    compileSdkVersion 19
-    buildToolsVersion "19.1"
+    compileSdkVersion "Google Inc.:Google APIs:21"
+    buildToolsVersion "21.1.2"
     defaultConfig {
         applicationId "org.pquery"
-        minSdkVersion 9
-        targetSdkVersion 19
+        minSdkVersion 7
+        targetSdkVersion 21
         testApplicationId "org.pquery.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
@@ -27,9 +27,9 @@ android {
 }
 
 dependencies {
-    compile 'com.google.android.gms:play-services:4.0.30'
-    compile 'com.android.support:support-v4:19.0.1'
-    compile 'com.google.code.gson:gson:2.2.2'
+    compile 'com.google.android.gms:play-services-maps:6.5.+'
+    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.google.code.gson:gson:2.3'
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile files('libs/actionbarsherlock-plugin-maps-4.2.0.jar')
     compile files('libs/jericho-html-3.3.jar')
