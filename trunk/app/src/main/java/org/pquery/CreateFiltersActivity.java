@@ -204,7 +204,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (id == 1) {
-            // Try to open map at current location (if we have it)
+
             if (queryStore.lat == 0 && queryStore.lon == 0) {
 
                 Intent intent;
@@ -212,6 +212,10 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                     intent = new Intent(this, MapsActivity.class);
                 else
                     intent = new Intent(this, MapsActivityOld.class);
+
+                // Try to open map at current location (if we have it)
+                intent.putExtra("lat", gpsLocation.getLatitude());
+                intent.putExtra("lon", gpsLocation.getLongitude());
 
                 startActivityForResult(intent, 123);
 

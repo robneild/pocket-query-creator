@@ -10,7 +10,7 @@
         android:state_enabled="true"
         android:clickable="true"
 
-        android:apiKey="0FlmDyhkwc96zAf4GiKQ5rRND2wmosP4u1-Srig"
+        android:apiKey="@string/google_maps_v1_api_key"
         />
 
     <LinearLayout android:id="@+id/zoom"
