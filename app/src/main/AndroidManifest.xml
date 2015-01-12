@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="org.pquery"
-    android:versionCode="43"
-    android:versionName="4.0.3">
+    android:versionCode="44"
+    android:versionName="4.0.4">
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -14,9 +14,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <!-- Have to force google services as we support from 2.1 and up. Google services  (maps v2) is an optional requirement -->
     <uses-sdk tools:overrideLibrary="com.google.android.gms.maps, com.google.android.gms"/>
-
-
 
     <!-- Required OpenGL ES 2.0. for Maps V2 -->
     <uses-feature
@@ -74,14 +73,16 @@
         </activity>
 
         <uses-library android:name="com.google.android.maps" />
-<!--
+
+        <!-- Development key -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDTls2cgmNRJmT_lC6p_rgNUko2-XV_hoU" />
+            android:value="@string/google_maps_v2_api_key" />
+
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
--->
 
         <service
             android:name="org.pquery.service.PQService"
