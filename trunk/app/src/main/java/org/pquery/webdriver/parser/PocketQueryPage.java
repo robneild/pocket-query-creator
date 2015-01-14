@@ -3,7 +3,9 @@ package org.pquery.webdriver.parser;
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Segment;
 import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.StartTag;
 
 import org.pquery.dao.DownloadablePQ;
 import org.pquery.dao.RepeatablePQ;
@@ -91,28 +93,17 @@ public class PocketQueryPage {
     }
 
     public RepeatablePQ[] getRepeatables() throws ParseException {
-        Element table = getRepeatableTable();
+        Element table = getActivePocketQueriesTable();
+
+        if (table == null)
+            return new RepeatablePQ[0];         // table is missing. no pq
 
         List<Element> rows = table.getAllElements(HTMLElementName.TR);
 
-        // Don't think this ever happens
         if (rows.size() <= 2)
-            return new RepeatablePQ[0];
+            return new RepeatablePQ[0];         // table seems to be empty. Can this happen?
 
-        // Detect if middle row says empty
-
-		/*
-		 * If there are no repeatable PQ then single row (between header and footer)
-		 * looks like this
-		 *
-		 * <tr class="BorderBottom"><td colspan="4">
-		 * No Downloads Available
-		 * </td></tr>
-		 */
-        Attribute classattrib = rows.get(1).getAttributes().get("class");
-        if (classattrib != null && classattrib.getValue().equalsIgnoreCase("TableFooter"))
-            return new RepeatablePQ[0];
-
+        // Extrat abbreviated day of week string (these will be localized I guess)
         List<String> weekdays = new ArrayList<String>();
         Element header = rows.get(0);
         List<Element> columns = header.getAllElements(HTMLElementName.TH);
@@ -125,10 +116,13 @@ public class PocketQueryPage {
 
         // Table has header and footer we can skip
         for (int i = 1; i < rows.size() - 1; i++) {
-            ret.add(decodeRepeatableRow(rows.get(i), weekdays));
+            RepeatablePQ rpq = decodeRepeatableRow(rows.get(i), weekdays);
+            if (rpq != null)
+                ret.add(rpq);
         }
         return ret.toArray(new RepeatablePQ[0]);
     }
+
 
     private RepeatablePQ decodeRepeatableRow(Element row, List<String> weekdays) throws ParseException {
         List<Element> column = row.getAllElements(HTMLElementName.TD);
@@ -139,9 +133,19 @@ public class PocketQueryPage {
 
         RepeatablePQ repeatable = new RepeatablePQ();
 
-        // Column 3. Extract title, which is wrapped in a link
-        repeatable.name = column.get(3).getFirstStartTag(HTMLElementName.A).getElement().getTextExtractor().toString();
-        // Column 3. Number of caches matching DownloadablePQ
+        // Column 4 looks like this "(500) 1-14-15 8.28 PM"
+
+        // Column 4. Extract pocket query title, it is wrapped in a link
+        Element nameElement = column.get(3).getFirstStartTag(HTMLElementName.A).getElement();
+
+        // Filter out pocket queries that have been deleted. They are displayed with a line through their name
+        // If The A link has a child element, we can assume it is <span style="strike>
+        if (nameElement.getContent().getFirstElement() != null)
+            return null;
+
+        repeatable.name = nameElement.getTextExtractor().toString();
+
+        // Column 4. Extract number of matching pq
         String waypoints = column.get(3).getTextExtractor().toString();
         Matcher m = Pattern.compile("\\((\\d+)\\)").matcher(waypoints);
         if (m.find()) {
@@ -149,7 +153,7 @@ public class PocketQueryPage {
         }
         repeatable.waypoints = waypoints;
 
-        // Column 5-11. extract days of week
+        // Columns 6-12. extract days of week
         for (int i = 5; i < 12; i++) {
             repeatable.addScheduleURL(column.get(i).getFirstStartTag(HTMLElementName.A).getAttributeValue("href"));
         }
@@ -157,7 +161,15 @@ public class PocketQueryPage {
         return repeatable;
     }
 
-    private Element getRepeatableTable() {
+    /**
+     * Get table shown on the first tab 'Active Pocket Queries'
+     * The list of pocket queries is *different* to the Downloadable Pocket Queries
+     *
+     * The table is optional and can be absent if no pocket queries
+     *
+     * @return null if not there
+     */
+    private Element getActivePocketQueriesTable() {
         return parsedHtml.getElementById("pqRepeater");
     }
 
