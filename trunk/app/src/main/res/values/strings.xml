@@ -234,4 +234,9 @@
     <string name="pqlist_info_url">file:///android_asset/pqlist_en.html</string>
     <string name="maps_activity_title">Long press to select point then press back</string>
 
+    <string name="daystogenerate_runqueryonce">Run query once</string>
+    <string name="daystogenerate_uncheckDayOfWeekAfterQuery">Uncheck day of week after query runs</string>
+    <string name="daystogenerate_runQueryEveryWeekOnCheckedDays">Run query every week on following days</string>
+
+    <string name="filter_days_to_generate">Days to Generate</string>
 </resources>

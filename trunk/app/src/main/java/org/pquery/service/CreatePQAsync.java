@@ -23,6 +23,7 @@ import org.pquery.filter.CacheTypeList;
 import org.pquery.filter.CheckBoxesFilter;
 import org.pquery.filter.ContainerType;
 import org.pquery.filter.ContainerTypeList;
+import org.pquery.filter.DaysToGenerateFilter;
 import org.pquery.filter.OneToFiveFilter;
 import org.pquery.util.GPS;
 import org.pquery.util.Logger;
@@ -243,19 +244,29 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
             // Name of pocket query
             loginFormExtra.setValueChecked("ctl00$ContentBody$tbName", queryStore.name);
 
-            // Turn of all days of week (if not creating disabled)
-            if (!Prefs.getDisabled(cxt)) {
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$0", "on");
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$1", "on");
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$2", "on");
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$3", "on");
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$4", "on");
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$5", "on");
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$6", "on");
-            }
+            // Days of week
+            DaysToGenerateFilter daysToGenerateFilter = Prefs.getDaysToGenerateFilter(cxt);
+
+            if (daysToGenerateFilter.dayOfWeek[0]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$0", "on");
+            if (daysToGenerateFilter.dayOfWeek[1]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$1", "on");
+            if (daysToGenerateFilter.dayOfWeek[2]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$2", "on");
+            if (daysToGenerateFilter.dayOfWeek[3]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$3", "on");
+            if (daysToGenerateFilter.dayOfWeek[4]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$4", "on");
+            if (daysToGenerateFilter.dayOfWeek[5]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$5", "on");
+            if (daysToGenerateFilter.dayOfWeek[6]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$6", "on");
+
+
+            // 1 = Uncheck the day of the week after the query runs
+            if (daysToGenerateFilter.howOftenRun == DaysToGenerateFilter.UNCHECK_DAY_AFTER_QUERY)
+                loginFormExtra.setValueChecked("ctl00$ContentBody$rbRunOption", "1");
+
+            // 2 = Run this query every week on the days checked
+            if (daysToGenerateFilter.howOftenRun == DaysToGenerateFilter.RUN_EVERY_WEEK_ON_CHECKED_DAYS)
+                loginFormExtra.setValueChecked("ctl00$ContentBody$rbRunOption", "2");
 
             // 3 = Run this query once then delete it
-            loginFormExtra.setValueChecked("ctl00$ContentBody$rbRunOption", "3");
+            if (daysToGenerateFilter.howOftenRun == DaysToGenerateFilter.RUN_ONCE_THEN_DELETE)
+                loginFormExtra.setValueChecked("ctl00$ContentBody$rbRunOption", "3");
 
             loginFormExtra.setValueChecked("ctl00$ContentBody$tbResults", Prefs.getMaxCaches(cxt));
 

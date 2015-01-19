@@ -15,6 +15,7 @@ import org.pquery.dao.RepeatablePQ;
 import org.pquery.filter.CacheTypeList;
 import org.pquery.filter.CheckBoxesFilter;
 import org.pquery.filter.ContainerTypeList;
+import org.pquery.filter.DaysToGenerateFilter;
 import org.pquery.filter.OneToFiveFilter;
 
 import java.io.IOException;
@@ -37,6 +38,8 @@ public class Prefs {
     private static final String CONTAINER_FILTER = "container_type_filter_preference";
     private static final String DIFFICULTY_FILTER = "difficulty_filter_preference";
     private static final String TERRAIN_FILTER = "terrain_filter_preference";
+    private static final String DAYS_TO_GENERATE_FILTER = "daystogenerate_filter_preference";
+
     private static final String RADUIS = "radius_preference";
     private static final String COOKIES = "cookies_preference";
     public static final String USERNAME = "username_preference";
@@ -70,6 +73,7 @@ public class Prefs {
     }
 
     public static CheckBoxesFilter getCheckBoxesFilter(Context cxt) {
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(cxt);
         boolean enabled = prefs.getBoolean(ENABLED_FILTER, true);
         boolean travelBug = prefs.getBoolean(TRAVEL_BUG_FILTER, false);
@@ -163,6 +167,22 @@ public class Prefs {
         String t = PreferenceManager.getDefaultSharedPreferences(cxt).getString(TERRAIN_FILTER, "1 - 5");
         return new OneToFiveFilter(t);
     }
+
+    public static DaysToGenerateFilter getDaysToGenerateFilter(Context cxt) {
+        String t = PreferenceManager.getDefaultSharedPreferences(cxt).getString(DAYS_TO_GENERATE_FILTER, null);
+        return new DaysToGenerateFilter(t);
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     public static void saveCacheTypeFilter(Context cxt, CacheTypeList list) {
         Editor edit = PreferenceManager.getDefaultSharedPreferences(cxt).edit();
@@ -323,6 +343,16 @@ public class Prefs {
         edit.putLong(PQ_LIST_STATE_TIMESTAMP, new Date().getTime());
         edit.commit();
     }
+
+
+    public static void saveDaysToGenerateFilter(Context cxt, DaysToGenerateFilter f) {
+        String ser = f.serializeIntoString();
+
+        Editor edit = PreferenceManager.getDefaultSharedPreferences(cxt).edit();
+        edit.putString(DAYS_TO_GENERATE_FILTER, ser);
+        edit.commit();
+    }
+
 
     public static long getPQListStateTimestamp(Context cxt) {
         return PreferenceManager.getDefaultSharedPreferences(cxt).getLong(PQ_LIST_STATE_TIMESTAMP, 0);

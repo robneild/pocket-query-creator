@@ -134,6 +134,8 @@ public class PocketQueryPage {
         RepeatablePQ repeatable = new RepeatablePQ();
 
         // Column 4 looks like this "(500) 1-14-15 8.28 PM"
+        // <a href="http://www.geocaching.com/pocket/gcquery.aspx?guid=ee839634-5dd9-4e56-940b-1f46ed6e7975" title="New Query">New Query</a>
+        // <a href="http://www.geocaching.com/pocket/gcquery.aspx?guid=ee839634-5dd9-4e56-940b-1f46ed6e7975" title="New Query">New Query</a>
 
         // Column 4. Extract pocket query title, it is wrapped in a link
         Element nameElement = column.get(3).getFirstStartTag(HTMLElementName.A).getElement();
