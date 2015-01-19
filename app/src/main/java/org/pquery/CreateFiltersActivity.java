@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockListActivity;
@@ -35,11 +36,13 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import junit.framework.Assert;
 
+import org.pquery.dao.Schedule;
 import org.pquery.filter.CacheType;
 import org.pquery.filter.CacheTypeList;
 import org.pquery.filter.CheckBoxesFilter;
 import org.pquery.filter.ContainerType;
 import org.pquery.filter.ContainerTypeList;
+import org.pquery.filter.DaysToGenerateFilter;
 import org.pquery.filter.OneToFiveFilter;
 import org.pquery.service.PQService;
 import org.pquery.util.GPS;
@@ -115,7 +118,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
             queryStore.lat = lat;
             queryStore.lon = lon;
 
-            _filterList.get(1).setCurrentValue(queryStore.lat, queryStore.lon, gpsLocation);
+            _filterList.get(2).setCurrentValue(queryStore.lat, queryStore.lon, gpsLocation);
 
             m_adapter.notifyDataSetChanged();
         }
@@ -156,13 +159,16 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
         filterOption.setCurrentValue(queryStore.name);
         _filterList.add(filterOption);
 
+        filterOption = new CreationOption(getResources().getString(R.string.filter_days_to_generate), R.drawable.calendar, getResources());
+        filterOption.setCurrentValue(Prefs.getDaysToGenerateFilter(this), getResources());
+        _filterList.add(filterOption);
+
         filterOption = new CreationOption(getResources().getString(R.string.filter_origin), getResources());
         filterOption.setCurrentValue(queryStore.lat, queryStore.lon, gpsLocation);
         _filterList.add(filterOption);
 
         filterOption = new CreationOption(getResources().getString(R.string.filter_radius), R.drawable.target, getResources());
         filterOption.setCurrentValue(Prefs.getDefaultRadius(this) + (Prefs.isMetric(this) ? getResources().getString(R.string.filter_radius_km) : getResources().getString(R.string.filter_radius_miles)));
-
         _filterList.add(filterOption);
 
 
@@ -203,7 +209,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        if (id == 1) {
+        if (id == 2) {
 
             if (queryStore.lat == 0 && queryStore.lon == 0) {
 
@@ -222,7 +228,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
             } else {
                 queryStore.lat = 0;
                 queryStore.lon = 0;
-                _filterList.get(1).setCurrentValue(queryStore.lat, queryStore.lon, gpsLocation);
+                _filterList.get(2).setCurrentValue(queryStore.lat, queryStore.lon, gpsLocation);
 
                 m_adapter.notifyDataSetChanged();
             }
@@ -269,8 +275,69 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                     }).show();
         }
 
+        if (id == 1) {
 
-        if (id == 2) {
+            LayoutInflater vi = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = vi.inflate(R.layout.days_to_generate_fragment, null);
+
+            final DaysToGenerateFilter daysToGenerateFilter = Prefs.getDaysToGenerateFilter(this);
+
+            final RadioButton uncheck = (RadioButton) v.findViewById(R.id.radio_uncheckDayOfWeekAfterQuery);
+            final RadioButton oncheckeddays = (RadioButton) v.findViewById(R.id.radio_runQueryEveryWeekOnCheckedDays);
+            final RadioButton runonce = (RadioButton) v.findViewById(R.id.radio_runqueryonce);
+
+            final CheckBox sun = (CheckBox) v.findViewById(R.id.checkBox_sun);
+            final CheckBox mon = (CheckBox) v.findViewById(R.id.checkBox_mon);
+            final CheckBox tue = (CheckBox) v.findViewById(R.id.checkBox_tue);
+            final CheckBox wed = (CheckBox) v.findViewById(R.id.checkBox_wed);
+            final CheckBox thu = (CheckBox) v.findViewById(R.id.checkBox_thu);
+            final CheckBox fri = (CheckBox) v.findViewById(R.id.checkBox_fri);
+            final CheckBox sat = (CheckBox) v.findViewById(R.id.checkBox_sat);
+
+            if (daysToGenerateFilter.howOftenRun == DaysToGenerateFilter.UNCHECK_DAY_AFTER_QUERY) uncheck.setChecked(true);
+            if (daysToGenerateFilter.howOftenRun == DaysToGenerateFilter.RUN_EVERY_WEEK_ON_CHECKED_DAYS) oncheckeddays.setChecked(true);
+            if (daysToGenerateFilter.howOftenRun == DaysToGenerateFilter.RUN_ONCE_THEN_DELETE) runonce.setChecked(true);
+
+            if (daysToGenerateFilter.dayOfWeek[0]) sun.setChecked(true);
+            if (daysToGenerateFilter.dayOfWeek[1]) mon.setChecked(true);
+            if (daysToGenerateFilter.dayOfWeek[2]) tue.setChecked(true);
+            if (daysToGenerateFilter.dayOfWeek[3]) wed.setChecked(true);
+            if (daysToGenerateFilter.dayOfWeek[4]) thu.setChecked(true);
+            if (daysToGenerateFilter.dayOfWeek[5]) fri.setChecked(true);
+            if (daysToGenerateFilter.dayOfWeek[6]) sat.setChecked(true);
+
+            return new AlertDialog.Builder(this)
+                    .setTitle(R.string.pocket_query_name)
+                    .setView(v)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            if (uncheck.isChecked()) daysToGenerateFilter.howOftenRun = DaysToGenerateFilter.UNCHECK_DAY_AFTER_QUERY;
+                            if (oncheckeddays.isChecked()) daysToGenerateFilter.howOftenRun = DaysToGenerateFilter.RUN_EVERY_WEEK_ON_CHECKED_DAYS;
+                            if (runonce.isChecked()) daysToGenerateFilter.howOftenRun = DaysToGenerateFilter.RUN_ONCE_THEN_DELETE;
+
+                            daysToGenerateFilter.dayOfWeek[0] = sun.isChecked();
+                            daysToGenerateFilter.dayOfWeek[1] = mon.isChecked();
+                            daysToGenerateFilter.dayOfWeek[2] = tue.isChecked();
+                            daysToGenerateFilter.dayOfWeek[3] = wed.isChecked();
+                            daysToGenerateFilter.dayOfWeek[4] = thu.isChecked();
+                            daysToGenerateFilter.dayOfWeek[5] = fri.isChecked();
+                            daysToGenerateFilter.dayOfWeek[6] = sat.isChecked();
+
+                            Prefs.saveDaysToGenerateFilter(CreateFiltersActivity.this, daysToGenerateFilter);
+
+                            _filterList.get(1).setCurrentValue(Prefs.getDaysToGenerateFilter(CreateFiltersActivity.this), getResources());
+                            m_adapter.notifyDataSetChanged();
+                        }
+                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                        }
+                    }).show();
+        }
+
+
+        if (id == 3) {
             final EditText input = new EditText(this);
             input.setInputType(InputType.TYPE_CLASS_NUMBER);
             input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(3)});
@@ -284,7 +351,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                             try {
                                 int r = Integer.parseInt(input.getText().toString());
                                 Prefs.saveDefaultRadius(CreateFiltersActivity.this, r + "");
-                                _filterList.get(2).setCurrentValue(r + (Prefs.isMetric(CreateFiltersActivity.this) ? getResources().getString(R.string.filter_radius_km) : getResources().getString(R.string.filter_radius_miles)));
+                                _filterList.get(3).setCurrentValue(r + (Prefs.isMetric(CreateFiltersActivity.this) ? getResources().getString(R.string.filter_radius_km) : getResources().getString(R.string.filter_radius_miles)));
                                 m_adapter.notifyDataSetChanged();
                             } catch (NumberFormatException e) {
                             }
@@ -297,7 +364,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                     .show();
         }
 
-        if (id == 3) {
+        if (id == 4) {
             // Cache type
             CheckBoxesFilter checkBoxesFilter = Prefs.getCheckBoxesFilter(this);
             String[] options = checkBoxesFilter.getOptions(getResources());
@@ -314,7 +381,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                             CheckBoxesFilter checkBoxesFilter = new CheckBoxesFilter(selections);
                             Prefs.saveCheckBoxesFilter(CreateFiltersActivity.this, checkBoxesFilter);
 
-                            _filterList.get(3).setCurrentValue(checkBoxesFilter, getResources());
+                            _filterList.get(4).setCurrentValue(checkBoxesFilter, getResources());
                             m_adapter.notifyDataSetChanged();
                         }
                     }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -324,7 +391,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                     }).create();
         }
 
-        if (id == 4) {
+        if (id == 5) {
             // Cache type
             CharSequence[] options = new CharSequence[CacheType.values().length];
             for (int i = 0; i < options.length; i++) {
@@ -343,7 +410,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                             CacheTypeList cacheTypeList = new CacheTypeList(selections);
                             Prefs.saveCacheTypeFilter(CreateFiltersActivity.this, cacheTypeList);
 
-                            _filterList.get(4).setCurrentValue(cacheTypeList);
+                            _filterList.get(5).setCurrentValue(cacheTypeList);
                             m_adapter.notifyDataSetChanged();
                         }
                     }).setNeutralButton(R.string.any, new DialogInterface.OnClickListener() {
@@ -353,14 +420,14 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                             cacheTypeList.setAll();
                             Prefs.saveCacheTypeFilter(CreateFiltersActivity.this, cacheTypeList);
 
-                            _filterList.get(4).setCurrentValue(cacheTypeList);
+                            _filterList.get(5).setCurrentValue(cacheTypeList);
                             m_adapter.notifyDataSetChanged();
                         }
 
                     }).create();
         }
 
-        if (id == 5) {
+        if (id == 6) {
             // Container type
 
             CharSequence[] options = new CharSequence[ContainerType.values().length];
@@ -381,7 +448,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                             ContainerTypeList containerTypeList = new ContainerTypeList(selections);
                             Prefs.saveContainerTypeFilter(CreateFiltersActivity.this, containerTypeList);
 
-                            _filterList.get(5).setCurrentValue(containerTypeList);
+                            _filterList.get(6).setCurrentValue(containerTypeList);
                             m_adapter.notifyDataSetChanged();
                         }
 
@@ -392,29 +459,29 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                             containerTypeList.setAll();
                             Prefs.saveContainerTypeFilter(CreateFiltersActivity.this, containerTypeList);
 
-                            _filterList.get(5).setCurrentValue(containerTypeList);
+                            _filterList.get(6).setCurrentValue(containerTypeList);
                             m_adapter.notifyDataSetChanged();
                         }
 
                     }).create();
         }
 
-        if (id == 6)
+        if (id == 7)
             return CreateDialog(R.string.filter_terrain, Prefs.getTerrainFilter(this), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Prefs.saveTerrainFilter(CreateFiltersActivity.this, newOneToFiveFilter);
-                    _filterList.get(6).setCurrentValue(newOneToFiveFilter);
+                    _filterList.get(7).setCurrentValue(newOneToFiveFilter);
                     m_adapter.notifyDataSetChanged();
                 }
             });
 
-        if (id == 7)
+        if (id == 8)
             return CreateDialog(R.string.filter_difficulty, Prefs.getDifficultyFilter(this), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Prefs.saveDifficultyFilter(CreateFiltersActivity.this, newOneToFiveFilter);
-                    _filterList.get(7).setCurrentValue(newOneToFiveFilter);
+                    _filterList.get(8).setCurrentValue(newOneToFiveFilter);
                     m_adapter.notifyDataSetChanged();
                 }
             });
@@ -624,6 +691,10 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
             }
         }
 
+        public void setCurrentValue(DaysToGenerateFilter daysToGenerateFilter, Resources resources) {
+            this.currentValue = daysToGenerateFilter.toLocalisedString(resources);
+        }
+
         public void setColor(int color) {
             this.color = color;
         }
@@ -631,6 +702,8 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
         public int getColor() {
             return color;
         }
+
+
     }
 
 
@@ -646,7 +719,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
             this.gpsLocation = gpsLocation;
 
             // Update displayed accuracy in the "Origin" list item
-            _filterList.get(1).setCurrentValue(queryStore.lat, queryStore.lon, gpsLocation);
+            _filterList.get(2).setCurrentValue(queryStore.lat, queryStore.lon, gpsLocation);
             m_adapter.notifyDataSetChanged();
         }
 
