@@ -153,7 +153,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
 
             Logger.d("[successMessage=" + successMessageParser.successMessage + "]");
 
-            if (!Prefs.getDownload(cxt) || Prefs.getDisabled(cxt) || successMessageParser.extractNumberPQ() == 0) {
+            if (!Prefs.getDownload(cxt) || successMessageParser.extractNumberPQ() == 0) {
                 // We we aren't downloading or creating disabled then can finish
                 // now
                 return new CreatePQResult(successMessageParser.toString(res));

@@ -32,7 +32,6 @@ public class Prefs {
     public static final String DEFAULT_DOWNLOAD_DIR = "default_download_dir_preference";
     public static final String USER_DOWNLOAD_DIR = "user_download_dir_preference";
     public static final String AUTO_NAME = "autoname_preference";
-    public static final String DISABLED = "disabled_preference";
     public static final String DEBUG_PREFERENCE = "debug_preference";
     private static final String CACHE_FILTER = "cache_type_filter_preference";
     private static final String CONTAINER_FILTER = "container_type_filter_preference";
@@ -108,10 +107,6 @@ public class Prefs {
 
     public static boolean isDefaultDownloadDir(Context cxt) {
         return PreferenceManager.getDefaultSharedPreferences(cxt).getBoolean(DEFAULT_DOWNLOAD_DIR, true);
-    }
-
-    public static boolean getDisabled(Context cxt) {
-        return PreferenceManager.getDefaultSharedPreferences(cxt).getBoolean(DISABLED, false);
     }
 
     public static boolean getDownload(Context cxt) {
