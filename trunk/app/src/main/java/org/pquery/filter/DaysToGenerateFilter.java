@@ -45,6 +45,9 @@ public class DaysToGenerateFilter {
         // There was no saved state, or failed to restore state so
         // setup the initial state of this filter
         howOftenRun = RUN_ONCE_THEN_DELETE;
+        for (int i=0; i<=6; i++) {
+            dayOfWeek[i] = true;
+        }
     }
 
     /**
