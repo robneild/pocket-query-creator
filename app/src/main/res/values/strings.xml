@@ -89,15 +89,19 @@
     <string name="login_geocaching_com">Logging into Geocaching.com</string>
     <string name="retrieving_creation_page">Retrieving Pocket Query creation page…</string>
     <string name="bad_credentials">Login to Geocaching.com failed. Verify your credentials are correct"</string>
+    <string name="failed_login_form">Failed to fill in login form</string>
+    <string name="unable_to_submit_login">Unable to submit login form</string>
     <string name="not_premium">You aren\'t a premium member. Goto Geocaching.com and upgrade</string>
     <string name="login_download_fail">Couldn\'t download login page</string>
     <string name="service_creation_failed">Creation failed</string>
     <string name="service_creation_success">Created ok</string>
-    <string name="gps_wait">Waiting for GPS fix</string>
+    <string name="gps_wait">Waiting for GPS fix (accuracy %1$dm)</string>
     <string name="gps_timeout">Timed out getting GPS fix</string>
     <string name="retrieve_page">Retrieving page</string>
     <string name="refresh_page">Refreshing page</string>
     <string name="creating">Submitting creation page</string>
+    <string name="submitting">submitting</string>
+    <string name="unable_to_submit_creation_form">Unable to submit creation form</string>
     <string name="creation_pending">View creation progress</string>
     <string name="cancel_creation">Cancel Creation</string>
     <string name="create">Create</string>
@@ -107,6 +111,8 @@
     <string name="retry_dont">Don\'t retry</string>
     <string name="retry_few">Retry a few times</string>
     <string name="retry_long">Retry for a long time</string>
+    <string name="downloaded_pq">Pocket Query downloaded</string>
+    <string name="pq_downloaded_into">Pocket Query downloaded into folder %s</string>
 
     <string-array name="retry">
         <item>@string/retry_dont</item>
@@ -128,7 +134,8 @@
         <item>150</item>
         <item>1500</item>
     </string-array>
-    <string name="download_failed">Unable to download Pocket Query</string>
+    <string name="download_failed">Download failed</string>
+    <string name="unable_to_write_file">Unable to write to output file</string>
     <string name="service_cancelled">User cancelled</string>
     <string name="filter_terrain">Terrain</string>
     <string name="filter_difficulty">Difficulty</string>
@@ -145,7 +152,10 @@
     <string name="external_storage_unavailable">Unable to download pocket query as external storage currently unavailable</string>
     <string name="file_creation_error">Unable to create output file</string>
     <string name="creation_zero_pqs">Pocket Query created but didn\'t find any matching geocaches</string>
-    <string name="created_ok">Pocket Query created and currently matches</string>
+    <string name="created_ok_and_matches">Pocket Query created and currently matches %d caches</string>
+    <string name="parse_error_download_link">Parse error. Can\'t extract download link</string>
+    <string name="parse_error_generated_pqs">Parse error. Can\'t extract numb generated pqs</string>
+    <string name="response_indicate_failure">Response seemed to indicate creation failed</string>
     <string name="not_geocaching_page">Retrieved web page doesn\'t mention geocaching. A wifi login page?</string>
     <string name="download_not_ready">Pocket Query hasn\'t been run yet</string>
     <string name="auto_name">During creation, try to set from location name</string>
@@ -171,6 +181,7 @@
     <string name="prefs_login">Login credentials</string>
     <string name="actionbar_view_details">Detail</string>
     <string name="downloading">Downloading</string>
+    <string name="requesting">requesting</string>
     <string-array name="create_categories">
         <item>Name/Radius</item>
         <item>Location</item>
@@ -239,4 +250,10 @@
     <string name="daystogenerate_runQueryEveryWeekOnCheckedDays">Run query every week on following days</string>
 
     <string name="filter_days_to_generate">Days to Generate</string>
+
+    <string name="creating_pq">Creating Pocket Query</string>
+    <string name="downloading_pq">Downloading Pocket Query %s</string>
+    <string name="create_failed">Create failed</string>
+    <string name="created_ok">Created ok</string>
+
 </resources>

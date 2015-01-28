@@ -1,5 +1,8 @@
 package org.pquery.service;
 
+import android.content.res.Resources;
+
+import org.pquery.R;
 import org.pquery.webdriver.FailurePermanentException;
 
 import java.io.File;
@@ -17,16 +20,16 @@ public class DownloadPQResult {
         this.fileNameDownloaded = fileNameDownloaded;
     }
 
-    public String getTitle() {
+    public String getTitle(Resources res) {
         if (failure == null)
-            return "DownloadablePQ Downloaded";
+            return res.getString(R.string.downloaded_pq);
         else
-            return "Download failed";
+            return res.getString(R.string.download_failed);
     }
 
-    public String getMessage() {
+    public String getMessage(Resources res) {
         if (failure == null)
-            return "Pocket Query downloaded into " + fileNameDownloaded.getAbsolutePath();
+            return String.format(res.getString(R.string.pq_downloaded_into), fileNameDownloaded.getAbsolutePath());
         else
             return failure.toString();
     }
