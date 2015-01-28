@@ -52,7 +52,7 @@ public class SubmitFormPageTask extends RetriableTask<String> {
         try {
             // Initialize to 0%
 
-            progressReport(0, res.getString(R.string.creating), "submitting");
+            progressReport(0, res.getString(R.string.creating), res.getString(R.string.submitting));
 
             try {
                 // https://www.geocaching.com/login/default.aspx?redir=%2fpocket%2fdefault.aspx%3f
@@ -73,7 +73,7 @@ public class SubmitFormPageTask extends RetriableTask<String> {
                 Prefs.saveCookies(cxt, cookies);
 
             } catch (IOException e) {
-                throw new FailureException("Unable to submit creation form", e);
+                throw new FailureException(res.getString(R.string.unable_to_submit_creation_form), e);
             }
 
             return html;

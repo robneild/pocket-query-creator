@@ -148,10 +148,10 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
             String html = submitTask.call();
 
 
-            SuccessMessageParser successMessageParser = new SuccessMessageParser(html);
+            SuccessMessageParser successMessageParser = new SuccessMessageParser(html, res);
 
 
-            Logger.d("[successMessage=" + successMessageParser.successMessage + "]");
+            Logger.d("[successMessage=" + successMessageParser.getSuccessMessage() + "]");
 
             if (!Prefs.getDownload(cxt) || successMessageParser.extractNumberPQ() == 0) {
                 // We we aren't downloading or creating disabled then can finish
@@ -455,7 +455,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
 
 
         } catch (ParseException e) {
-            throw new FailurePermanentException("Failed to fill in login form", e.getMessage());
+            throw new FailurePermanentException(res.getString(R.string.failed_login_form), e.getMessage());
         }
 
         List<BasicNameValuePair> nameValuePairs = loginFormExtra.toNameValuePairs();
@@ -482,8 +482,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
             queryStore.lon = gpsLocation.getLongitude();
         }
 
-        publishProgress(new ProgressInfo(1, res.getString((R.string.gps_wait)) + " (accuracy "
-                + (int) gpsLocation.getAccuracy() + "m)"));
+        publishProgress(new ProgressInfo(1, String.format(res.getString((R.string.gps_wait)), (int)gpsLocation.getAccuracy())));
     }
 
     @Override

@@ -52,7 +52,7 @@ public class DownloadTask extends RetriableTask<File> {
             client.getCookieStore().addCookie(c);
         }
 
-        progressReport(0, res.getString(R.string.downloading), "requesting");
+        progressReport(0, res.getString(R.string.downloading), res.getString(R.string.requesting));
 
         // Get the pocket query creation page
         // and read the response. Need to detect if logged in or no
@@ -104,7 +104,7 @@ public class DownloadTask extends RetriableTask<File> {
             Logger.d("Written to file ok");
 
         } catch (IOException e) {
-            throw new FailurePermanentException("Unable to write to output file");
+            throw new FailurePermanentException(res.getString(R.string.unable_to_write_file));
         }
 
         return output;

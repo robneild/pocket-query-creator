@@ -30,19 +30,16 @@ import java.util.regex.Pattern;
  */
 public class SuccessMessageParser {
 
-    private static final String PARSE_ERROR_DOWNLOAD = "Parse error. Can't extract download link";
-    private static final String PARSE_ERROR_NUMB = "Parse error. Can't extract numb generated pqs";
-    private static final String NOT_FIND = "Response seemed to indicate creation failed";
-
-    public String successMessage;
+    private String successMessage;
+    private Resources res;
 
     /**
      * Try to parse out success message from passed in html
      * <p/>
      * Extracts out everything between <p class="Success"> and </p>
      */
-    public SuccessMessageParser(String html) throws FailurePermanentException {
-
+    public SuccessMessageParser(String html, Resources res) throws FailurePermanentException {
+        this.res = res;
         final String START = Pattern.quote("<p class=\"Success\">");
         final String END = Pattern.quote("</p>");
 
@@ -52,7 +49,7 @@ public class SuccessMessageParser {
             String name = m.group(1);
             successMessage = name;
         } else
-            throw new FailurePermanentException(NOT_FIND);
+            throw new FailurePermanentException(this.res.getString(R.string.response_indicate_failure));
     }
 
 
@@ -76,7 +73,7 @@ public class SuccessMessageParser {
             return guid;
         }
 
-        throw new FailurePermanentException(PARSE_ERROR_DOWNLOAD);
+        throw new FailurePermanentException(res.getString(R.string.parse_error_download_link));
     }
 
     /**
@@ -93,10 +90,14 @@ public class SuccessMessageParser {
             return Integer.parseInt(name);
         }
 
-        throw new FailurePermanentException(PARSE_ERROR_NUMB);
+        throw new FailurePermanentException(res.getString(R.string.parse_error_generated_pqs));
     }
 
     public String toString(Resources res) throws FailurePermanentException {
-        return res.getString(R.string.created_ok) + " " + extractNumberPQ() + " caches";
+        return String.format(res.getString(R.string.created_ok_and_matches), extractNumberPQ());
+    }
+
+    public String getSuccessMessage() {
+        return successMessage;
     }
 }

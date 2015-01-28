@@ -55,7 +55,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
         try {
             // Initialize to 0%
 
-            progressReport(0, res.getString(R.string.retrieving_page), "requesting");
+            progressReport(0, res.getString(R.string.retrieving_page), res.getString(R.string.requesting));
 
             client = new DefaultHttpClient();
 
@@ -142,7 +142,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
             // Check the response. Detecting login and premium state
             if (pageParser.isLoggedIn()) {
                 if (!pageParser.isPremium())
-                    throw new FailurePermanentException("You aren't a premium member. Goto Geocaching.com and upgrade");
+                    throw new FailurePermanentException(res.getString(R.string.not_premium));
 
                 // This is Good. User already logged in and proper
                 // page retrieved. Cookies must be good
@@ -166,12 +166,12 @@ public class RetrievePageTask extends RetriableTask<Source> {
                 loginFormExtra.setValueChecked("ctl00$cbRememberMe", "on");
                 loginFormExtra.checkValue("ctl00$btnSignIn", "Sign In");
             } catch (ParseException e) {
-                throw new FailurePermanentException("Failed to fill in login form");
+                throw new FailurePermanentException(res.getString(R.string.failed_login_form));
             }
 
             List<BasicNameValuePair> nameValuePairs = loginFormExtra.toNameValuePairs();
 
-            progressReport(50, res.getString(R.string.login_geocaching_com), "requesting");
+            progressReport(50, res.getString(R.string.login_geocaching_com), res.getString(R.string.requesting));
 
             try {
                 // https://www.geocaching.com/login/default.aspx?redir=%2fpocket%2fdefault.aspx%3f
@@ -192,7 +192,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
                 cookies = client.getCookieStore().getCookies();
 
             } catch (IOException e) {
-                throw new FailureException("Unable to submit login form", e);
+                throw new FailureException(res.getString(R.string.unable_to_submit_login), e);
             }
 
             //

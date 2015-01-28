@@ -1,5 +1,8 @@
 package org.pquery.service;
 
+import android.content.res.Resources;
+
+import org.pquery.R;
 import org.pquery.webdriver.FailurePermanentException;
 
 public class CreatePQResult {
@@ -21,19 +24,19 @@ public class CreatePQResult {
     }
 
 
-    public String getTitle() {
+    public String getTitle(Resources res) {
         if (failure != null)
-            return "Create failed";
+            return res.getString(R.string.create_failed);
         if (downloadPQResult != null)
-            return downloadPQResult.getTitle();
-        return "Created OK";
+            return downloadPQResult.getTitle(res);
+        return res.getString(R.string.created_ok);
     }
 
-    public String getMessage() {
+    public String getMessage(Resources res) {
         if (failure != null)
             return failure.toString();
         if (downloadPQResult != null)
-            return downloadPQResult.getMessage();
+            return downloadPQResult.getMessage(res);
         return successMessage;
     }
 }

@@ -32,27 +32,36 @@
     <string name="any">Jedes</string>
     <string name="auto_name">Versuche den Standortnamen zu setzen</string>
     <string name="bad_credentials">Login in Geocaching.com fehlgeschlagen. Prüfe Deine Zugangsdaten in den Einstellungen.</string>
+    <string name="failed_login_form">Fehler beim Ausfüllen des Login Formulars</string>
+    <string name="unable_to_submit_login">Fehler beim Senden des Login Formulars</string>
     <string name="cancel_creation">Erstellung abbrechen</string>
     <string name="change_schedule">Ausführungsplan ändern</string>
     <string name="container_large">Groß</string>
-    <string name="container_micro">Micro</string>
-    <string name="container_other">Andere</string>
+    <string name="container_micro">Mikro</string>
+    <string name="container_other">Sonstige</string>
     <string name="container_regular">Normal</string>
     <string name="container_small">Klein</string>
     <string name="container_unknown">Unbekannt</string>
     <string name="container_virtual">Virtuell</string>
     <string name="create">Neu</string>
-    <string name="created_ok">Pocket Query wurde erstellt und Treffer gefunden</string>
+    <string name="created_ok_and_matches">Pocket Query wurde erstellt und %d Caches gefunden</string>
+    <string name="parse_error_download_link">Lesefehler: Downloadlink nicht erkannt.</string>
+    <string name="parse_error_generated_pqs">Lesefehler: Anzahl generierter PQs nicht erkannt.</string>
+    <string name="response_indicate_failure">Fehler bei der Erstellung der PQ.</string>
     <string name="creating">Seite wird übertragen</string>
+    <string name="submitting">sende</string>
+    <string name="unable_to_submit_creation_form">Fehler beim Senden des Erstellungsformulars</string>
     <string name="creation_pending">Verlauf der Erstellung anzeigen</string>
     <string name="creation_zero_pqs">Pocket Query wurde erstellt, aber es wurden keine Geocaches gefunden</string>
     <string name="dialog_title_password_preference">Eingabe Passwort</string>
     <string name="dialog_title_username_preference">Eingabe Benutzername</string>
     <string name="directory_picker_title">Wähle Verzeichnis</string>
-    <string name="download_failed">Download der Pocket Query fehlgeschlagen</string>
+    <string name="download_failed">Download fehlgeschlagen</string>
+    <string name="unable_to_write_file">Fehler beim Schreiben der Datei</string>
     <string name="download_in_progress">Lade Pocket Query</string>
     <string name="download_not_ready">Pocket Query wurde noch nicht ausgeführt</string>
     <string name="downloading">Download läuft</string>
+    <string name="requesting">Seite wird angefordert</string>
     <string name="email_bad_response">Email Logdatei</string>
     <string name="error_parsing">Problem beim Lesen der Geocaching Webseite</string>
     <string name="external_storage_unavailable">Fehler beim Herunterladen der Pocket Query, das externe Dateisystem ist nicht verfügbar</string>
@@ -71,7 +80,7 @@
     <string name="filter_travelbug">Enthält Travel Bugs</string>
     <string name="get_pq_list">Lade PQ Liste</string>
     <string name="gps_timeout">Zeitüberschreibung beim GPS Fix</string>
-    <string name="gps_wait">Warte auf den GPS Fix</string>
+    <string name="gps_wait">Warte auf den GPS Fix (Genauigkeit %1$dm)</string>
     <string name="help">Hilfe</string>
     <string name="login_download_fail">Konnte Loginseite nicht laden</string>
     <string name="login_geocaching_com">Anmeldung bei Geocaching.com</string>
@@ -82,6 +91,10 @@
     <string name="retry_dont">Keine Wiederholung</string>
     <string name="retry_few">Wenige Wiederholungen</string>
     <string name="retry_long">Mehrmalige Wiederholungen</string>
+
+    <string name="downloaded_pq">Pocket Query heruntergeladen</string>
+    <string name="pq_downloaded_into">Pocket Query wurde im Verzeichnis %s gespeichert</string>
+
 
     <string name="prefs_advanced">Erweitert</string>
     <string name="prefs_creation">Erstellung</string>
@@ -162,5 +175,16 @@
     <string name="pqlist_info_url">file:///android_asset/pqlist_de.html</string>
 
     <string name="maps_activity_title">Lange drücken, um einen Punkt zu selektieren, dann zurück.</string>
+
+    <string name="daystogenerate_runqueryonce">Starte diese Query einmal und lösche sie dann</string>
+    <string name="daystogenerate_uncheckDayOfWeekAfterQuery">Auswahl des Wochentages nach Ablauf der Query aufheben</string>
+    <string name="daystogenerate_runQueryEveryWeekOnCheckedDays">Starte diese Query an jedem ausgewählten Tag der Woche</string>
+
+    <string name="filter_days_to_generate">An diesen Tagen erstellen</string>
+
+    <string name="creating_pq">Erstelle Pocket Query</string>
+    <string name="downloading_pq">Lade Pocket Query %s herunter</string>
+    <string name="create_failed">Create failed</string>
+    <string name="created_ok">Created ok</string>
 
 </resources>

@@ -14,6 +14,7 @@ import junit.framework.Assert;
 
 import org.pquery.Main;
 import org.pquery.QueryStore;
+import org.pquery.R;
 import org.pquery.dao.DownloadablePQ;
 import org.pquery.dao.RepeatablePQ;
 import org.pquery.util.Logger;
@@ -154,7 +155,7 @@ public class PQService extends Service {
 
         wakeLock = ((PowerManager) getSystemService(Context.POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PocketQuery");
         wakeLock.acquire();
-        notificationUtil.startInProgressNotification("Creating DownloadablePQ", "", getPendingIntent());
+        notificationUtil.startInProgressNotification(getApplicationContext().getResources().getString(R.string.creating_pq), "", getPendingIntent());
 
         // Kick off background thread
 
@@ -163,8 +164,8 @@ public class PQService extends Service {
             @Override
             protected void onPostExecute(CreatePQResult result) {
                 super.onPostExecute(result);
-                String title = result.getTitle();
-                String message = result.getMessage();
+                String title = result.getTitle(getResources());
+                String message = result.getMessage(getResources());
                 int notificationId = notificationUtil.showEndNotification(title, message);
 
                 Prefs.erasePQListState(PQService.this);        // erase any DownloadablePQ list as we know is out-of-date now
@@ -200,15 +201,15 @@ public class PQService extends Service {
 
         wakeLock = ((PowerManager) getSystemService(Context.POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PocketQuery");
         wakeLock.acquire();
-        notificationUtil.startInProgressNotification("Downloading DownloadablePQ " + pq.name, "", getPendingIntent());
+        notificationUtil.startInProgressNotification(String.format(getApplicationContext().getResources().getString(R.string.downloading_pq), pq.name), "", getPendingIntent());
 
         downloadPQAsync = new DownloadPQAsync(getApplicationContext(), pq) {
 
             @Override
             protected void onPostExecute(DownloadPQResult result) {
                 super.onPostExecute(result);
-                String title = result.getTitle();
-                String message = result.getMessage();
+                String title = result.getTitle(getResources());
+                String message = result.getMessage(getResources());
                 int notificationId = notificationUtil.showEndNotification(title, message);
 
                 sendMessageToClients(title, message, notificationId);
