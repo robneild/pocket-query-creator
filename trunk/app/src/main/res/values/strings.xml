@@ -95,7 +95,8 @@
     <string name="login_download_fail">Couldn\'t download login page</string>
     <string name="service_creation_failed">Creation failed</string>
     <string name="service_creation_success">Created ok</string>
-    <string name="gps_wait">Waiting for GPS fix (accuracy %1$dm)</string>
+    <string name="gps_wait_no_fix">Waiting for GPS fix</string>
+    <string name="gps_wait">Waiting for GPS fix (accuracy %dm)</string>
     <string name="gps_timeout">Timed out getting GPS fix</string>
     <string name="retrieve_page">Retrieving page</string>
     <string name="refresh_page">Refreshing page</string>
@@ -113,6 +114,7 @@
     <string name="retry_long">Retry for a long time</string>
     <string name="downloaded_pq">Pocket Query downloaded</string>
     <string name="pq_downloaded_into">Pocket Query downloaded into folder %s</string>
+    <string name="processing_form">Processing form</string>
 
     <string-array name="retry">
         <item>@string/retry_dont</item>
@@ -255,5 +257,6 @@
     <string name="downloading_pq">Downloading Pocket Query %s</string>
     <string name="create_failed">Create failed</string>
     <string name="created_ok">Created ok</string>
+    <string name="will_try_again">Will try again in %d seconds</string>
 
 </resources>

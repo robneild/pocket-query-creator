@@ -19,12 +19,10 @@ import java.io.File;
 public class CreateOutputDirectoryTask extends RetriableTask<File> {
 
     private Context cxt;
-    private Resources res;
 
     public CreateOutputDirectoryTask(int numberOfRetries, int fromPercent, int toPercent, ProgressListener progressListener, CancelledListener cancelledListener, Context cxt) {
-        super(numberOfRetries, fromPercent, toPercent, progressListener, cancelledListener);
+        super(numberOfRetries, fromPercent, toPercent, progressListener, cancelledListener, cxt.getResources());
         this.cxt = cxt;
-        this.res = cxt.getResources();
     }
 
     @Override

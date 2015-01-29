@@ -80,13 +80,15 @@
     <string name="filter_travelbug">Enthält Travel Bugs</string>
     <string name="get_pq_list">Lade PQ Liste</string>
     <string name="gps_timeout">Zeitüberschreibung beim GPS Fix</string>
-    <string name="gps_wait">Warte auf den GPS Fix (Genauigkeit %1$dm)</string>
+    <string name="gps_wait_no_fix">Warte auf GPS Fix</string>
+    <string name="gps_wait">Warte auf GPS Fix (Genauigkeit %dm)</string>
     <string name="help">Hilfe</string>
     <string name="login_download_fail">Konnte Loginseite nicht laden</string>
     <string name="login_geocaching_com">Anmeldung bei Geocaching.com</string>
     <string name="not_geocaching_page">Geladene Webseite ist keine Geocaching-Seite. WLAN Anmeldung?</string>
     <string name="not_premium">Du bist kein Premium Mitglied. Erweitere Dein Konto auf Geocaching.com</string>
     <string name="parsing">Lesen</string>
+    <string name="processing_form">Verarbeite Formular</string>
 
     <string name="retry_dont">Keine Wiederholung</string>
     <string name="retry_few">Wenige Wiederholungen</string>
@@ -184,7 +186,8 @@
 
     <string name="creating_pq">Erstelle Pocket Query</string>
     <string name="downloading_pq">Lade Pocket Query %s herunter</string>
-    <string name="create_failed">Create failed</string>
-    <string name="created_ok">Created ok</string>
+    <string name="create_failed">Erstellung fehlgeschlagen</string>
+    <string name="created_ok">Erstellung ok</string>
+    <string name="will_try_again">Neuer Versuch in %d Sekunden</string>
 
 </resources>
