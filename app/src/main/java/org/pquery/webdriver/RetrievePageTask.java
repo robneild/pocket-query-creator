@@ -27,15 +27,12 @@ import java.util.List;
 public class RetrievePageTask extends RetriableTask<Source> {
 
     private Context cxt;
-    private Resources res;
     private String urlPath;
 
     public RetrievePageTask(int numberOfRetries, int fromPercent, int toPercent, ProgressListener progressListener, CancelledListener cancelledListener, Context cxt, String urlPath) {
-        super(numberOfRetries, fromPercent, toPercent, progressListener, cancelledListener);
+        super(numberOfRetries, fromPercent, toPercent, progressListener, cancelledListener, cxt.getResources());
         this.cxt = cxt;
         this.urlPath = urlPath;
-        this.res = cxt.getResources();
-
     }
 
     @Override

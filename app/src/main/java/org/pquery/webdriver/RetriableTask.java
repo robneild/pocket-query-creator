@@ -1,9 +1,14 @@
 package org.pquery.webdriver;
 
+import android.content.res.Resources;
+
 import junit.framework.Assert;
+
+import org.pquery.R;
 
 public abstract class RetriableTask<T> {
 
+    protected Resources res;
     private int numberOfTriesLeft; // number left
     private int lastPercent;
     private ProgressListener progressListener;
@@ -11,7 +16,7 @@ public abstract class RetriableTask<T> {
     private int fromPercent;
     private int toPercent;
 
-    public RetriableTask(int numberOfRetries, int fromPercent, int toPercent, ProgressListener progressListener, CancelledListener cancelledListener) {
+    public RetriableTask(int numberOfRetries, int fromPercent, int toPercent, ProgressListener progressListener, CancelledListener cancelledListener, Resources res) {
         Assert.assertNotNull(progressListener);
         Assert.assertNotNull(cancelledListener);
         Assert.assertTrue(toPercent > fromPercent);
@@ -21,6 +26,7 @@ public abstract class RetriableTask<T> {
         this.cancelledListener = cancelledListener;
         this.fromPercent = fromPercent;
         this.toPercent = toPercent;
+        this.res = res;
     }
 
     public T call() throws InterruptedException, FailurePermanentException {
@@ -60,7 +66,8 @@ public abstract class RetriableTask<T> {
 
     protected void progressReport(int percent, FailurePermanentException failure, int retryIn) {
         this.lastPercent = percent;
-        progressListener.progressReport(ProgressInfo.create(scalePercent(percent), failure, retryIn));
+        String message = failure.toHTML() + "<br><br>" + String.format(res.getString(R.string.will_try_again), retryIn);
+        progressListener.progressReport(ProgressInfo.create(scalePercent(percent), message, null));
     }
 
     private int scalePercent(int percent) {

@@ -15,11 +15,6 @@ public class ProgressInfo {
             return new ProgressInfo(percent, plainMessage);
     }
 
-    public static ProgressInfo create(int percent, FailurePermanentException failure, int retryIn) {
-        return new ProgressInfo(percent, failure.toHTML() + "<br><br>Will try again in " + retryIn + " seconds");
-    }
-
-
     public ProgressInfo(int percent, String htmlMessage) {
         this.percent = percent;
         this.htmlMessage = htmlMessage;

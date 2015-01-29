@@ -26,16 +26,14 @@ import java.util.List;
 public class DownloadTask extends RetriableTask<File> {
 
     private Context cxt;
-    private Resources res;
     private String url;
     private File dir;
     private String filename;
 
     public DownloadTask(int numberOfRetries, int fromPercent, int toPercent, ProgressListener progressListener, CancelledListener cancelledListener, Context cxt, String url, File dir, String filename) {
-        super(numberOfRetries, fromPercent, toPercent, progressListener, cancelledListener);
+        super(numberOfRetries, fromPercent, toPercent, progressListener, cancelledListener, cxt.getResources());
         this.cxt = cxt;
         this.url = url;
-        this.res = cxt.getResources();
         this.dir = dir;
         this.filename = filename;
     }

@@ -97,7 +97,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
         // Needs to be done here, on UI thread
         if (!queryStore.haveLocation()) {
             Logger.d("Starting gps");
-            publishProgress(new ProgressInfo(1, res.getString((R.string.gps_wait))));
+            publishProgress(new ProgressInfo(1, res.getString((R.string.gps_wait_no_fix))));
             startGPS();
         }
     }
@@ -137,7 +137,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
             RetrievePageTask loginTask = new RetrievePageTask(retryCount, 5, 30, this, this, cxt, "/pocket/gcquery.aspx");
             Source parsedHtml = loginTask.call();
 
-            publishProgress(new ProgressInfo(30, "Processing form"));
+            publishProgress(new ProgressInfo(30, res.getString(R.string.processing_form)));
 
             GeocachingPage createPage = new GeocachingPage(parsedHtml);
             List<BasicNameValuePair> form = fillInCreateForm(createPage);
@@ -482,7 +482,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
             queryStore.lon = gpsLocation.getLongitude();
         }
 
-        publishProgress(new ProgressInfo(1, String.format(res.getString((R.string.gps_wait)), (int)gpsLocation.getAccuracy())));
+        publishProgress(new ProgressInfo(1, String.format(res.getString(R.string.gps_wait), (int)gpsLocation.getAccuracy())));
     }
 
     @Override
