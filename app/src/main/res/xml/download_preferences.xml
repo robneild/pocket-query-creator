@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--
+    No longer used as can control creation days now
+
     <CheckBoxPreference
         android:defaultValue="false"
         android:disableDependentsState="true"
         android:key="disabled_preference"
         android:summary="@string/summary_disabled_preference"
         android:title="@string/title_disabled_preference" />
+    -->
 
     <CheckBoxPreference
         android:defaultValue="true"
-        android:dependency="disabled_preference"
         android:key="download_preference"
         android:summary="@string/summary_download_preference"
         android:title="@string/title_download_preference" />

@@ -84,14 +84,17 @@ public class DaysToGenerateFilter {
     }
 
     /**
-     * Try to create a human description of this filter
+     * Try to create a human description of this filter to shown as summary in filter list
      */
     public String toLocalisedString(Resources res) {
 
         String ret = "";
 
-        if (howOftenRun == RUN_ONCE_THEN_DELETE)
-            return res.getString(R.string.daystogenerate_runqueryonce);
+        // Start with general strategy
+
+        if (howOftenRun == RUN_ONCE_THEN_DELETE) {
+            ret += res.getString(R.string.daystogenerate_runqueryonce);
+        }
 
         if (howOftenRun == UNCHECK_DAY_AFTER_QUERY)
             ret += res.getString(R.string.daystogenerate_uncheckDayOfWeekAfterQuery);
@@ -100,6 +103,8 @@ public class DaysToGenerateFilter {
             ret += res.getString(R.string.daystogenerate_runQueryEveryWeekOnCheckedDays);
 
 
+        // Add short list of selected days
+
         List days = new ArrayList<String>();
         String [] shortWeekDayNames = res.getStringArray(R.array.shortWeekdayNames);
 
@@ -107,6 +112,11 @@ public class DaysToGenerateFilter {
             if (dayOfWeek[i])
                 days.add(shortWeekDayNames[i]);
         }
+
+        // If "Run once" is being used, and all days selected, then don't bother adding the days
+        // This is the most common used by 99.9% of people
+        if (howOftenRun == RUN_ONCE_THEN_DELETE && days.size() == 7)
+            return ret;
 
         ret += " (" + TextUtils.join(", ", days.toArray()) + ")";
 
