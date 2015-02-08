@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
 
+import static org.pquery.webdriver.HttpClientFactory.createHttpClient;
+
 public class RetrievePageTask extends RetriableTask<Source> {
 
     private Context cxt;
@@ -54,7 +56,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
 
             progressReport(0, res.getString(R.string.retrieving_page), res.getString(R.string.requesting));
 
-            client = new DefaultHttpClient();
+            client = createHttpClient();
 
             for (Cookie c : cookies) {
                 Logger.d("restored cookie " + c);

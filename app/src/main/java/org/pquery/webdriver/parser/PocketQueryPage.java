@@ -32,7 +32,14 @@ public class PocketQueryPage {
      * @throws ParseException
      */
     public DownloadablePQ[] getReadyForDownload() throws ParseException {
+
+        // Get table containing active (downloadable) PQ called uxOfflinePQTable
+        // There were some crashes reported here with it returning null
+        // A guess would be that somehow people are no longer premium members. In that case the 'uxOfflinePQTable' is missing
+
         Element table = getReadyForDownloadTable();
+        if (table==null)
+            throw new ParseException("Unable to find PQ table. Are you still a premium member?");
 
         List<Element> rows = table.getAllElements(HTMLElementName.TR);
 

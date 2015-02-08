@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import static org.pquery.webdriver.HttpClientFactory.createHttpClient;
+
 /**
  * Download file over HTTP
  */
@@ -42,7 +44,7 @@ public class DownloadTask extends RetriableTask<File> {
     protected File task() throws FailureException, FailurePermanentException, InterruptedException {
 
         FileDetails pq;
-        DefaultHttpClient client = new DefaultHttpClient();
+        DefaultHttpClient client = createHttpClient();
         List<Cookie> cookies = Prefs.getCookies(cxt);
 
         for (Cookie c : cookies) {
