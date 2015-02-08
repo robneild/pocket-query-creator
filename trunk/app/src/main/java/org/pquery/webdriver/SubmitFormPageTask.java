@@ -16,6 +16,8 @@ import org.pquery.util.Util;
 import java.io.IOException;
 import java.util.List;
 
+import static org.pquery.webdriver.HttpClientFactory.createHttpClient;
+
 public class SubmitFormPageTask extends RetriableTask<String> {
 
     private Context cxt;
@@ -39,7 +41,7 @@ public class SubmitFormPageTask extends RetriableTask<String> {
         // Create client and restore cookies so we will be logged in
         // ASSUMING already logged in at this stage
 
-        DefaultHttpClient client = new DefaultHttpClient();
+        DefaultHttpClient client = createHttpClient();
 
         List<Cookie> cookies = Prefs.getCookies(cxt);
         for (Cookie c : cookies) {
