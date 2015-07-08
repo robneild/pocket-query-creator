@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -36,12 +38,13 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import junit.framework.Assert;
 
-import org.pquery.dao.Schedule;
 import org.pquery.filter.CacheType;
 import org.pquery.filter.CacheTypeList;
 import org.pquery.filter.CheckBoxesFilter;
 import org.pquery.filter.ContainerType;
 import org.pquery.filter.ContainerTypeList;
+import org.pquery.filter.Country;
+import org.pquery.filter.CountryList;
 import org.pquery.filter.DaysToGenerateFilter;
 import org.pquery.filter.OneToFiveFilter;
 import org.pquery.service.PQService;
@@ -147,7 +150,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
 
         setContentView(R.layout.create_filters_fragment);
 
-        // Create list of filters, adding each one
+        // Create the list of of possible filters, adding an option to open a dialog for each one
 
         _filterList = new ArrayList<CreationOption>();
         this.m_adapter = new CreationOptionAdapter(this, R.layout.create_filters_fragment_list, _filterList);
@@ -174,27 +177,32 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
 
         filterOption = new CreationOption(getResources().getString(R.string.filter_checkboxes), R.drawable.tick,
                 getResources());
-        filterOption.setCurrentValue(Prefs.getCheckBoxesFilter(this), getResources());
+        filterOption.setCurrentValue(Prefs.getCheckBoxesFilter(this).toLocalisedString(getResources()));
         _filterList.add(filterOption);
 
         filterOption = new CreationOption(getResources().getString(R.string.filter_cache_type), R.drawable.ghost,
                 getResources());
-        filterOption.setCurrentValue(Prefs.getCacheTypeFilter(this));
+        filterOption.setCurrentValue(Prefs.getCacheTypeFilter(this).toLocalisedString(getResources()));
         _filterList.add(filterOption);
 
         filterOption = new CreationOption(getResources().getString(R.string.filter_container),
                 R.drawable.container, getResources());
-        filterOption.setCurrentValue(Prefs.getContainerTypeFilter(this));
+        filterOption.setCurrentValue(Prefs.getContainerTypeFilter(this).toLocalisedString(getResources()));
         _filterList.add(filterOption);
 
         filterOption = new CreationOption(getResources().getString(R.string.filter_terrain), R.drawable.mountain,
                 getResources());
-        filterOption.setCurrentValue(Prefs.getTerrainFilter(this));
+        filterOption.setCurrentValue(Prefs.getTerrainFilter(this).toLocalisedString(this));
         _filterList.add(filterOption);
 
         filterOption = new CreationOption(getResources().getString(R.string.filter_difficulty), R.drawable.maze,
                 getResources());
-        filterOption.setCurrentValue(Prefs.getDifficultyFilter(this));
+        filterOption.setCurrentValue(Prefs.getDifficultyFilter(this).toLocalisedString(this));
+        _filterList.add(filterOption);
+
+        filterOption = new CreationOption(getResources().getString(R.string.filter_countries), R.drawable.ryanlerch_flagpole,
+                getResources());
+        filterOption.setCurrentValue(Prefs.getCountriesFilter(this).toLocalisedString(getResources()));
         _filterList.add(filterOption);
 
 
@@ -381,7 +389,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                             CheckBoxesFilter checkBoxesFilter = new CheckBoxesFilter(selections);
                             Prefs.saveCheckBoxesFilter(CreateFiltersActivity.this, checkBoxesFilter);
 
-                            _filterList.get(4).setCurrentValue(checkBoxesFilter, getResources());
+                            _filterList.get(4).setCurrentValue(checkBoxesFilter.toLocalisedString(getResources()));
                             m_adapter.notifyDataSetChanged();
                         }
                     }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -410,7 +418,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                             CacheTypeList cacheTypeList = new CacheTypeList(selections);
                             Prefs.saveCacheTypeFilter(CreateFiltersActivity.this, cacheTypeList);
 
-                            _filterList.get(5).setCurrentValue(cacheTypeList);
+                            _filterList.get(5).setCurrentValue(cacheTypeList.toLocalisedString(getResources()));
                             m_adapter.notifyDataSetChanged();
                         }
                     }).setNeutralButton(R.string.any, new DialogInterface.OnClickListener() {
@@ -420,7 +428,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                             cacheTypeList.setAll();
                             Prefs.saveCacheTypeFilter(CreateFiltersActivity.this, cacheTypeList);
 
-                            _filterList.get(5).setCurrentValue(cacheTypeList);
+                            _filterList.get(5).setCurrentValue(cacheTypeList.toLocalisedString(getResources()));
                             m_adapter.notifyDataSetChanged();
                         }
 
@@ -448,7 +456,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                             ContainerTypeList containerTypeList = new ContainerTypeList(selections);
                             Prefs.saveContainerTypeFilter(CreateFiltersActivity.this, containerTypeList);
 
-                            _filterList.get(6).setCurrentValue(containerTypeList);
+                            _filterList.get(6).setCurrentValue(containerTypeList.toLocalisedString(getResources()));
                             m_adapter.notifyDataSetChanged();
                         }
 
@@ -459,7 +467,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                             containerTypeList.setAll();
                             Prefs.saveContainerTypeFilter(CreateFiltersActivity.this, containerTypeList);
 
-                            _filterList.get(6).setCurrentValue(containerTypeList);
+                            _filterList.get(6).setCurrentValue(containerTypeList.toLocalisedString(getResources()));
                             m_adapter.notifyDataSetChanged();
                         }
 
@@ -471,7 +479,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Prefs.saveTerrainFilter(CreateFiltersActivity.this, newOneToFiveFilter);
-                    _filterList.get(7).setCurrentValue(newOneToFiveFilter);
+                    _filterList.get(7).setCurrentValue(newOneToFiveFilter.toLocalisedString(CreateFiltersActivity.this));
                     m_adapter.notifyDataSetChanged();
                 }
             });
@@ -481,10 +489,69 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Prefs.saveDifficultyFilter(CreateFiltersActivity.this, newOneToFiveFilter);
-                    _filterList.get(8).setCurrentValue(newOneToFiveFilter);
+                    _filterList.get(8).setCurrentValue(newOneToFiveFilter.toLocalisedString(CreateFiltersActivity.this));
                     m_adapter.notifyDataSetChanged();
                 }
             });
+
+
+        // Country list
+
+        if (id == 9) {
+            ListView countryView = new ListView(this);
+
+            final CountryList selectedCountries = Prefs.getCountriesFilter(this);
+            final CountryList allCountries = new CountryList(this);
+
+            final CountryArrayAdapter countryAdapter = new CountryArrayAdapter(this, allCountries, selectedCountries);
+            countryView.setAdapter(countryAdapter);
+            countryView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // User clicked on a country. Have to manually add/remove from selected countries list
+                    Country clickedCountry = allCountries.get(position);
+                    if (selectedCountries.contains(clickedCountry))
+                        selectedCountries.remove(clickedCountry);
+                    else
+                        selectedCountries.add(clickedCountry);
+
+                    countryAdapter.notifyDataSetChanged();  // informs countryView to update. Array has changed
+                }
+            });
+
+            return new AlertDialog.Builder(this)
+                    .setTitle(R.string.filter_countries)
+                    .setView(countryView)
+
+                    .setNeutralButton(R.string.none, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            selectedCountries.clear();
+                            Prefs.saveCountriesFilter(CreateFiltersActivity.this, selectedCountries);
+                            _filterList.get(9).setCurrentValue(selectedCountries.toLocalisedString(getResources()));
+                            m_adapter.notifyDataSetChanged();
+                        }
+                    })
+
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Prefs.saveCountriesFilter(CreateFiltersActivity.this, selectedCountries);
+                            _filterList.get(9).setCurrentValue(selectedCountries.toLocalisedString(getResources()));
+                            m_adapter.notifyDataSetChanged();
+                        }
+                    })
+
+                    .setNegativeButton(R.string.any, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Prefs.saveCountriesFilter(CreateFiltersActivity.this, allCountries);
+                            _filterList.get(9).setCurrentValue(allCountries.toLocalisedString(getResources()));
+                            m_adapter.notifyDataSetChanged();
+                        }
+                    })
+                    .show();
+        }
 
         Assert.assertTrue(false);
         return null;
@@ -585,7 +652,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
                     tt.setText(o.getName());
                 }
                 if (bt != null) {
-                    bt.setText(o.getCurrentValue());
+                    bt.setText(Html.fromHtml(o.getCurrentValue()));//o.getCurrentValue());
                     bt.setTextColor(o.getColor());
                 }
             }
@@ -630,38 +697,6 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
 
         public void setCurrentValue(String filterValue) {
             this.currentValue = filterValue;
-            //this.color = Color.GREEN;
-        }
-
-        public void setCurrentValue(CheckBoxesFilter checkBoxesFilter, Resources res) {
-            this.currentValue = checkBoxesFilter.toLocalisedString(res);
-            this.color = Color.MAGENTA;
-        }
-
-        public void setCurrentValue(OneToFiveFilter f) {
-            this.currentValue = f.toString();
-            if (f.isAll())
-                this.color = Color.GREEN;
-            else
-                this.color = Color.MAGENTA;
-        }
-
-        public void setCurrentValue(CacheTypeList cacheTypeList) {
-            this.currentValue = cacheTypeList.toLocalisedString(res);
-            if (cacheTypeList.isAll()) {
-                this.color = Color.GREEN;
-                this.currentValue = res.getString(R.string.any);
-            } else
-                this.color = Color.MAGENTA;
-        }
-
-        public void setCurrentValue(ContainerTypeList containerList) {
-            this.currentValue = containerList.toLocalisedString(res);
-            if (containerList.isAll()) {
-                this.color = Color.GREEN;
-                this.currentValue = res.getString(R.string.any);
-            } else
-                this.color = Color.MAGENTA;
         }
 
         public void setCurrentValue(double mapPositionLat, double mapPositionLon, Location gpsLocation) {
@@ -734,5 +769,19 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
     public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
     }
 
+
+//    private CountryList readCountries() {
+//        List<Country> ret = new ArrayList<Country>();
+//
+//        String [] countryNames = getResources().getStringArray(R.array.country_names);
+//        String [] countryCodes = getResources().getStringArray(R.array.country_codes);
+//        TypedArray countryFlags = getResources().obtainTypedArray(R.array.country_flags);
+//
+//        for (int i=0; i<countryNames.length; i++) {
+//            Log.i("rob", ""+i + " " + countryNames[i] + " " + countryCodes[i] + " " + countryFlags.getString(i) + " " + countryFlags.getResourceId(i, -1));
+//            ret.add(new Country(countryNames[i], countryCodes[i], getResources().getDrawable(countryFlags.getResourceId(i, -1))));
+//        }
+//        return ret;
+//    }
 
 }

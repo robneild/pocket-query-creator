@@ -190,4 +190,6 @@
     <string name="created_ok">Erstellung ok</string>
     <string name="will_try_again">Neuer Versuch in %d Sekunden</string>
 
+    <string name="filter_countries">Länder</string>
+
 </resources>

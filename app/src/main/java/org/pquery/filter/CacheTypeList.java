@@ -4,6 +4,9 @@ import android.content.res.Resources;
 
 import junit.framework.Assert;
 
+import org.pquery.R;
+import org.pquery.util.MyColors;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -73,11 +76,16 @@ public class CacheTypeList implements Iterable<CacheType> {
     }
 
     /**
-     * A nice, comma separated list for presentation to user
-     * Enum value converted into localized
+     * A nice, comma separated, localized, HTML list for presentation to user
+     * Enum value converted into display string
      */
     public String toLocalisedString(Resources res) {
+
+        if (isAll())
+            return "<font color='" + MyColors.LIME + "'>" + res.getString(R.string.any) + "</font>";
+
         StringBuffer ret = new StringBuffer();
+        ret.append("<font color='" + MyColors.MEGENTA + "'>");
 
         for (CacheType cache : inner) {
             ret.append(res.getString(cache.getResourceId()) + ", ");
@@ -86,6 +94,7 @@ public class CacheTypeList implements Iterable<CacheType> {
         if (ret.length() > 0)
             ret.setLength(ret.length() - 2);
 
+        ret.append("</font>");
         return ret.toString();
     }
 
