@@ -1,6 +1,11 @@
 package org.pquery.filter;
 
+import android.content.Context;
+
 import junit.framework.Assert;
+
+import org.pquery.R;
+import org.pquery.util.MyColors;
 
 public class OneToFiveFilter {
 
@@ -55,6 +60,23 @@ public class OneToFiveFilter {
         if (up)
             return "" + value + " - 5";
         return "1 - " + value;
+    }
+
+    /**
+     * Display a colorized summary of this filter
+     * @param cxt
+     * @return html
+     */
+    public String toLocalisedString(Context cxt) {
+        String ret = "";
+        if (isAll())
+            ret ="<font color='" + MyColors.LIME + "'>";      // Lime
+        else
+            ret ="<font color='"  + MyColors.MEGENTA + "'>";      // Magenta
+
+        ret += toString();
+        ret += "</font>";
+        return ret;
     }
 
     public boolean isAll() {

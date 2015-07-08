@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:padding="10dp"
+              android:layout_height="fill_parent"
+              android:layout_width="fill_parent"
+              android:orientation="horizontal"
+              android:id="@+id/countrylist"
+              xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+                     android:id="@+id/countrylist_line"
+                     android:layout_width="fill_parent"
+                     android:layout_height="30dip"
+                     android:textAppearance="?android:attr/textAppearance"
+                     android:gravity="center_vertical"
+                     android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                     android:paddingLeft="6dip"
+                     android:paddingRight="6dip"
+
+                     android:textColor="#fff"/>
+
+</LinearLayout>
+

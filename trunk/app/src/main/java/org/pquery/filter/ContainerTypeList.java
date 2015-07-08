@@ -4,6 +4,9 @@ import android.content.res.Resources;
 
 import junit.framework.Assert;
 
+import org.pquery.R;
+import org.pquery.util.MyColors;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -53,8 +56,18 @@ public class ContainerTypeList implements Iterable<ContainerType> {
         return ret;
     }
 
+    /**
+     * Get a nice, comma seperated, localized, HTML display string representation of enum
+     */
     public String toLocalisedString(Resources res) {
+        if (isAll())
+            return "<font color='" + MyColors.LIME + "'>" + res.getString(R.string.any) + "</font>";
+
         StringBuffer ret = new StringBuffer();
+        if (isAll())
+            ret.append("<font color='" + MyColors.LIME + "'>");
+        else
+            ret.append("<font color='" + MyColors.MEGENTA + "'>");
 
         for (ContainerType container : inner) {
             ret.append(res.getString(container.getResourceId()));
@@ -64,6 +77,7 @@ public class ContainerTypeList implements Iterable<ContainerType> {
         if (ret.length() > 0)
             ret.setLength(ret.length() - 2);
 
+        ret.append("</font>");
         return ret.toString();
     }
 

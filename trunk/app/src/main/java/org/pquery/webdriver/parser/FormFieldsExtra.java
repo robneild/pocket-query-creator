@@ -67,11 +67,24 @@ public class FormFieldsExtra {
             if (field.getFormControl().getFormControlType() == FormControlType.SUBMIT)
                 pairList.add(new BasicNameValuePair(field.getName(), field.getPredefinedValues().iterator().next()));
             else {
-                if (field.getValues().size() != 0)
-                    pairList.add(new BasicNameValuePair(field.getName(), field.getValues().get(0)));
+                // Usually the field will only have one value
+                // However, for a multiple select control, there will be multiple values e.g. country
+                for (String value : field.getValues()) {
+                    pairList.add(new BasicNameValuePair(field.getName(), value));
+                }
             }
         }
 
         return pairList;
+    }
+
+    public void addValue(String name, String value) throws ParseException {
+        if (form.get(name) == null)
+            throw new ParseException(name + " missing");
+
+        boolean success = form.addValue(name, value);
+
+        if (!success)
+            throw new ParseException(name);
     }
 }

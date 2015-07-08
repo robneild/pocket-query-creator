@@ -15,6 +15,7 @@ import org.pquery.dao.RepeatablePQ;
 import org.pquery.filter.CacheTypeList;
 import org.pquery.filter.CheckBoxesFilter;
 import org.pquery.filter.ContainerTypeList;
+import org.pquery.filter.CountryList;
 import org.pquery.filter.DaysToGenerateFilter;
 import org.pquery.filter.OneToFiveFilter;
 
@@ -38,12 +39,12 @@ public class Prefs {
     private static final String DIFFICULTY_FILTER = "difficulty_filter_preference";
     private static final String TERRAIN_FILTER = "terrain_filter_preference";
     private static final String DAYS_TO_GENERATE_FILTER = "daystogenerate_filter_preference";
+    private static final String COUNTRIES_FILTER = "countries_filter_preference";
 
     private static final String RADUIS = "radius_preference";
     private static final String COOKIES = "cookies_preference";
     public static final String USERNAME = "username_preference";
     public static final String PASSWORD = "password_preference";
-    private static final String RADIUS = "radius_preference2";
 
     private static final String ENABLED_FILTER = "enabled_filter_preference";
     private static final String TRAVEL_BUG_FILTER = "travel_bug_filter";
@@ -168,8 +169,24 @@ public class Prefs {
         return new DaysToGenerateFilter(t);
     }
 
+    public static CountryList getCountriesFilter(Context cxt) {
+        String encodedCountryCodes = PreferenceManager.getDefaultSharedPreferences(cxt).getString(COUNTRIES_FILTER, null);
 
+        return new CountryList(cxt, encodedCountryCodes);
+    }
 
+    /**
+     * Save Countries Filter
+     * We use JSON to easily pack the int array into a single String
+     * @param cxt
+     * @param countries
+     */
+    public static void saveCountriesFilter(Context cxt, CountryList countries) {
+
+        Editor edit = PreferenceManager.getDefaultSharedPreferences(cxt).edit();
+        edit.putString(COUNTRIES_FILTER, countries.toString());     // CountryList will create a comma separated string
+        edit.commit();
+    }
 
 
 
@@ -378,6 +395,8 @@ public class Prefs {
 
         return new Gson().fromJson(pqsSerial, RepeatablePQ[].class);
     }
+
+
 
     public static void userNameChanged(Context cxt) {
         Editor edit = PreferenceManager.getDefaultSharedPreferences(cxt).edit();

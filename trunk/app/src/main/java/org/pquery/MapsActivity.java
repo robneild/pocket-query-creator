@@ -18,6 +18,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.pquery.util.Prefs;
+
 /**
  * Show map to select centre of pocket query
  * Using new Maps V2 API that requires google play services
@@ -70,9 +72,17 @@ public class MapsActivity extends SherlockFragmentActivity implements OnMapReady
                 map.addMarker(marker);
 
                 // Create circle round marker, depicting coverage of pocket query
+
+                float radiusInKm;
+
+                if (Prefs.isMetric(getApplicationContext()))
+                    radiusInKm = Float.parseFloat(Prefs.getDefaultRadius(getApplicationContext()));
+                else
+                    radiusInKm = Float.parseFloat(Prefs.getDefaultRadius(getApplicationContext())) * 1.609344f;
+
                 CircleOptions circleOptions = new CircleOptions()
                         .center(point)
-                        .radius(1000); // In meters
+                        .radius(radiusInKm * 1000); // In meters
 
                 Circle circle = map.addCircle(circleOptions);
 

@@ -23,6 +23,8 @@ import org.pquery.filter.CacheTypeList;
 import org.pquery.filter.CheckBoxesFilter;
 import org.pquery.filter.ContainerType;
 import org.pquery.filter.ContainerTypeList;
+import org.pquery.filter.Country;
+import org.pquery.filter.CountryList;
 import org.pquery.filter.DaysToGenerateFilter;
 import org.pquery.filter.OneToFiveFilter;
 import org.pquery.util.GPS;
@@ -347,11 +349,26 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
                 loginFormExtra.setValueChecked("ctl00$ContentBody$ddTerrainScore", "" + terrainFilter.value);
             }
 
-            loginFormExtra.setValueChecked("ctl00$ContentBody$CountryState", "rbNone");
 
-            // paramList.add(new
-            // BasicNameValuePair("ctl00$ContentBody$Origin","rbOriginWpt"); //
-            // rbOriginNone");  //  rbOriginWpt");
+            CountryList countryList = Prefs.getCountriesFilter(cxt);
+
+            if (countryList.isAll()) {
+                // If all countries then select the "None" radio as 'all countries' will be implicit
+                loginFormExtra.setValueChecked("ctl00$ContentBody$CountryState", "rbNone");
+            }
+            else {
+                loginFormExtra.setValueChecked("ctl00$ContentBody$CountryState", "rbCountries");
+
+                for (Country country : countryList) {
+                    loginFormExtra.addValue("ctl00$ContentBody$lbCountries", country.getCode());
+                }
+            }
+
+
+
+
+
+
 
             loginFormExtra.setValueChecked("ctl00$ContentBody$Origin", "rbOriginWpt"); // rbOriginNone");  //  rbOriginWpt");
 
@@ -360,7 +377,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
 
 
             // 0 = decimal degrees
-            loginFormExtra.setValueChecked("ctl00$ContentBody$LatLong", "0"); // "1");
+            loginFormExtra.setValueChecked("ctl00$ContentBody$LatLong", "0");
 
             // The jericho parser doesn't know that these shouldn't be submitted when
             // 'Decimal degrees' is selected

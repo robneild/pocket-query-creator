@@ -83,7 +83,7 @@
 
     <string name="ok">OK</string>
     <string name="any">Any</string>
-
+    <string name="none">None</string>
 
     <!--  Dialog 2 -->
     <string name="login_geocaching_com">Logging into Geocaching.com</string>
@@ -258,5 +258,773 @@
     <string name="create_failed">Create failed</string>
     <string name="created_ok">Created ok</string>
     <string name="will_try_again">Will try again in %d seconds</string>
+
+    <string name="filter_countries">Countries</string>
+
+    <string-array name="country_names">
+        <item>Afghanistan</item>
+        <item>Aland Islands</item>
+        <item>Albania</item>
+        <item>Algeria</item>
+        <item>American Samoa</item>
+        <item>Andorra</item>
+        <item>Angola</item>
+        <item>Anguilla</item>
+        <item>Antarctica</item>
+        <item>Antigua and Barbuda</item>
+        <item>Argentina</item>
+        <item>Armenia</item>
+        <item>Aruba</item>
+        <item>Australia</item>
+        <item>Austria</item>
+        <item>Azerbaijan</item>
+        <item>Bahamas</item>
+        <item>Bahrain</item>
+        <item>Bangladesh</item>
+        <item>Barbados</item>
+        <item>Belarus</item>
+        <item>Belgium</item>
+        <item>Belize</item>
+        <item>Benin</item>
+        <item>Bermuda</item>
+        <item>Bhutan</item>
+        <item>Bolivia</item>
+        <item>Bonaire</item>
+        <item>Bosnia and Herzegovina</item>
+        <item>Botswana</item>
+        <item>Bouvet Island</item>
+        <item>Brazil</item>
+        <item>British Indian Ocean Territories</item>
+        <item>British Virgin Islands</item>
+        <item>Brunei</item>
+        <item>Bulgaria</item>
+        <item>Burkina Faso</item>
+        <item>Burundi</item>
+        <item>Cambodia</item>
+        <item>Cameroon</item>
+        <item>Canada</item>
+        <item>Cape Verde</item>
+        <item>Cayman Islands</item>
+        <item>Central African Republic</item>
+        <item>Chad</item>
+        <item>Chile</item>
+        <item>China</item>
+        <item>Christmas Island</item>
+        <item>Cocos (Keeling) Islands</item>
+        <item>Colombia</item>
+        <item>Comoros</item>
+        <item>Congo</item>
+        <item>Cook Islands</item>
+        <item>Costa Rica</item>
+        <item>Croatia</item>
+        <item>Cuba</item>
+        <item>Curacao</item>
+        <item>Cyprus</item>
+        <item>Czech Republic</item>
+        <item>Democratic Republic of the Congo</item>
+        <item>Denmark</item>
+        <item>Djibouti</item>
+        <item>Dominica</item>
+        <item>Dominican Republic</item>
+        <item>East Timor</item>
+        <item>Ecuador</item>
+        <item>Egypt</item>
+        <item>El Salvador</item>
+        <item>Equatorial Guinea</item>
+        <item>Eritrea</item>
+        <item>Estonia</item>
+        <item>Ethiopia</item>
+        <item>Falkland Islands</item>
+        <item>Faroe Islands</item>
+        <item>Fiji</item>
+        <item>Finland</item>
+        <item>France</item>
+        <item>French Guiana</item>
+        <item>French Polynesia</item>
+        <item>French Southern Territories</item>
+        <item>Gabon</item>
+        <item>Gambia</item>
+        <item>Georgia</item>
+        <item>Germany</item>
+        <item>Ghana</item>
+        <item>Gibraltar</item>
+        <item>Greece</item>
+        <item>Greenland</item>
+        <item>Grenada</item>
+        <item>Guadeloupe</item>
+        <item>Guam</item>
+        <item>Guatemala</item>
+        <item>Guernsey</item>
+        <item>Guinea</item>
+        <item>Guinea-Bissau</item>
+        <item>Guyana</item>
+        <item>Haiti</item>
+        <item>Heard Island And Mcdonald Islands</item>
+        <item>Honduras</item>
+        <item>Hong Kong</item>
+        <item>Hungary</item>
+        <item>Iceland</item>
+        <item>India</item>
+        <item>Indonesia</item>
+        <item>Iran</item>
+        <item>Iraq</item>
+        <item>Ireland</item>
+        <item>Isle of Man</item>
+        <item>Israel</item>
+        <item>Italy</item>
+        <item>Ivory Coast</item>
+        <item>Jamaica</item>
+        <item>Japan</item>
+        <item>Jersey</item>
+        <item>Jordan</item>
+        <item>Kazakhstan</item>
+        <item>Kenya</item>
+        <item>Kiribati</item>
+        <item>Kuwait</item>
+        <item>Kyrgyzstan</item>
+        <item>Laos</item>
+        <item>Latvia</item>
+        <item>Lebanon</item>
+        <item>Lesotho</item>
+        <item>Liberia</item>
+        <item>Libya</item>
+        <item>Liechtenstein</item>
+        <item>Lithuania</item>
+        <item>Luxembourg</item>
+        <item>Macau</item>
+        <item>Macedonia</item>
+        <item>Madagascar</item>
+        <item>Malawi</item>
+        <item>Malaysia</item>
+        <item>Maldives</item>
+        <item>Mali</item>
+        <item>Malta</item>
+        <item>Marshall Islands</item>
+        <item>Martinique</item>
+        <item>Mauritania</item>
+        <item>Mauritius</item>
+        <item>Mayotte</item>
+        <item>Mexico</item>
+        <item>Micronesia</item>
+        <item>Moldova</item>
+        <item>Monaco</item>
+        <item>Mongolia</item>
+        <item>Montenegro</item>
+        <item>Montserrat</item>
+        <item>Morocco</item>
+        <item>Mozambique</item>
+        <item>Myanmar</item> <!-- 126 -->
+        <item>Namibia</item>
+        <item>Nauru</item>
+        <item>Nepal</item>
+        <item>Netherlands</item>
+        <item>Netherlands Antilles</item>
+        <item>Nevis and St Kitts</item>
+        <item>New Caledonia</item>
+        <item>New Zealand</item>
+        <item>Nicaragua</item>
+        <item>Niger</item>
+        <item>Nigeria</item>
+        <item>Niue</item>
+        <item>Norfolk Island</item>
+        <item>North Korea</item>
+        <item>Northern Mariana Islands</item>
+        <item>Norway</item>
+        <item>Oman</item>
+        <item>Pakistan</item>
+        <item>Palau</item>
+        <item>Palestine</item>
+        <item>Panama</item>
+        <item>Papua New Guinea</item>
+        <item>Paraguay</item>
+        <item>Peru</item>
+        <item>Philippines</item>
+        <item>Pitcairn Islands</item>
+        <item>Poland</item>
+        <item>Portugal</item>
+        <item>Puerto Rico</item>
+        <item>Qatar</item>
+        <item>Reunion</item>
+        <item>Romania</item>
+        <item>Russia</item>
+        <item>Rwanda</item>
+        <item>Saba</item>
+        <item>Saint Helena</item>
+        <item>Saint Kitts and Nevis</item>
+        <item>Saint Lucia</item>
+        <item>Samoa</item>
+        <item>San Marino</item>
+        <item>Sao Tome and Principe</item>
+        <item>Saudi Arabia</item>
+        <item>Senegal</item>
+        <item>Serbia</item>
+        <item>Seychelles</item>
+        <item>Sierra Leone</item>
+        <item>Singapore</item>
+        <item>Slovakia</item>
+        <item>Slovenia</item>
+        <item>Solomon Islands</item>
+        <item>Somalia</item>
+        <item>South Africa</item>
+        <item>South Georgia and Sandwich Islands</item>
+        <item>South Korea</item>
+        <item>South Sudan</item>
+        <item>Spain</item>
+        <item>Sri Lanka</item>
+        <item>St Barthelemy</item>
+        <item>St Eustatius</item>
+        <item>St Kitts</item>
+        <item>St Pierre Miquelon</item>
+        <item>St Vince Grenadines</item>
+        <item>St. Martin</item>
+        <item>Sudan</item>
+        <item>Suriname</item>
+        <item>Svalbard and Jan Mayen</item>
+        <item>Swaziland</item>
+        <item>Sweden</item>
+        <item>Switzerland</item>
+        <item>Syria</item>
+        <item>Taiwan</item>
+        <item>Tajikistan</item>
+        <item>Tanzania</item>
+        <item>Thailand</item>
+        <item>Togo</item>
+        <item>Tokelau</item>
+        <item>Tonga</item>
+        <item>Trinidad and Tobago</item>
+        <item>Tunisia</item>
+        <item>Turkey</item>
+        <item>Turkmenistan</item>
+        <item>Turks and Caicos Islands</item>
+        <item>Tuvalu</item>
+        <item>Uganda</item>
+        <item>Ukraine</item>
+        <item>United Arab Emirates</item>
+        <item>United Kingdom</item>
+        <item>Uruguay</item>
+        <item>US Minor Outlying Islands</item>
+        <item>US Virgin Islands</item>
+        <item>Uzbekistan</item>
+        <item>Vanuatu</item>
+        <item>Vatican City State</item>
+        <item>Venezuela</item>
+        <item>Vietnam</item>
+        <item>Wallis And Futuna Islands</item>
+        <item>Western Sahara</item>
+        <item>Yemen</item>
+        <item>Zambia</item>
+        <item>Zimbabwe</item>
+    </string-array>
+
+    <string-array name="country_codes">
+        <item>12</item>
+        <item>272</item>
+        <item>244</item>
+        <item>14</item>
+        <item>245</item>
+        <item>16</item>
+        <item>17</item>
+        <item>246</item>
+        <item>18</item>
+        <item>13</item>
+        <item>19</item>
+        <item>15</item>
+        <item>20</item>
+        <item>3</item>
+        <item>227</item>
+        <item>21</item>
+        <item>23</item>
+        <item>29</item>
+        <item>24</item>
+        <item>25</item>
+        <item>40</item>
+        <item>4</item>
+        <item>31</item>
+        <item>26</item>
+        <item>27</item>
+        <item>30</item>
+        <item>32</item>
+        <item>275</item>
+        <item>234</item>
+        <item>33</item>
+        <item>247</item>
+        <item>34</item>
+        <item>248</item>
+        <item>39</item>
+        <item>36</item>
+        <item>37</item>
+        <item>216</item>
+        <item>35</item>
+        <item>42</item>
+        <item>43</item>
+        <item>5</item>
+        <item>239</item>
+        <item>44</item>
+        <item>46</item>
+        <item>249</item>
+        <item>6</item>
+        <item>47</item>
+        <item>250</item>
+        <item>251</item>
+        <item>49</item>
+        <item>50</item>
+        <item>51</item>
+        <item>48</item>
+        <item>52</item>
+        <item>53</item>
+        <item>238</item>
+        <item>54</item>
+        <item>55</item>
+        <item>56</item>
+        <item>257</item>
+        <item>57</item>
+        <item>58</item>
+        <item>59</item>
+        <item>60</item>
+        <item>252</item>
+        <item>61</item>
+        <item>63</item>
+        <item>64</item>
+        <item>62</item>
+        <item>65</item>
+        <item>66</item>
+        <item>67</item>
+        <item>69</item>
+        <item>68</item>
+        <item>71</item>
+        <item>72</item>
+        <item>73</item>
+        <item>70</item>
+        <item>74</item>
+        <item>253</item>
+        <item>75</item>
+        <item>76</item>
+        <item>78</item>
+        <item>79</item>
+        <item>254</item>
+        <item>80</item>
+        <item>82</item>
+        <item>83</item>
+        <item>81</item>
+        <item>77</item>
+        <item>229</item>
+        <item>84</item>
+        <item>86</item>
+        <item>255</item>
+        <item>85</item>
+        <item>87</item>
+        <item>89</item>
+        <item>256</item>
+        <item>90</item>
+        <item>91</item>
+        <item>92</item>
+        <item>93</item>
+        <item>94</item>
+        <item>95</item>
+        <item>96</item>
+        <item>97</item>
+        <item>7</item>
+        <item>243</item>
+        <item>98</item>
+        <item>99</item>
+        <item>100</item>
+        <item>101</item>
+        <item>104</item>
+        <item>102</item>
+        <item>103</item>
+        <item>106</item>
+        <item>107</item>
+        <item>109</item>
+        <item>241</item>
+        <item>108</item>
+        <item>110</item>
+        <item>111</item>
+        <item>113</item>
+        <item>114</item>
+        <item>115</item>
+        <item>112</item>
+        <item>116</item>
+        <item>117</item>
+        <item>8</item>
+        <item>258</item>
+        <item>125</item>
+        <item>119</item>
+        <item>129</item>
+        <item>121</item>
+        <item>124</item>
+        <item>127</item>
+        <item>128</item>
+        <item>240</item>
+        <item>122</item>
+        <item>123</item>
+        <item>134</item>
+        <item>259</item>
+        <item>228</item>
+        <item>242</item>
+        <item>237</item>
+        <item>130</item>
+        <item>131</item>
+        <item>274</item>
+        <item>135</item>
+        <item>132</item>
+        <item>133</item>
+        <item>136</item>
+        <item>137</item>
+        <item>138</item>
+        <item>140</item>
+        <item>141</item>
+        <item>148</item>
+        <item>142</item>
+        <item>41</item>
+        <item>9</item>
+        <item>144</item>
+        <item>143</item>
+        <item>145</item>
+        <item>149</item>
+        <item>260</item>
+        <item>146</item>
+        <item>236</item>
+        <item>147</item>
+        <item>150</item>
+        <item>151</item>
+        <item>261</item>
+        <item>276</item>
+        <item>152</item>
+        <item>156</item>
+        <item>262</item>
+        <item>153</item>
+        <item>154</item>
+        <item>155</item>
+        <item>158</item>
+        <item>159</item>
+        <item>226</item>
+        <item>160</item>
+        <item>161</item>
+        <item>162</item>
+        <item>163</item>
+        <item>164</item>
+        <item>277</item>
+        <item>171</item>
+        <item>264</item>
+        <item>173</item>
+        <item>217</item>
+        <item>183</item>
+        <item>176</item>
+        <item>166</item>
+        <item>167</item>
+        <item>222</item>
+        <item>168</item>
+        <item>178</item>
+        <item>179</item>
+        <item>182</item>
+        <item>181</item>
+        <item>184</item>
+        <item>185</item>
+        <item>165</item>
+        <item>267</item>
+        <item>180</item>
+        <item>278</item>
+        <item>186</item>
+        <item>187</item>
+        <item>169</item>
+        <item>170</item>
+        <item>172</item>
+        <item>175</item>
+        <item>177</item>
+        <item>174</item>
+        <item>188</item>
+        <item>189</item>
+        <item>268</item>
+        <item>190</item>
+        <item>10</item>
+        <item>192</item>
+        <item>193</item>
+        <item>194</item>
+        <item>195</item>
+        <item>196</item>
+        <item>198</item>
+        <item>200</item>
+        <item>269</item>
+        <item>201</item>
+        <item>202</item>
+        <item>203</item>
+        <item>204</item>
+        <item>199</item>
+        <item>197</item>
+        <item>205</item>
+        <item>208</item>
+        <item>207</item>
+        <item>206</item>
+        <item>11</item>
+        <item>210</item>
+        <item>270</item>
+        <item>235</item>
+        <item>211</item>
+        <item>212</item>
+        <item>213</item>
+        <item>214</item>
+        <item>215</item>
+        <item>218</item>
+        <item>271</item>
+        <item>220</item>
+        <item>224</item>
+        <item>225</item>
+    </string-array>
+
+    <string-array name="country_flags">
+        <item>@drawable/af</item>
+        <item>@drawable/ax</item>
+        <item>@drawable/al</item>
+        <item>@drawable/dz</item>
+        <item>@drawable/blank</item> <!-- American Samoa -->
+        <item>@drawable/ad</item>
+        <item>@drawable/ao</item>
+        <item>@drawable/blank</item> <!-- Anguilla -->
+        <item>@drawable/blank</item> <!--Antarctica -->
+        <item>@drawable/ag</item>
+        <item>@drawable/ar</item>
+        <item>@drawable/am</item>
+        <item>@drawable/blank</item> <!-- Aruba -->
+        <item>@drawable/au</item>
+        <item>@drawable/at</item>
+        <item>@drawable/az</item>
+        <item>@drawable/bs</item>
+        <item>@drawable/bh</item>
+        <item>@drawable/bd</item>
+        <item>@drawable/bb</item>
+        <item>@drawable/by</item>
+        <item>@drawable/be</item>
+        <item>@drawable/bz</item>
+        <item>@drawable/bj</item>
+        <item>@drawable/blank</item> <!-- Bermuda -->
+        <item>@drawable/bt</item>
+        <item>@drawable/bo</item>
+        <item>@drawable/blank</item> <!-- Bonaire-->
+        <item>@drawable/ba</item>
+        <item>@drawable/bw</item>
+        <item>@drawable/blank</item> <!-- Bouvet Island -->
+        <item>@drawable/br</item>
+        <item>@drawable/blank</item> <!-- British Indian Ocean Territories -->
+        <item>@drawable/blank</item> <!-- British Virgin Islands -->
+        <item>@drawable/bn</item>
+        <item>@drawable/bg</item>
+        <item>@drawable/bf</item>
+        <item>@drawable/bi</item>
+        <item>@drawable/kh</item>
+        <item>@drawable/cm</item>
+        <item>@drawable/ca</item>
+        <item>@drawable/cv</item>
+        <item>@drawable/blank</item> <!-- Cayman Islands -->
+        <item>@drawable/cf</item>
+        <item>@drawable/td</item>
+        <item>@drawable/cl</item>
+        <item>@drawable/cn</item>
+        <item>@drawable/blank</item> <!-- Christmas Island -->
+        <item>@drawable/blank</item> <!-- Cocos (Keeling) Islands -->
+        <item>@drawable/co</item>
+        <item>@drawable/km</item>
+        <item>@drawable/cg</item>
+        <item>@drawable/ck</item>
+        <item>@drawable/cr</item>
+        <item>@drawable/hr</item>
+        <item>@drawable/cu</item>
+        <item>@drawable/blank</item> <!-- Curacao -->
+        <item>@drawable/cy</item>
+        <item>@drawable/cz</item>
+        <item>@drawable/cd</item>
+        <item>@drawable/dk</item>
+        <item>@drawable/dj</item>
+        <item>@drawable/dm</item>
+        <item>@drawable/dox</item>
+        <item>@drawable/tl</item>
+        <item>@drawable/ec</item>
+        <item>@drawable/eg</item>
+        <item>@drawable/sv</item>
+        <item>@drawable/gq</item>
+        <item>@drawable/er</item>
+        <item>@drawable/ee</item>
+        <item>@drawable/et</item>
+        <item>@drawable/blank</item> <!-- Falkland Islands -->
+        <item>@drawable/blank</item> <!-- Faroe Islands -->
+        <item>@drawable/fj</item>
+        <item>@drawable/fi</item>
+        <item>@drawable/fr</item>
+        <item>@drawable/blank</item> <!-- French Guiana -->
+        <item>@drawable/blank</item> <!-- French Polynesia -->
+        <item>@drawable/blank</item> <!-- French Southern Territories -->
+        <item>@drawable/ga</item>
+        <item>@drawable/gm</item>
+        <item>@drawable/ge</item>
+        <item>@drawable/de</item>
+        <item>@drawable/gh</item>
+        <item>@drawable/blank</item> <!-- Gibraltar -->
+        <item>@drawable/gr</item>
+        <item>@drawable/blank</item> <!-- Greenland -->
+        <item>@drawable/gd</item>
+        <item>@drawable/blank</item> <!-- Guadeloupe -->
+        <item>@drawable/blank</item> <!-- Guam -->
+        <item>@drawable/gt</item>
+        <item>@drawable/blank</item> <!-- Guernsey -->
+        <item>@drawable/gn</item>
+        <item>@drawable/gw</item>
+        <item>@drawable/gy</item>
+        <item>@drawable/ht</item>
+        <item>@drawable/blank</item> <!-- Heard Island And Mcdonald Islands -->
+        <item>@drawable/hn</item>
+        <item>@drawable/blank</item> <!-- Hong Kong -->
+        <item>@drawable/hu</item>
+        <item>@drawable/is</item>
+        <item>@drawable/in</item>
+        <item>@drawable/id</item>
+        <item>@drawable/ir</item>
+        <item>@drawable/iq</item>
+        <item>@drawable/ie</item>
+        <item>@drawable/blank</item> <!-- Isle of Man -->
+        <item>@drawable/il</item>
+        <item>@drawable/it</item>
+        <item>@drawable/blank</item> <!-- Ivory Coast -->
+        <item>@drawable/jm</item>
+        <item>@drawable/jp</item>
+        <item>@drawable/blank</item> <!-- Jersey -->
+        <item>@drawable/jo</item>
+        <item>@drawable/kz</item>
+        <item>@drawable/ke</item>
+        <item>@drawable/ki</item>
+        <item>@drawable/kw</item>
+        <item>@drawable/kg</item>
+        <item>@drawable/la</item>
+        <item>@drawable/lv</item>
+        <item>@drawable/lb</item>
+        <item>@drawable/ls</item>
+        <item>@drawable/lr</item>
+        <item>@drawable/ly</item>
+        <item>@drawable/li</item>
+        <item>@drawable/lt</item>
+        <item>@drawable/lu</item>
+        <item>@drawable/blank</item> <!-- Macau -->
+        <item>@drawable/mk</item>
+        <item>@drawable/mg</item>
+        <item>@drawable/mw</item>
+        <item>@drawable/my</item>
+        <item>@drawable/mv</item>
+        <item>@drawable/ml</item>
+        <item>@drawable/mt</item>
+        <item>@drawable/mh</item>
+        <item>@drawable/blank</item> <!-- Martinique -->
+        <item>@drawable/mr</item>
+        <item>@drawable/mu</item>
+        <item>@drawable/blank</item> <!-- Mayotte -->
+        <item>@drawable/mx</item>
+        <item>@drawable/fm</item>
+        <item>@drawable/md</item>
+        <item>@drawable/mc</item>
+        <item>@drawable/mn</item>
+        <item>@drawable/me</item>
+        <item>@drawable/blank</item> <!-- Montserrat -->
+        <item>@drawable/ma</item>
+        <item>@drawable/mz</item>
+        <item>@drawable/mm</item>
+        <item>@drawable/na</item>
+        <item>@drawable/nr</item>
+        <item>@drawable/np</item>
+        <item>@drawable/nl</item>
+        <item>@drawable/blank</item> <!-- Netherlands Antilles -->
+        <item>@drawable/blank</item> <!-- Nevis and St Kitts -->
+        <item>@drawable/blank</item> <!-- New Caledonia -->
+        <item>@drawable/nz</item>
+        <item>@drawable/ni</item>
+        <item>@drawable/ne</item>
+        <item>@drawable/ng</item>
+        <item>@drawable/nu</item>
+        <item>@drawable/blank</item> <!-- Norfolk Island -->
+        <item>@drawable/kp</item>
+        <item>@drawable/blank</item> <!-- Northern Mariana Islands -->
+        <item>@drawable/no</item>
+        <item>@drawable/om</item>
+        <item>@drawable/pk</item>
+        <item>@drawable/pw</item>
+        <item>@drawable/blank</item> <!-- Palestine -->
+        <item>@drawable/pa</item>
+        <item>@drawable/pg</item>
+        <item>@drawable/py</item>
+        <item>@drawable/pe</item>
+        <item>@drawable/ph</item>
+        <item>@drawable/blank</item> <!-- Pitcairn Islands -->
+        <item>@drawable/pl</item>
+        <item>@drawable/pt</item>
+        <item>@drawable/blank</item> <!-- Puerto Rico -->
+        <item>@drawable/qa</item>
+        <item>@drawable/blank</item> <!-- Reunion -->
+        <item>@drawable/ro</item>
+        <item>@drawable/ru</item>
+        <item>@drawable/rw</item>
+        <item>@drawable/blank</item> <!-- Saba -->
+        <item>@drawable/blank</item> <!-- Saint Helena -->
+        <item>@drawable/kn</item>
+        <item>@drawable/lc</item>
+        <item>@drawable/ws</item>
+        <item>@drawable/sm</item>
+        <item>@drawable/st</item>
+        <item>@drawable/sa</item>
+        <item>@drawable/sn</item>
+        <item>@drawable/rs</item>
+        <item>@drawable/sc</item>
+        <item>@drawable/sl</item>
+        <item>@drawable/sg</item>
+        <item>@drawable/sk</item>
+        <item>@drawable/si</item>
+        <item>@drawable/sb</item>
+        <item>@drawable/so</item>
+        <item>@drawable/za</item>
+        <item>@drawable/blank</item> <!-- South Georgia and Sandwich Islands -->
+        <item>@drawable/kr</item>
+        <item>@drawable/ss</item>
+        <item>@drawable/es</item>
+        <item>@drawable/lk</item>
+        <item>@drawable/blank</item> <!-- St Barthelemy -->
+        <item>@drawable/blank</item> <!-- St Eustatius -->
+        <item>@drawable/blank</item> <!-- St Kitts -->
+        <item>@drawable/blank</item> <!-- St Pierre Miquelon -->
+        <item>@drawable/blank</item> <!-- St Vince Grenadines -->
+        <item>@drawable/blank</item> <!-- St. Martin -->
+        <item>@drawable/sd</item>
+        <item>@drawable/sr</item>
+        <item>@drawable/blank</item> <!-- Svalbard and Jan Mayen -->
+        <item>@drawable/sz</item>
+        <item>@drawable/se</item>
+        <item>@drawable/ch</item>
+        <item>@drawable/sy</item>
+        <item>@drawable/blank</item> <!-- Taiwan -->
+        <item>@drawable/tj</item>
+        <item>@drawable/tz</item>
+        <item>@drawable/th</item>
+        <item>@drawable/tg</item>
+        <item>@drawable/blank</item> <!-- Tokelau -->
+        <item>@drawable/to</item>
+        <item>@drawable/tt</item>
+        <item>@drawable/tn</item>
+        <item>@drawable/tr</item>
+        <item>@drawable/tm</item>
+        <item>@drawable/blank</item> <!-- Turks and Caicos Islands -->
+        <item>@drawable/tv</item>
+        <item>@drawable/ug</item>
+        <item>@drawable/ua</item>
+        <item>@drawable/ae</item>
+        <item>@drawable/gb</item>
+        <item>@drawable/uy</item>
+        <item>@drawable/blank</item> <!-- US Minor Outlying Islands -->
+        <item>@drawable/blank</item> <!-- US Virgin Islands -->
+        <item>@drawable/uz</item>
+        <item>@drawable/vu</item>
+        <item>@drawable/va</item>
+        <item>@drawable/ve</item>
+        <item>@drawable/vn</item>
+        <item>@drawable/blank</item> <!-- Wallis And Futuna Islands -->
+        <item>@drawable/eh</item>
+        <item>@drawable/ye</item>
+        <item>@drawable/zm</item>
+        <item>@drawable/zw</item>
+
+    </string-array>
 
 </resources>
