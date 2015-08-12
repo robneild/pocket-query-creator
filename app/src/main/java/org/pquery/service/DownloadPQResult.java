@@ -33,4 +33,8 @@ public class DownloadPQResult {
         else
             return failure.toString();
     }
+
+    public File getFileNameDownloaded() {
+        return fileNameDownloaded;
+    }
 }

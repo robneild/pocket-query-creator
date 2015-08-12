@@ -21,6 +21,7 @@ import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 import org.pquery.webdriver.ProgressInfo;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -170,7 +171,7 @@ public class PQService extends Service {
 
                 Prefs.erasePQListState(PQService.this);        // erase any DownloadablePQ list as we know is out-of-date now
                 sendMessageToClients(new RetrievePQListResult());        // sends an empty DownloadablePQ list to GUI so will redraw empty
-                sendMessageToClients(title, message, notificationId);
+                sendMessageToClients(title, message, notificationId,null);
                 cleanUpAndStopSelf();
             }
 
@@ -211,8 +212,9 @@ public class PQService extends Service {
                 String title = result.getTitle(getResources());
                 String message = result.getMessage(getResources());
                 int notificationId = notificationUtil.showEndNotification(title, message);
+                File fileNameDownloaded = result.getFileNameDownloaded();
 
-                sendMessageToClients(title, message, notificationId);
+                sendMessageToClients(title, message, notificationId, fileNameDownloaded);
                 cleanUpAndStopSelf();
             }
 
@@ -232,7 +234,6 @@ public class PQService extends Service {
         };
         downloadPQAsync.execute();
     }
-
 
     private void handleRetrievePQList(final Bundle extras) {
 
@@ -284,10 +285,10 @@ public class PQService extends Service {
         }
     }
 
-    private void sendMessageToClients(String title, String message, int notificationId) {
+    private void sendMessageToClients(String title, String message, int notificationId, File fileNameDownloaded) {
         //lastUpdate = value;
         for (PQServiceListener client : clients) {
-            client.onServiceOperationResult(title, message, notificationId);
+            client.onServiceOperationResult(title, message, notificationId, fileNameDownloaded);
         }
     }
 

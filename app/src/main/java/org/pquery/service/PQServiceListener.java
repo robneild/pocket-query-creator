@@ -2,9 +2,11 @@ package org.pquery.service;
 
 import org.pquery.webdriver.ProgressInfo;
 
+import java.io.File;
+
 public interface PQServiceListener {
 
-    public void onServiceOperationResult(String title, String message, int notificationId);
+    public void onServiceOperationResult(String title, String message, int notificationId, File fileNameDownloaded);
 
     //public void onServicePQDownloaded(); // DownloadPQResult downloadPQResult);
     public void onServiceRetrievePQList(RetrievePQListResult pqListResult);

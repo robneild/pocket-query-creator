@@ -52,6 +52,7 @@ import org.pquery.util.Prefs;
 import org.pquery.util.Util;
 import org.pquery.webdriver.ProgressInfo;
 
+import java.io.File;
 import java.util.Date;
 
 public class Main extends SherlockFragmentActivity implements PQClickedListener, PQServiceListener, ProgressBoxFragmentListener {
@@ -155,15 +156,15 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
             String title = getIntent().getStringExtra("title");
             String message = getIntent().getStringExtra("message");
             int notificationId = getIntent().getIntExtra("notificationId", 0);
-
+            File fileNameDownloaded = (File) (getIntent().getExtras().get("fileNameDownloaded"));
             if (title != null && message != null) {
-                onServiceOperationResult(title, message, notificationId);
+                onServiceOperationResult(title, message, notificationId,fileNameDownloaded);
             }
 
             getIntent().removeExtra("title");
             getIntent().removeExtra("message");
             getIntent().removeExtra("notificationId");
-
+            getIntent().removeExtra("fileNameDownloaded");
         }
         doDialog = false;
 
@@ -497,9 +498,9 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 
     @Override
     public void onServiceOperationResult(String title, String message,
-                                         int notificationId) {
+                                         int notificationId, File fileNameDownloaded) {
 
-        MyDialogFragment dialog = MyDialogFragment.newInstance(title, message);
+        MyDialogFragment dialog = MyDialogFragment.newInstance(title, message, fileNameDownloaded);
         dialog.show(getSupportFragmentManager(), "dialog");
 
         checkActionBar();

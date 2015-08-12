@@ -11,6 +11,9 @@
     <string name="view_bad_response">View log file</string>
     <string name="email_bad_response">Email log file</string>
 
+    <string name="open_in_app">Open in &#8230;</string>
+    <string name="no_app_installed">No app installed to open PQ</string>
+
     <string name="cant_write_directory">Can not write into this directory</string>
     <string name="could_not_read_folder">Could not read folder contents</string>
 

@@ -11,6 +11,8 @@ import org.pquery.Main;
 import org.pquery.R;
 import org.pquery.util.Logger;
 
+import java.io.File;
+
 public class NotificationUtil {
 
     private static int notificationId = 1;
@@ -59,10 +61,15 @@ public class NotificationUtil {
     }
 
     private PendingIntent getPendingIntent(String title, String message, int notificationId) {
+        return getPendingIntent(title , message, notificationId, null);
+    }
+
+    private PendingIntent getPendingIntent(String title, String message, int notificationId, File fileNameDownloaded) {
         Intent intent = new Intent(cxt, Main.class);
         intent.putExtra("title", title);
         intent.putExtra("message", message);
         intent.putExtra("notificationId", notificationId);
+        intent.putExtra("fileNameDownloaded", fileNameDownloaded);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return PendingIntent.getActivity(cxt, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
