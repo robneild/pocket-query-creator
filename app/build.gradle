@@ -6,7 +6,7 @@ android {
         }
     }
     compileSdkVersion "Google Inc.:Google APIs:21"
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "22.0.1"
     defaultConfig {
         applicationId "org.pquery"
         minSdkVersion 7
@@ -32,7 +32,7 @@ android {
 
 dependencies {
     compile 'com.google.android.gms:play-services-maps:6.5.+'
-    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:support-v4:22.2.1'
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile files('libs/actionbarsherlock-plugin-maps-4.2.0.jar')
