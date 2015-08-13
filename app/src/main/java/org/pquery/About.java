@@ -38,7 +38,7 @@ public class About extends SherlockActivity {
 
         setContentView(R.layout.about);
 
-        final String mimeType = "text/html";
+        final String mimeType = "text/html; charset=utf-8";
         final String encoding = "utf-8";
 
         WebView wv;
@@ -46,7 +46,7 @@ public class About extends SherlockActivity {
         //"background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, #444444), color-stop(1, #000000));" +	
 
 
-        String html = "<font color='#ffffff'>" +
+        String html = "<html><head><meta charset='utf-8'></head><body><font color='#ffffff'>" +
 
                 "<style type='text/css'>" +
 
@@ -59,7 +59,7 @@ public class About extends SherlockActivity {
                 "body {font: 15px/1.3em 'Helvetica Neue','HelveticaNeue',Helvetica,sans-serif }" +
                 "</style> " +
 
-                "Written by <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>Rob Neild</a>, extended by <a href='mailto:peter.storch@gmail.com?subject=PocketQueryCreator'>Peter Storch</a><p>Don't hesitate to contact us with comments or errors" +
+                "Written by <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>Rob Neild</a>, extended by <a href='mailto:peter.storch@gmail.com?subject=PocketQueryCreator'>Peter Storch</a> and Ondřej Kunc<p>Don't hesitate to contact us with comments or errors" +
 
                 "<h2>Contains</h2>" +
                 "<a href='http://www.openclipart.org/detail/89059/push-pin-icon-by-jhnri4'>Push pin icon</a> - openclipart.org<br/>" +
@@ -76,11 +76,12 @@ public class About extends SherlockActivity {
                 "<a href='http://openclipart.org/detail/96391/target-black-and-white-by-10binary'>target black and white</a> - openclipart.org<br/>" +
                 "<a href='https://openclipart.org/detail/182401/calendar-by-crisg-182401'>calendar</a> - openclipart.org<br/>" +
                 "<a href='https://openclipart.org/detail/4622/flagpole'>flagpole</a> - openclipart.org<br/>" +
-                "<br>" +
+                "<p>" +
                 "<a href='http://code.google.com/p/range-seek-bar'>range-seek-bar</a><br>" +
                 "<a href='http://www.bgreco.net/directorypicker/'>Android Directory Picker</a><br>" +
                 "<a href='http://www.gisgraphy.com/gisgraphoid.htm'>Gisgraphoid</a><br>" +
-                "<a href='http://code.google.com/p/google-gson/'>Google Gson</a>" +
+                "<a href='http://code.google.com/p/google-gson/'>Google Gson</a><br>" +
+                "Flags from <a href='http://flagpedia.net'>flagpedia.net</a>" +
 
                 "<h2>Acknowledgements</h2>" +
                 "The web site <a href='http://geocaching.com'>Geocaching.com</a> is owned by <a href='http://www.groundspeak.com/'>Groundspeak Inc.</a>" +
@@ -104,8 +105,8 @@ public class About extends SherlockActivity {
                 "along with this program.  If not, see " +
                 "<a href='http://www.gnu.org/licenses/'>http://www.gnu.org/licenses/</a>." +
 
-                "<p>Source code is available here <a href='http://code.google.com/p/pocket-query-creator/'>code.google.com/p/pocket-query-creator</a>" +
-                "</font>";
+                "<p>Source code is available here <a href='https://github.com/robneild/pocket-query-creator'>https://github.com/robneild/pocket-query-creator</a>" +
+                "</font></body></html>";
 
         wv = (WebView) findViewById(R.id.webview1);
         wv.setBackgroundColor(getResources().getColor(color.black));
