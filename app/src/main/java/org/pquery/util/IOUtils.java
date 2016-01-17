@@ -93,9 +93,9 @@ public class IOUtils {
      */
     public static FileDetails httpGetBytes(HttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
 
-        Logger.d("enter [path=" + getHost() + path + "]");
+        Logger.d("enter [path=" + getSecureHost() + path + "]");
 
-        HttpGet get = new HttpGet(getHost() + path);
+        HttpGet get = new HttpGet(getSecureHost() + path);
         get.addHeader("Accept-Encoding", "gzip");
         get.addHeader("Connection", "close");
         HttpClientParams.setRedirecting(get.getParams(), false);    // don't follow redirects. geocaching redirects on errors

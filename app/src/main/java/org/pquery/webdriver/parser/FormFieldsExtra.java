@@ -17,6 +17,7 @@ public class FormFieldsExtra {
         this.form = wrappedForm;
     }
 
+
     public void setValueChecked(String name, String value) throws ParseException {
 
         if (form.get(name) == null)
@@ -79,12 +80,10 @@ public class FormFieldsExtra {
     }
 
     public void addValue(String name, String value) throws ParseException {
-        if (form.get(name) == null)
-            throw new ParseException(name + " missing");
-
         boolean success = form.addValue(name, value);
 
         if (!success)
             throw new ParseException(name);
     }
+
 }

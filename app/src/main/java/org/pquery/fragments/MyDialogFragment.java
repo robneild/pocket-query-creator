@@ -21,7 +21,7 @@ import java.util.List;
 public class MyDialogFragment extends SherlockDialogFragment {
 
     public static MyDialogFragment newInstance(String title, String message) {
-        return newInstance(title, message);
+        return newInstance(title, message, null);
     }
 
     public static MyDialogFragment newInstance(String title, String message, File fileNameDownloaded) {
