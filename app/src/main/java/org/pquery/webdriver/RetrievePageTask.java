@@ -59,7 +59,8 @@ public class RetrievePageTask extends RetriableTask<Source> {
             client = createHttpClient();
 
 
-            // Restore cookies. This might mean we are already logged in
+            // Restore cookies
+            // This gives us a chance for server to think we are logged in
 
             for (Cookie c : cookies) {
                 Logger.d("restored cookie " + c);
@@ -67,11 +68,11 @@ public class RetrievePageTask extends RetriableTask<Source> {
             }
 
 
+            //
+            // Get the target page
+            // Not sure if logged in yet
 
-            // Get the pocket query creation page
-            // and read the response. Detect if already logged in or not
-
-            // 0 - 25%
+            // 0 - 33%
 
             try {
 
@@ -80,7 +81,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
                         @Override
                         public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
                             progressReport(
-                                    percent0to100 / 4,    // convert to 0-25%
+                                    percent0to100 / 3,    // convert to 0-33%
                                     res.getString(R.string.retrieve_page),
                                     Util.humanDownloadCounter(bytesReadSoFar, expectedLength));
                         }
@@ -99,15 +100,16 @@ public class RetrievePageTask extends RetriableTask<Source> {
             cookies = client.getCookieStore().getCookies();
 
 
+
+
             //
             // Parse the response
-            //
-            // Can take a long time an old CPU but good way
-            // to update progress
+            // Check for some common problems and detect if already logged in or not
+            // Can take a long time an old CPU but good way to update progress
 
-            // 30%
+            // 50%
 
-            progressReport(30, res.getString(R.string.parsing), "");
+            progressReport(50, res.getString(R.string.parsing), "");
             GeocachingPage pageParser = new GeocachingPage(html);
 
             ifCancelledThrow();
@@ -135,78 +137,29 @@ public class RetrievePageTask extends RetriableTask<Source> {
 
 
 
-
-
-
-
-
-            // Get the login page
-
-            // 30 - 55%
-
-            try {
-
-                    html = IOUtils.httpGet(client, "/login/default.aspx?redir=" + URLEncoder.encode(urlPath), cancelledListener, new Listener() {
-
-                        @Override
-                        public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
-                            progressReport(
-                                    (percent0to100 / 4) + 30,    // convert to 30 - 55%
-                                    res.getString(R.string.retrieve_page),
-                                    Util.humanDownloadCounter(bytesReadSoFar, expectedLength));
-                        }
-                    });
-
-            } catch (IOException e) {
-                cookies = client.getCookieStore().getCookies();
-
-                Logger.e("Exception downloading login page", e);
-                throw new FailureException(res.getString(R.string.login_download_fail), e);
-            }
-
-
-
             //
-            // Parse the response
-            //
-            // Can take a long time an old CPU but good way
-            // to update progress
-
-            // 60%
-
-            progressReport(60, res.getString(R.string.parsing), "");
-            pageParser = new GeocachingPage(html);
-
-            ifCancelledThrow();
-
-            // Check for a completely wrong page returned that doesn't mention
-            // Geocaching in the title
-            // Likely to be a wifi login page
-
-            if (!pageParser.isGeocachingPage())
-                throw new FailurePermanentException(res.getString(R.string.not_geocaching_page));
-
-
             // So we now need to POST the login form
-
             // Fill in the form values
+
+            // 60% - 93%
 
             FormFields loginForm = pageParser.extractForm();
 
             FormFieldsExtra loginFormExtra = new FormFieldsExtra(loginForm);
             try {
-                loginFormExtra.setValueChecked("ctl00$ContentBody$tbUsername", username);
-                loginFormExtra.setValueChecked("ctl00$ContentBody$tbPassword", password);
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbRememberMe", "on");
+                loginFormExtra.setValueChecked("ctl00$uxLoginStatus$tbUsername", username);
+                loginFormExtra.setValueChecked("ctl00$uxLoginStatus$tbPassword", password);
+                loginFormExtra.setValueChecked("ctl00$uxLoginStatus$cbRememberMe", "on");
 
-                loginFormExtra.checkValue("ctl00$ContentBody$btnSignIn", "Sign In");
+                loginFormExtra.checkValue("ctl00$uxLoginStatus$btnSignIn", "Sign In");
             } catch (ParseException e) {
                 throw new FailurePermanentException(res.getString(R.string.failed_login_form));
             }
 
             List<BasicNameValuePair> nameValuePairs = loginFormExtra.toNameValuePairs();
 
-            progressReport(65, res.getString(R.string.login_geocaching_com), res.getString(R.string.requesting));
+
+            progressReport(60, res.getString(R.string.login_geocaching_com), res.getString(R.string.requesting));
 
             try {
                 // https://www.geocaching.com/login/default.aspx?redir=%2fpocket%2fdefault.aspx%3f
@@ -217,7 +170,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
                             @Override
                             public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
                                 progressReport(
-                                        65 + percent0to100 / 4,
+                                        60 + percent0to100 / 3,
                                         res.getString(R.string.login_geocaching_com),
                                         Util.humanDownloadCounter(bytesReadSoFar, expectedLength)); // 18-30%
                             }
@@ -230,8 +183,11 @@ public class RetrievePageTask extends RetriableTask<Source> {
                 throw new FailureException(res.getString(R.string.unable_to_submit_login), e);
             }
 
+
+
+
             //
-            // Parse response to check we are now logged in
+            // Parse response to verify we are now logged in
             //
 
             progressReport(95, res.getString(R.string.parsing), "");

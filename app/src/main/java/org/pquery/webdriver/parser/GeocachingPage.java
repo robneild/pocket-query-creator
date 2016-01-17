@@ -56,10 +56,10 @@ public class GeocachingPage {
      */
     public boolean isLoggedIn() throws ParseException {
 
-        if (html.indexOf("www.geocaching.com/login/default.aspx?RESET=Y") != -1) // Logout
+        if (html.indexOf("ctl00_uxLoginStatus_divSignedIn") != -1) // Logout
             // link
             return true;
-        if (html.indexOf("ctl00_divNotSignedIn") != -1)
+        if (html.indexOf("ctl00_uxLoginStatus_vsSignInWidgetForm") != -1)
             return false;
 
         throw new ParseException("Unable to detect login status on geocaching.com page");
