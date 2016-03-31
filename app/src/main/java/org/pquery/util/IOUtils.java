@@ -1,13 +1,16 @@
 package org.pquery.util;
 
+import android.content.Context;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.pquery.webdriver.CancelledListener;
@@ -76,8 +79,8 @@ public class IOUtils {
     }
 
 
-    public static String httpGet(HttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
-        FileDetails fileDetails = httpGetBytes(client, path, cancelledListener, listener);
+    public static String httpGet(Context cxt, DefaultHttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
+        FileDetails fileDetails = httpGetBytes(cxt, client, path, cancelledListener, listener);
 
         // Convert data into string. Geocaching.com uses utf-8 pages?
         String ret = new String(fileDetails.contents, "utf-8");
@@ -91,7 +94,7 @@ public class IOUtils {
      *
      * @throws InterruptedException
      */
-    public static FileDetails httpGetBytes(HttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
+    public static FileDetails httpGetBytes(Context cxt, DefaultHttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
 
         Logger.d("enter [path=" + getSecureHost() + path + "]");
 
@@ -99,6 +102,15 @@ public class IOUtils {
         get.addHeader("Accept-Encoding", "gzip");
         get.addHeader("Connection", "close");
         HttpClientParams.setRedirecting(get.getParams(), false);    // don't follow redirects. geocaching redirects on errors
+
+        // Restore cookies
+        // This gives us a chance for server to think we are logged in
+
+        List<Cookie> cookies = Prefs.getCookies(cxt);
+        for (Cookie c : cookies) {
+            Logger.d("restored cookie " + c);
+            client.getCookieStore().addCookie(c);
+        }
 
         // Initiate the HTTP request
 
@@ -129,6 +141,9 @@ public class IOUtils {
             data = IOUtils.toByteArray(in, cancelledListener, null, length * ESTIMATED_COMPRESSION_RATIO);
         }
 
+        cookies = client.getCookieStore().getCookies();
+        Prefs.saveCookies(cxt, cookies);
+
         // Check for 404 page not found, 302 object moved etc
         // We read in body, even though error, because need to see the redirect link etc
         // Can assume error page is html (rather than binary) so ok to log it etc
@@ -147,7 +162,7 @@ public class IOUtils {
         return ret;
     }
 
-    public static String httpPost(HttpClient client, List<BasicNameValuePair> paramList, String path, boolean secure, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
+    public static String httpPost(Context cxt, DefaultHttpClient client, List<BasicNameValuePair> paramList, String path, boolean secure, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
 
         HttpEntity entity = new UrlEncodedFormEntity(paramList, HTTP.UTF_8);
 
@@ -163,6 +178,15 @@ public class IOUtils {
         HttpPost post = new HttpPost(url);
         post.addHeader("Accept-Encoding", "gzip");
         post.setEntity(entity);
+
+        // Restore cookies
+        // This gives us a chance for server to think we are logged in
+
+        List<Cookie> cookies = Prefs.getCookies(cxt);
+        for (Cookie c : cookies) {
+            Logger.d("restored cookie " + c);
+            client.getCookieStore().addCookie(c);
+        }
 
         HttpResponse response = client.execute(post);
 
@@ -187,6 +211,9 @@ public class IOUtils {
             in = new GZIPInputStream(new ByteArrayInputStream(data));
             data = IOUtils.toByteArray(in, cancelledListener, null, length * ESTIMATED_COMPRESSION_RATIO);
         }
+
+        cookies = client.getCookieStore().getCookies();
+        Prefs.saveCookies(cxt, cookies);
 
         String ret = new String(data, "utf-8");
         Logger.d(ret);

@@ -1,10 +1,8 @@
 package org.pquery.webdriver;
 
 import android.content.Context;
-import android.content.res.Resources;
 
 import org.apache.http.HttpStatus;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.pquery.R;
 import org.pquery.util.HTTPStatusCodeException;
@@ -18,7 +16,6 @@ import org.pquery.util.Util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import static org.pquery.webdriver.HttpClientFactory.createHttpClient;
 
@@ -45,12 +42,6 @@ public class DownloadTask extends RetriableTask<File> {
 
         FileDetails pq;
         DefaultHttpClient client = createHttpClient();
-        List<Cookie> cookies = Prefs.getCookies(cxt);
-
-        for (Cookie c : cookies) {
-            Logger.d("restored cookie " + c);
-            client.getCookieStore().addCookie(c);
-        }
 
         progressReport(0, res.getString(R.string.downloading), res.getString(R.string.requesting));
 
@@ -58,7 +49,7 @@ public class DownloadTask extends RetriableTask<File> {
         // and read the response. Need to detect if logged in or no
 
         try {
-            pq = IOUtils.httpGetBytes(client, url, cancelledListener, new Listener() {
+            pq = IOUtils.httpGetBytes(cxt, client, url, cancelledListener, new Listener() {
 
                 @Override
                 public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
