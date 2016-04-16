@@ -27,13 +27,11 @@ public class SchedulePQFragment extends DialogFragment {
     public void setSchedules(Map<Integer, Schedule> schedules) {
         this.schedules = schedules;
         selectedWeekdays = new boolean[schedules.size()];
-        int index = 0;
         for (Schedule schedule : schedules.values()) {
-            selectedWeekdays[index] = schedule.isEnabled();
+            selectedWeekdays[schedule.getDay()] = schedule.isEnabled();
             if (schedule.isEnabled()) {
                 mSelectedItems.add(schedule.getDay().toString());
             }
-            index++;
         }
     }
 
