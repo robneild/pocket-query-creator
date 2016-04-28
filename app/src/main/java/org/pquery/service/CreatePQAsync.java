@@ -7,14 +7,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Pair;
 
 import junit.framework.Assert;
 
 import net.htmlparser.jericho.FormFields;
 import net.htmlparser.jericho.Source;
 
-import org.apache.http.cookie.Cookie;
-import org.apache.http.message.BasicNameValuePair;
 import org.pquery.QueryStore;
 import org.pquery.R;
 import org.pquery.dao.DownloadablePQ;
@@ -54,7 +53,6 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
     private QueryStore queryStore;
     private LocationManager locationManager;
     private Location gpsLocation;
-    private List<Cookie> cookies;
     private int retryCount;
     private boolean gpsOn;
 
@@ -65,10 +63,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
         this.cxt = cxt;
         this.queryStore = queryStore;
         this.locationManager = locationManager;
-        this.cookies = Prefs.getCookies(cxt);
         this.retryCount = Prefs.getRetryCount(cxt);
-
-        Logger.cookie("Cookies retrieve from prefs", cookies);
     }
 
     private void checkCancelled() throws InterruptedException {
@@ -142,7 +137,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
             publishProgress(new ProgressInfo(30, res.getString(R.string.processing_form)));
 
             GeocachingPage createPage = new GeocachingPage(parsedHtml);
-            List<BasicNameValuePair> form = fillInCreateForm(createPage);
+            List<Pair<String,String>> form = fillInCreateForm(createPage);
 
 
             // 30% - 60%
@@ -237,7 +232,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
      *
      * @throws FailurePermanentException
      */
-    public List<BasicNameValuePair> fillInCreateForm(GeocachingPage page) throws FailurePermanentException {
+    public List<Pair<String,String>> fillInCreateForm(GeocachingPage page) throws FailurePermanentException {
 
         FormFields loginForm = page.extractForm();
 
@@ -475,7 +470,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
             throw new FailurePermanentException(res.getString(R.string.failed_login_form), e.getMessage());
         }
 
-        List<BasicNameValuePair> nameValuePairs = loginFormExtra.toNameValuePairs();
+        List<Pair<String,String>> nameValuePairs = loginFormExtra.toNameValuePairs();
 
         return nameValuePairs;
 

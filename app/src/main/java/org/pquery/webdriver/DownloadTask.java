@@ -2,8 +2,6 @@ package org.pquery.webdriver;
 
 import android.content.Context;
 
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.pquery.R;
 import org.pquery.util.HTTPStatusCodeException;
 import org.pquery.util.IOUtils;
@@ -16,8 +14,7 @@ import org.pquery.util.Util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import static org.pquery.webdriver.HttpClientFactory.createHttpClient;
+import java.net.HttpURLConnection;
 
 /**
  * Download file over HTTP
@@ -41,7 +38,6 @@ public class DownloadTask extends RetriableTask<File> {
     protected File task() throws FailureException, FailurePermanentException, InterruptedException {
 
         FileDetails pq;
-        DefaultHttpClient client = createHttpClient();
 
         progressReport(0, res.getString(R.string.downloading), res.getString(R.string.requesting));
 
@@ -49,7 +45,7 @@ public class DownloadTask extends RetriableTask<File> {
         // and read the response. Need to detect if logged in or no
 
         try {
-            pq = IOUtils.httpGetBytes(cxt, client, url, cancelledListener, new Listener() {
+            pq = IOUtils.httpGetBytes(cxt, url, cancelledListener, new Listener() {
 
                 @Override
                 public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
@@ -62,7 +58,7 @@ public class DownloadTask extends RetriableTask<File> {
 
         } catch (HTTPStatusCodeException e) {
             // When DownloadablePQ not run, we get back 302 redirect to <a href="/pocket/">
-            if (e.code == HttpStatus.SC_MOVED_TEMPORARILY && e.body.indexOf("<a href=\"/pocket/\">") != -1)
+            if (e.code == HttpURLConnection.HTTP_MOVED_TEMP && e.body.indexOf("<a href=\"/pocket/\">") != -1)
                 throw new FailureException(res.getString(R.string.download_not_ready));
 
             // Treat any other status code as error

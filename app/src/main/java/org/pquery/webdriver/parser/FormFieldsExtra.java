@@ -1,10 +1,10 @@
 package org.pquery.webdriver.parser;
 
+import android.util.Pair;
+
 import net.htmlparser.jericho.FormControlType;
 import net.htmlparser.jericho.FormField;
 import net.htmlparser.jericho.FormFields;
-
-import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,19 +59,19 @@ public class FormFieldsExtra {
     //    } else {
 
 
-    public List<BasicNameValuePair> toNameValuePairs() {
+    public List<Pair<String,String>> toNameValuePairs() {
 
-        ArrayList<BasicNameValuePair> pairList = new ArrayList<BasicNameValuePair>();
+        ArrayList<Pair<String,String>> pairList = new ArrayList<>();
 
         for (FormField field : form) {
 
             if (field.getFormControl().getFormControlType() == FormControlType.SUBMIT)
-                pairList.add(new BasicNameValuePair(field.getName(), field.getPredefinedValues().iterator().next()));
+                pairList.add(new Pair(field.getName(), field.getPredefinedValues().iterator().next()));
             else {
                 // Usually the field will only have one value
                 // However, for a multiple select control, there will be multiple values e.g. country
                 for (String value : field.getValues()) {
-                    pairList.add(new BasicNameValuePair(field.getName(), value));
+                    pairList.add(new Pair(field.getName(), value));
                 }
             }
         }

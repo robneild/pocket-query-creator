@@ -3,13 +3,12 @@ package org.pquery.util;
 import android.os.Environment;
 import android.text.format.Time;
 import android.util.Log;
-
-import org.apache.http.cookie.Cookie;
-import org.apache.http.message.BasicNameValuePair;
+import android.util.Pair;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.HttpCookie;
 import java.util.List;
 
 public class Logger {
@@ -49,26 +48,26 @@ public class Logger {
         log(message, Log.WARN);
     }
 
-    public static void cookie(String message, List<Cookie> cookies) {
+    public static void cookie(String message, List<HttpCookie> cookies) {
         if (enabled) {
             StringBuffer s = new StringBuffer();
             s.append(message + "\n");
-            for (Cookie cookie : cookies) {
+            for (HttpCookie cookie : cookies) {
                 s.append("name=" + cookie.getName() + ", value=" + cookie.getValue() + "\n");
             }
             log(s.toString(), Log.DEBUG);
         }
     }
 
-    public static void d(List<BasicNameValuePair> list) {
+    public static void d(List<Pair<String,String>> list) {
         if (enabled) {
             StringBuffer s = new StringBuffer();
-            for (BasicNameValuePair nvp : list) {
+            for (Pair nvp : list) {
                 // Don't log password into log file
-                if (nvp.getName().equals("ctl00$tbPassword"))
-                    s.append(nvp.getName() + " = password not logged\n");
+                if (nvp.first.equals("ctl00$tbPassword"))
+                    s.append(nvp.first + " = password not logged\n");
                 else
-                    s.append(nvp.getName() + " = " + nvp.getValue() + "\n");
+                    s.append(nvp.first + " = " + nvp.second + "\n");
             }
             log(s.toString(), Log.DEBUG);
         }

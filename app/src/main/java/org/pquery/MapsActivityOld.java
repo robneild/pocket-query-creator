@@ -95,7 +95,7 @@ public class MapsActivityOld extends SherlockMapActivity
                 // Create circle round marker, depicting coverage of pocket query
                 Projection projection = mapView.getProjection();
 
-                float circleRadius = projection.metersToEquatorPixels(radiusInKm * 1000) * (1/ FloatMath.cos((float) Math.toRadians(point.getLatitudeE6() / 1E6)));
+                float circleRadius = projection.metersToEquatorPixels(radiusInKm * 1000) * (float) (1/ Math.cos(Math.toRadians(point.getLatitudeE6() / 1E6)));
 
                 Paint innerCirclePaint;
 

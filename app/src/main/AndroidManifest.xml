@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="org.pquery"
-    android:versionCode="55"
-    android:versionName="4.1.5">
+    android:versionCode="56"
+    android:versionName="4.1.6">
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -75,8 +75,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <uses-library android:name="com.google.android.maps" />
 
         <!-- Development key -->
         <meta-data

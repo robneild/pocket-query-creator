@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 
 import org.pquery.Main;
 import org.pquery.R;
@@ -28,10 +29,18 @@ public class NotificationUtil {
         Logger.d("[title=" + title + ",message=" + message + "]");
         int notificationId = getNextNotificationId();
 
-        Notification notification = new Notification(R.drawable.status_bar2, title, System.currentTimeMillis());
-        notification.setLatestEventInfo(cxt, title, message, intent);
+        // Notification notification = new Notification(R.drawable.status_bar2, title, System.currentTimeMillis());
+        // notification.setLatestEventInfo(cxt, title, message, intent);
+
+        Notification notification = new NotificationCompat.Builder(cxt)
+                .setContentIntent(intent)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setOngoing(true)
+                .build();
 
         //notifManager.notify(notificationId, notification);
+
         cxt.startForeground(notificationId, notification);
         return;
     }
@@ -43,9 +52,20 @@ public class NotificationUtil {
         int notificationId = getNextNotificationId();
         PendingIntent intent = getPendingIntent(title, message, notificationId);
 
-        Notification notification = new Notification(R.drawable.status_bar2, title, System.currentTimeMillis());
-        notification.setLatestEventInfo(cxt, title, message, intent);
-        notification.defaults = Notification.DEFAULT_ALL;      // vibrate etc
+
+        //Notification notification = new Notification(R.drawable.status_bar2, title, System.currentTimeMillis());
+        //notification.setLatestEventInfo(cxt, title, message, intent);
+        //notification.defaults = Notification.DEFAULT_ALL;      // vibrate etc
+
+
+        Notification notification = new NotificationCompat.Builder(cxt)
+                .setContentIntent(intent)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setDefaults(Notification.DEFAULT_ALL)     // vibrate etc
+                .build();
+
+
         notifManager.notify(notificationId, notification);
 
         return notificationId;

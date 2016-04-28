@@ -56,11 +56,24 @@ public class GeocachingPage {
      */
     public boolean isLoggedIn() throws ParseException {
 
-        if (html.indexOf("ctl00_uxLoginStatus_divSignedIn") != -1) // Logout
-            // link
+        if (html.indexOf("ctl00_ContentBody_LoggedInPanel") != -1) {
+            // This is shown on the page returned by a successfully POST /login/default.aspx
+            // The page usually is a 302, with an Object moved body
             return true;
+        }
+
+        if (html.indexOf("ctl00_uxLoginStatus_divSignedIn") != -1)
+            // Logout link
+            return true;
+
         if (html.indexOf("ctl00_uxLoginStatus_vsSignInWidgetForm") != -1)
             return false;
+
+        if (html.indexOf("ctl00_ContentBody_LoginPanel") != -1) {
+            // This is shown on the page returned by a failed POST /login/default.aspx
+            // The page usually is a 200. It shows a standard login panel with some kind of error message
+            return true;
+        }
 
         throw new ParseException("Unable to detect login status on geocaching.com page");
     }

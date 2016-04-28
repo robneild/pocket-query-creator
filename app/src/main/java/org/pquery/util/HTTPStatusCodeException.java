@@ -1,7 +1,5 @@
 package org.pquery.util;
 
-import org.apache.http.StatusLine;
-
 import java.io.IOException;
 
 public class HTTPStatusCodeException extends IOException {
@@ -12,10 +10,10 @@ public class HTTPStatusCodeException extends IOException {
     public String reason;
     public String body;
 
-    public HTTPStatusCodeException(StatusLine status, String body) {
-        super("Geocaching.com returned " + status.getStatusCode() + " " + status.getReasonPhrase());
-        code = status.getStatusCode();
-        reason = status.getReasonPhrase();
+    public HTTPStatusCodeException(int statusCode, String statusMessage, String body) {
+        super("Geocaching.com returned " + statusCode + " " + statusMessage);
+        code = statusCode;
+        reason = statusMessage;
         this.body = body;
     }
 }

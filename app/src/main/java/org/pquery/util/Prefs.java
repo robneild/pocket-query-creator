@@ -7,8 +7,6 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.cookie.BasicClientCookie;
 import org.pquery.R;
 import org.pquery.dao.DownloadablePQ;
 import org.pquery.dao.RepeatablePQ;
@@ -20,9 +18,9 @@ import org.pquery.filter.DaysToGenerateFilter;
 import org.pquery.filter.OneToFiveFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Prefs {
 
@@ -220,7 +218,7 @@ public class Prefs {
         edit.commit();
     }
 
-    public static void saveCookies(Context cxt, List<Cookie> cookies) {
+    public static void saveCookies(Context cxt, Map<String,String> cookies) {
 
         String s = "";
 
@@ -231,8 +229,8 @@ public class Prefs {
 
         // Store the cookie list into a string
 
-        for (Cookie c : cookies) {
-            s += c.getName() + COMMA + c.getValue() + SEMI_COLON;
+        for (Map.Entry<String,String> cookie : cookies.entrySet()) {
+            s += cookie.getKey() + COMMA + cookie.getValue() + SEMI_COLON;
         }
 
         Editor edit = PreferenceManager.getDefaultSharedPreferences(cxt).edit();
@@ -251,8 +249,8 @@ public class Prefs {
         edit.commit();
     }
 
-    public static List<Cookie> getCookies(Context cxt) {
-        ArrayList<Cookie> ret = new ArrayList<Cookie>();
+    public static Map<String,String> getCookies(Context cxt) {
+        Map<String,String> ret = new HashMap<>();
 
         // Decode Base64 wrapper
 
@@ -292,10 +290,7 @@ public class Prefs {
 
                 // Check for bad cookie. Shouldn't happen
                 if (parts.length == 2) {
-                    BasicClientCookie basicCookie = new BasicClientCookie(parts[0], parts[1]);
-                    basicCookie.setDomain("www.geocaching.com");
-                    basicCookie.setPath("/");
-                    ret.add(basicCookie);
+                    ret.put(parts[0], parts[1]);
                 } else {
                     Logger.e("got bad cookie [" + cookie + "]");
                 }

@@ -1,29 +1,32 @@
 package org.pquery.util;
 
 import android.content.Context;
+import android.util.Pair;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.params.HttpClientParams;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 import org.pquery.webdriver.CancelledListener;
+import org.pquery.webdriver.HttpClientFactory;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpCookie;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 
 public class IOUtils {
+
+
+    private static final String SET_COOKIE = "Set-Cookie";
+
 
     /**
      * Used to store response from downloading a file
@@ -38,12 +41,9 @@ public class IOUtils {
     private static final int ESTIMATED_CONTENT_SIZE = 48000;
 
     public interface Listener {
-        public void update(int bytesReadSoFar, int expectedLength, int percent);
+        void update(int bytesReadSoFar, int expectedLength, int percent);
     }
 
-//    public static byte[] toByteArray(InputStream input) throws IOException {
-//        return toByteArray(input, null, -1);
-//    }
 
     public static byte[] toByteArray(InputStream input, CancelledListener cancelledListener, Listener listener, int expectedLength) throws IOException, InterruptedException {
 
@@ -79,8 +79,8 @@ public class IOUtils {
     }
 
 
-    public static String httpGet(Context cxt, DefaultHttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
-        FileDetails fileDetails = httpGetBytes(cxt, client, path, cancelledListener, listener);
+    public static String httpGet(Context cxt, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
+        FileDetails fileDetails = httpGetBytes(cxt, path, cancelledListener, listener);
 
         // Convert data into string. Geocaching.com uses utf-8 pages?
         String ret = new String(fileDetails.contents, "utf-8");
@@ -94,35 +94,41 @@ public class IOUtils {
      *
      * @throws InterruptedException
      */
-    public static FileDetails httpGetBytes(Context cxt, DefaultHttpClient client, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
+    public static FileDetails httpGetBytes(Context cxt, String path, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
 
         Logger.d("enter [path=" + getSecureHost() + path + "]");
 
-        HttpGet get = new HttpGet(getSecureHost() + path);
-        get.addHeader("Accept-Encoding", "gzip");
-        get.addHeader("Connection", "close");
-        HttpClientParams.setRedirecting(get.getParams(), false);    // don't follow redirects. geocaching redirects on errors
+        URL url = new URL(getSecureHost() + path);
+
+        HttpURLConnection client = HttpClientFactory.createURLConnection(url);
+        client.setRequestMethod("GET");
 
         // Restore cookies
         // This gives us a chance for server to think we are logged in
 
-        List<Cookie> cookies = Prefs.getCookies(cxt);
-        for (Cookie c : cookies) {
-            Logger.d("restored cookie " + c);
-            client.getCookieStore().addCookie(c);
+        Map<String,String> cookies = Prefs.getCookies(cxt);
+        if (cookies.size() > 0) {
+            String coo = "";
+            for (Map.Entry<String, String> cookie : cookies.entrySet()) {
+                if (coo.length() == 0) {
+                    coo = cookie.getKey() + "=" + cookie.getValue();
+                } else {
+                    coo += ";" + cookie.getKey() + "=" + cookie.getValue();
+                }
+            }
+            client.setRequestProperty("Cookie", coo);
         }
 
         // Initiate the HTTP request
 
-        HttpResponse response = client.execute(get);
-
-        // Get info from the HTTP response headers
-
-        int length = (int) response.getEntity().getContentLength();
-        boolean chunked = response.getEntity().isChunked();
-        Header contentEncoding = response.getFirstHeader("Content-Encoding");
-        int statusCode = response.getStatusLine().getStatusCode();
-        String filename = decodeContentDispositionHeader(response.getHeaders("Content-Disposition"));
+        int length = (int) client.getContentLength();
+        boolean chunked = false;
+        if (client.getHeaderField("Transfer-Encoding") != null && client.getHeaderField("Transfer-Encoding").equalsIgnoreCase("Chunked")) {
+            chunked = true;
+        }
+        String contentEncoding = client.getContentEncoding(); // .getFirstHeader("Content-Encoding");
+        int statusCode = client.getResponseCode();
+        String filename = decodeContentDispositionHeader(client.getHeaderField("Content-Disposition"));
         Logger.d("response [length=" + length + ",chunked=" + chunked + ",contentEncoding=" + contentEncoding + ",statusCode=" + statusCode + "]");
 
         // Read response
@@ -130,18 +136,20 @@ public class IOUtils {
         if (length == -1)
             length = ESTIMATED_CONTENT_SIZE;   // if chunking is on, we have to guess final length
 
-        InputStream in = response.getEntity().getContent();
+        InputStream in = client.getInputStream();
         byte data[] = IOUtils.toByteArray(in, cancelledListener, listener, length);
 
         // Handle if response is compressed
 
-        if (contentEncoding != null && contentEncoding.getValue().equalsIgnoreCase("gzip")) {
+        if (contentEncoding != null && contentEncoding.equalsIgnoreCase("gzip")) {
             Logger.d("decoding gzip");
             in = new GZIPInputStream(new ByteArrayInputStream(data));
             data = IOUtils.toByteArray(in, cancelledListener, null, length * ESTIMATED_COMPRESSION_RATIO);
         }
 
-        cookies = client.getCookieStore().getCookies();
+        Map<String,String> newcookies = extractCookies(client);
+        cookies.putAll(newcookies);
+
         Prefs.saveCookies(cxt, cookies);
 
         // Check for 404 page not found, 302 object moved etc
@@ -150,7 +158,7 @@ public class IOUtils {
         if (statusCode >= 300) {
             String s = new String(data);
             Logger.d("Bad status page response body.. " + s);
-            throw new HTTPStatusCodeException(response.getStatusLine(), s);
+            throw new HTTPStatusCodeException(client.getResponseCode(), client.getResponseMessage(), s);
         }
 
         Logger.d("returning " + data.length + " bytes");
@@ -162,57 +170,103 @@ public class IOUtils {
         return ret;
     }
 
-    public static String httpPost(Context cxt, DefaultHttpClient client, List<BasicNameValuePair> paramList, String path, boolean secure, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
+    public static String httpPost(Context cxt, List<Pair<String,String>> paramList, String path, boolean secure, CancelledListener cancelledListener, Listener listener) throws IOException, InterruptedException {
 
-        HttpEntity entity = new UrlEncodedFormEntity(paramList, HTTP.UTF_8);
+        Logger.d("enter [path=" + getSecureHost() + path + "]");
 
-        String url;
-        if (secure)
-            url = getSecureHost() + path;
-        else
-            url = getHost() + path;
+        URL url = new URL(getSecureHost() + path);
 
-        Logger.d("enter [url=" + url + "]");
-        Logger.d(paramList);
-
-        HttpPost post = new HttpPost(url);
-        post.addHeader("Accept-Encoding", "gzip");
-        post.setEntity(entity);
+        HttpURLConnection client = HttpClientFactory.createURLConnection(url);
 
         // Restore cookies
         // This gives us a chance for server to think we are logged in
 
-        List<Cookie> cookies = Prefs.getCookies(cxt);
-        for (Cookie c : cookies) {
-            Logger.d("restored cookie " + c);
-            client.getCookieStore().addCookie(c);
+        Map<String,String> cookies = Prefs.getCookies(cxt);
+        if (cookies.size() > 0) {
+            String coo = "";
+            for (Map.Entry<String, String> cookie : cookies.entrySet()) {
+                if (coo.length() == 0) {
+                    coo = cookie.getKey() + "=" + cookie.getValue();
+                } else {
+                    coo += ";" + cookie.getKey() + "=" + cookie.getValue();
+                }
+            }
+
+            coo += ";_gali=ctl00_uxLoginStatus_btnSignIn";
+
+            client.setRequestProperty("Cookie", coo);
         }
 
-        HttpResponse response = client.execute(post);
 
-        int length = (int) response.getEntity().getContentLength();
-        boolean chunked = response.getEntity().isChunked();
-        Header contentEncoding = response.getFirstHeader("Content-Encoding");
 
-        Logger.d("response [length=" + length + ",chunked=" + chunked + ",contentEncoding=" + contentEncoding + "]");
+
+
+        // Setup output stuff
+        client.setDoOutput(true);
+        client.setRequestMethod("POST");
+        client.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+
+
+        // Add form parameters
+        StringBuilder form = new StringBuilder();
+        boolean first = true;
+
+        for (Pair<String,String> pair : paramList) {
+            if (first)
+                first = false;
+            else
+                form.append("&");
+
+            form.append(URLEncoder.encode(pair.first, "UTF-8"));
+            form.append("=");
+            form.append(URLEncoder.encode(pair.second, "UTF-8"));
+        }
+
+
+
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream(), "UTF-8"));
+        writer.write(form.toString());
+        writer.flush();
+        writer.close();
+
+
+        client.connect();
+
+
+        // Initiate the HTTP request
+
+        int length = (int) client.getContentLength();
+        boolean chunked = false;
+        if (client.getHeaderField("Transfer-Encoding") != null && client.getHeaderField("Transfer-Encoding").equalsIgnoreCase("Chunked")) {
+            chunked = true;
+        }
+        String contentEncoding = client.getContentEncoding(); // .getFirstHeader("Content-Encoding");
+        int statusCode = client.getResponseCode();
+        String filename = decodeContentDispositionHeader(client.getHeaderField("Content-Disposition"));
+        Logger.d("response [length=" + length + ",chunked=" + chunked + ",contentEncoding=" + contentEncoding + ",statusCode=" + statusCode + "]");
+
 
         // Read response
 
         if (length == -1)
             length = ESTIMATED_CONTENT_SIZE;   // if chunking is on, we have to guess final length
 
-        InputStream in = response.getEntity().getContent();
+        InputStream in = client.getInputStream();
         byte data[] = IOUtils.toByteArray(in, cancelledListener, listener, length);
 
         // Handle if response is compressed
 
-        if (contentEncoding != null && contentEncoding.getValue().equalsIgnoreCase("gzip")) {
+        if (contentEncoding != null && contentEncoding.equalsIgnoreCase("gzip")) {
             Logger.d("decoding gzip");
             in = new GZIPInputStream(new ByteArrayInputStream(data));
             data = IOUtils.toByteArray(in, cancelledListener, null, length * ESTIMATED_COMPRESSION_RATIO);
         }
 
-        cookies = client.getCookieStore().getCookies();
+
+        Map<String,String> newcookies = extractCookies(client);
+        cookies.putAll(newcookies);
+
         Prefs.saveCookies(cxt, cookies);
 
         String ret = new String(data, "utf-8");
@@ -228,15 +282,33 @@ public class IOUtils {
         return "https://www.geocaching.com";
     }
 
-    private static String decodeContentDispositionHeader(Header[] header) {
-        if (header.length != 1) {
-            Logger.d("Unable to decode DownloadablePQ name from Content-Disposition response http headers [length=" + header.length + "]");
+    private static String decodeContentDispositionHeader(String header) {
+        if (header == null) {
+            Logger.d("Unable to decode DownloadablePQ name from Content-Disposition response http headers");
             return null;
         }
 
-        String depoSplit[] = header[0].getValue().split("filename=");
+        String depoSplit[] = header.split("filename=");
         String ret = depoSplit[1].replace("filename=", "").replace("\"", "").trim();
 
         return ret;
     }
+
+    private static Map<String,String> extractCookies(HttpURLConnection conn) {
+        Map<String,String> ret = new HashMap<>();
+
+        String headerName=null;
+        for (int i=1; (headerName = conn.getHeaderFieldKey(i)) != null; i++) {
+            if (headerName.equalsIgnoreCase(SET_COOKIE)) {
+
+                List<HttpCookie> subcookies = HttpCookie.parse(conn.getHeaderField(i));
+
+                for (HttpCookie cookie : subcookies) {
+                    ret.put(cookie.getName(), cookie.getValue());
+                }
+            }
+        }
+        return ret;
+    }
+
 }
