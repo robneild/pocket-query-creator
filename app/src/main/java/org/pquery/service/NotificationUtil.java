@@ -27,22 +27,19 @@ public class NotificationUtil {
 
     public void startInProgressNotification(String title, String message, PendingIntent intent) {
         Logger.d("[title=" + title + ",message=" + message + "]");
+
         int notificationId = getNextNotificationId();
 
-        // Notification notification = new Notification(R.drawable.status_bar2, title, System.currentTimeMillis());
-        // notification.setLatestEventInfo(cxt, title, message, intent);
 
         Notification notification = new NotificationCompat.Builder(cxt)
-                .setContentIntent(intent)
                 .setContentTitle(title)
                 .setContentText(message)
+                .setSmallIcon(R.drawable.status_bar2)
+                .setContentIntent(intent)
                 .setOngoing(true)
                 .build();
 
-        //notifManager.notify(notificationId, notification);
-
         cxt.startForeground(notificationId, notification);
-        return;
     }
 
     public int showEndNotification(String title, String message) {
@@ -52,16 +49,11 @@ public class NotificationUtil {
         int notificationId = getNextNotificationId();
         PendingIntent intent = getPendingIntent(title, message, notificationId);
 
-
-        //Notification notification = new Notification(R.drawable.status_bar2, title, System.currentTimeMillis());
-        //notification.setLatestEventInfo(cxt, title, message, intent);
-        //notification.defaults = Notification.DEFAULT_ALL;      // vibrate etc
-
-
         Notification notification = new NotificationCompat.Builder(cxt)
                 .setContentIntent(intent)
                 .setContentTitle(title)
                 .setContentText(message)
+                .setSmallIcon(R.drawable.status_bar2)
                 .setDefaults(Notification.DEFAULT_ALL)     // vibrate etc
                 .build();
 
