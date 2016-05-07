@@ -115,7 +115,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
 
 
             //
-            // So we now need to POST the login form
+            // So we now need to GET the login form and POST the credentials
             //
             // - extract form values from the previous page
             // - fill in text boxes with username/password
@@ -125,15 +125,31 @@ public class RetrievePageTask extends RetriableTask<Source> {
 
             // 0% - 50%
 
+            try {
+                // https://www.geocaching.com/login/default.aspx?redir=%2fpocket%2fdefault.aspx%3f
+                html = IOUtils.httpGet(cxt, "/login/default.aspx?redir=" + URLEncoder.encode(urlPath), cancelledListener, new Listener() {
+
+                    @Override
+                    public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
+                        progressReport(
+                                percent0to100 / 2,
+                                res.getString(R.string.login_geocaching_com),
+                                Util.humanDownloadCounter(bytesReadSoFar, expectedLength)); // 18-30%
+                    }
+                });
+            } catch (IOException e) {
+                throw new FailureException(res.getString(R.string.unable_to_get_login), e);
+            }
+            pageParser = new GeocachingPage(html);
             FormFields loginForm = pageParser.extractForm();
 
             FormFieldsExtra loginFormExtra = new FormFieldsExtra(loginForm);
             try {
-                loginFormExtra.setValueChecked("ctl00$uxLoginStatus$tbUsername", username);
-                loginFormExtra.setValueChecked("ctl00$uxLoginStatus$tbPassword", password);
-                loginFormExtra.setValueChecked("ctl00$uxLoginStatus$cbRememberMe", "on");
+                loginFormExtra.setValueChecked("ctl00$ContentBody$tbUsername", username);
+                loginFormExtra.setValueChecked("ctl00$ContentBody$tbPassword", password);
+                loginFormExtra.setValueChecked("ctl00$ContentBody$cbRememberMe", "on");
 
-                loginFormExtra.checkValue("ctl00$uxLoginStatus$btnSignIn", "Sign In");
+                loginFormExtra.checkValue("ctl00$ContentBody$btnSignIn", "Sign In");
             } catch (ParseException e) {
                 throw new FailurePermanentException(res.getString(R.string.failed_login_form));
             }

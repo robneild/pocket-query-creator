@@ -75,6 +75,11 @@ public class GeocachingPage {
             return true;
         }
 
+        if (html.indexOf("id=\"hlSignIn\"") != -1) {
+            // Log In Link is shown
+            return false;
+        }
+
         throw new ParseException("Unable to detect login status on geocaching.com page");
     }
 

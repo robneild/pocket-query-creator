@@ -94,6 +94,7 @@
     <string name="bad_credentials">Login to Geocaching.com failed. Verify your credentials are correct"</string>
     <string name="failed_login_form">Failed to fill in login form</string>
     <string name="unable_to_submit_login">Unable to submit login form</string>
+    <string name="unable_to_get_login">Unable to get login page</string>
     <string name="not_premium">You aren\'t a premium member. Goto Geocaching.com and upgrade</string>
     <string name="login_download_fail">Couldn\'t download login page</string>
     <string name="service_creation_failed">Creation failed</string>
