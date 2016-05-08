@@ -192,7 +192,7 @@ public class IOUtils {
                 }
             }
 
-            coo += ";_gali=ctl00_uxLoginStatus_btnSignIn";
+            coo += ";_gali=ctl00_ContentBody_btnSignIn";
 
             client.setRequestProperty("Cookie", coo);
         }

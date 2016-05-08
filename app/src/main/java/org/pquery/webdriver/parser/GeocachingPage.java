@@ -56,6 +56,15 @@ public class GeocachingPage {
      */
     public boolean isLoggedIn() throws ParseException {
 
+        if (html.indexOf("Object moved") != -1) {
+            // After a successful login POST to the login.aspx page page is useless and doesn't
+            // indicate if there was a successful login
+            //
+            // However, on success we get back a 302 Object moved
+            // The html page also has a "Object Moved" message
+            return true;
+        }
+
         if (html.indexOf("ctl00_ContentBody_LoggedInPanel") != -1) {
             // This is shown on the page returned by a successfully POST /login/default.aspx
             // The page usually is a 302, with an Object moved body
@@ -69,10 +78,10 @@ public class GeocachingPage {
         if (html.indexOf("ctl00_uxLoginStatus_vsSignInWidgetForm") != -1)
             return false;
 
-        if (html.indexOf("ctl00_ContentBody_LoginPanel") != -1) {
+        if (html.indexOf("ctl00_ContentBody_vsSignInWidgetForm") != -1) {
             // This is shown on the page returned by a failed POST /login/default.aspx
             // The page usually is a 200. It shows a standard login panel with some kind of error message
-            return true;
+            return false;
         }
 
         if (html.indexOf("id=\"hlSignIn\"") != -1) {
