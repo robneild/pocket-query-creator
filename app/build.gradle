@@ -10,7 +10,7 @@ android {
         }
     }
     compileSdkVersion "Google Inc.:Google APIs:21"
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
     defaultConfig {
         applicationId "org.pquery"
         minSdkVersion 10
@@ -23,7 +23,7 @@ android {
             resValue "string", "google_maps_v1_api_key", "0FlmDyhkwc97apG6mrrpYcSA0DigW65uk3Om_Ow"
             resValue "string", "google_maps_v2_api_key", "AIzaSyA56Yx2cbK02os10ttbHlUkNgWb3Vho_w0"
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
         debug {
             resValue "string", "google_maps_v1_api_key", "0FlmDyhkwc96zAf4GiKQ5rRND2wmosP4u1-Srig"
