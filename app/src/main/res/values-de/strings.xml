@@ -191,5 +191,6 @@
     <string name="will_try_again">Neuer Versuch in %d Sekunden</string>
 
     <string name="filter_countries">Länder</string>
+    <string name="unable_to_get_login">Fehler beim Laden der Login Seite</string>
 
 </resources>
