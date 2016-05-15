@@ -6,6 +6,12 @@ repositories {
 
 android {
     signingConfigs {
+        release {
+            storeFile file("keystore")
+            storePassword "RedCabbage"
+            keyAlias "android"
+            keyPassword "RedCabbage"
+        }
         config {
         }
     }
@@ -14,7 +20,7 @@ android {
     defaultConfig {
         applicationId "org.pquery"
         minSdkVersion 10
-        targetSdkVersion 21
+        targetSdkVersion 23
         testApplicationId "org.pquery.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
@@ -24,6 +30,7 @@ android {
             resValue "string", "google_maps_v2_api_key", "AIzaSyA56Yx2cbK02os10ttbHlUkNgWb3Vho_w0"
             minifyEnabled false
             // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
         }
         debug {
             resValue "string", "google_maps_v1_api_key", "0FlmDyhkwc96zAf4GiKQ5rRND2wmosP4u1-Srig"
@@ -36,7 +43,7 @@ android {
 
 dependencies {
     compile 'com.google.android.gms:play-services-maps:7.+'
-    compile 'com.android.support:support-v4:21.+'
+    compile 'com.android.support:support-v4:23.+'
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile files('libs/actionbarsherlock-plugin-maps-4.2.0.jar')
