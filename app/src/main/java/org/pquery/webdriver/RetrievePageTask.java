@@ -151,7 +151,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
 
                 loginFormExtra.checkValue("ctl00$ContentBody$btnSignIn", "Sign In");
             } catch (ParseException e) {
-                throw new FailurePermanentException(res.getString(R.string.failed_login_form));
+                throw new FailurePermanentException(res.getString(R.string.failed_login_form), e.getMessage());
             }
 
             List<Pair<String,String>> nameValuePairs = loginFormExtra.toNameValuePairs();

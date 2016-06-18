@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="org.pquery"
-    android:versionCode="58"
-    android:versionName="4.1.8">
+    android:versionCode="59"
+    android:versionName="4.1.9">
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.INTERNET"/>
