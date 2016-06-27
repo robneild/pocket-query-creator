@@ -2,8 +2,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.pquery"
-    android:versionCode="59"
-    android:versionName="4.1.9">
+    android:versionCode="60"
+    android:versionName="4.2">
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -12,11 +12,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true" />
-
 
     <!-- hardwareAccelerated="false" is to stop an annoying white flash when WebView loads on >=3 -->
     <application

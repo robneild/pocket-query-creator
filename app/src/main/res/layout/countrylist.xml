@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:padding="10dp"
+<LinearLayout android:padding="1dp"
               android:layout_height="fill_parent"
               android:layout_width="fill_parent"
               android:orientation="horizontal"
@@ -9,12 +9,12 @@
     <CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
                      android:id="@+id/countrylist_line"
                      android:layout_width="fill_parent"
-                     android:layout_height="30dip"
+                     android:layout_height="45dip"
                      android:textAppearance="?android:attr/textAppearance"
                      android:gravity="center_vertical"
                      android:checkMark="?android:attr/listChoiceIndicatorMultiple"
                      android:paddingLeft="6dip"
-                     android:paddingRight="6dip"
+                     android:paddingRight="14dip"
 
                      android:textColor="#fff"/>
 
