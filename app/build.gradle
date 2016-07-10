@@ -27,7 +27,7 @@ android {
     buildTypes {
         release {
             resValue "string", "google_maps_v1_api_key", "0FlmDyhkwc97apG6mrrpYcSA0DigW65uk3Om_Ow"
-            resValue "string", "google_maps_v2_api_key", "AIzaSyCplcQbrx7lzmS5EdsdC6p3cCUikviyA9k" // AIzaSyA56Yx2cbK02os10ttbHlUkNgWb3Vho_w0"
+            resValue "string", "google_maps_v2_api_key", "AIzaSyA56Yx2cbK02os10ttbHlUkNgWb3Vho_w0"
             minifyEnabled false
             // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release

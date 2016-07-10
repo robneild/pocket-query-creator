@@ -9,6 +9,9 @@ import net.htmlparser.jericho.FormFields;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class to help putting values into a HTML form
+ */
 public class FormFieldsExtra {
 
     private FormFields form;
@@ -29,14 +32,16 @@ public class FormFieldsExtra {
             throw new ParseException(name);
     }
 
-    public void checkValue(String name, String value) throws ParseException {
+    /**
+     * Check if something exists in the form
+     * @param name html 'name'
+     * @throws ParseException
+     */
+    public void checkValue(String name) throws ParseException {
         if (form.get(name) == null)
             throw new ParseException(name + " missing");
 
-        if (value.equals(form.get(name).getPredefinedValues().iterator().next())) {
-            return;
-        }
-        throw new ParseException(name);
+        return;
     }
 
     public void setValue(String name, String value) throws ParseException {

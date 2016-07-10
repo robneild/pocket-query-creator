@@ -149,7 +149,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
                 loginFormExtra.setValueChecked("ctl00$ContentBody$tbPassword", password);
                 loginFormExtra.setValueChecked("ctl00$ContentBody$cbRememberMe", "on");
 
-                loginFormExtra.checkValue("ctl00$ContentBody$btnSignIn", "Sign In");
+                loginFormExtra.checkValue("ctl00$ContentBody$btnSignIn");
             } catch (ParseException e) {
                 throw new FailurePermanentException(res.getString(R.string.failed_login_form), e.getMessage());
             }
