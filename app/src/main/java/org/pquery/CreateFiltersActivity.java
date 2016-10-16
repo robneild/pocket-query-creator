@@ -2,6 +2,7 @@ package org.pquery;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,8 @@ import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,10 +32,6 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -56,7 +55,7 @@ import java.util.ArrayList;
 /**
  * Handle adding filters
  */
-public class CreateFiltersActivity extends SherlockListActivity implements LocationListener {
+public class CreateFiltersActivity extends ListActivity implements LocationListener {
 
     private QueryStore queryStore;
 
@@ -132,7 +131,7 @@ public class CreateFiltersActivity extends SherlockListActivity implements Locat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState != null) {
             queryStore = new QueryStore(savedInstanceState);

@@ -2,6 +2,7 @@ package org.pquery.fragments;
 
 import android.R.color;
 import android.app.Activity;
+import android.app.ListFragment;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,8 +12,6 @@ import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockListFragment;
 
 import org.pquery.R;
 import org.pquery.dao.DownloadablePQ;
@@ -30,7 +29,7 @@ import java.util.List;
  * <p/>
  * It shows some help when first opened
  */
-public class PQListFragment extends SherlockListFragment {
+public class PQListFragment extends ListFragment {
 
     public interface PQClickedListener {
         public void onPQClicked(DownloadablePQ pq);
@@ -96,7 +95,7 @@ public class PQListFragment extends SherlockListFragment {
             wv.loadUrl(getString(R.string.pqlist_info_url));
 
 
-            setListAdapter(new IconicAdapter(getSherlockActivity(), new PQListItem[0]));        // have to set empty list so help is displayed
+            setListAdapter(new IconicAdapter(getActivity(), new PQListItem[0]));        // have to set empty list so help is displayed
 
         } else {
 
@@ -117,7 +116,7 @@ public class PQListFragment extends SherlockListFragment {
                 listItems.addAll(Arrays.asList(repeatables));
             }
 
-            setListAdapter(new IconicAdapter(getSherlockActivity(), listItems.toArray(new PQListItem[0])));
+            setListAdapter(new IconicAdapter(getActivity(), listItems.toArray(new PQListItem[0])));
         }
 
     }

@@ -3,6 +3,7 @@ package org.pquery.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,14 +12,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
-
 import org.pquery.R;
 
 import java.io.File;
 import java.util.List;
 
-public class MyDialogFragment extends SherlockDialogFragment {
+public class MyDialogFragment extends DialogFragment {
 
     public static MyDialogFragment newInstance(String title, String message) {
         return newInstance(title, message, null);

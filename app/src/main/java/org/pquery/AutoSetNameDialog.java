@@ -2,6 +2,7 @@ package org.pquery;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.location.Location;
@@ -10,13 +11,11 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
-
 import org.pquery.util.GPS;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 
-public class AutoSetNameDialog extends SherlockDialogFragment implements LocationListener {
+public class AutoSetNameDialog extends DialogFragment implements LocationListener {
 
     /**
      * the async task the does the lookup

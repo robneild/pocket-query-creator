@@ -2,8 +2,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.pquery"
-    android:versionCode="62"
-    android:versionName="4.4">
+    android:versionCode="63"
+    android:versionName="4.5">
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -16,10 +16,10 @@
     <application
         android:icon="@drawable/icon"
         android:allowBackup="true"
-        android:label="@string/app_name"
-        android:theme="@style/Theme.Sherlock">
+        android:label="@string/app_name">
 
-        <uses-library android:name="com.google.android.maps" />
+    <!-- For google maps v1 -->
+    <uses-library android:name="com.google.android.maps" />
 
         <activity
             android:name="PreferencesFromXml"
@@ -52,7 +52,6 @@
         <activity
             android:label="Pocket Query Creator"
             android:name=".Main"
-            android:theme="@style/Theme.Sherlock"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

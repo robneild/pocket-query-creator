@@ -18,23 +18,22 @@
 package org.pquery;
 
 import android.R.color;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.webkit.WebView;
-
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
 
 /**
  * Show an HTML about page
  */
-public class Help extends SherlockActivity {
+public class Help extends Activity {
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.about);
 
         WebView wv = (WebView) findViewById(R.id.webview1);
@@ -53,4 +52,5 @@ public class Help extends SherlockActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

@@ -16,6 +16,9 @@
 
 package org.pquery;
 
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,15 +27,11 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.Window;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 
 import junit.framework.Assert;
 
@@ -55,7 +54,7 @@ import org.pquery.webdriver.ProgressInfo;
 import java.io.File;
 import java.util.Date;
 
-public class Main extends SherlockFragmentActivity implements PQClickedListener, PQServiceListener, ProgressBoxFragmentListener {
+public class Main extends Activity implements PQClickedListener, PQServiceListener, ProgressBoxFragmentListener {
 
     private boolean doDialog;
     private boolean onSaveInstanceStateCalled;
@@ -130,7 +129,7 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
         onSaveInstanceStateCalled = false;
 
         long time = Prefs.getPQListStateTimestamp(this);
-        PQListFragment pqList = (PQListFragment) getSupportFragmentManager().findFragmentById(R.id.pq_list_fragment);
+        PQListFragment pqList = (PQListFragment) getFragmentManager().findFragmentById(R.id.pq_list_fragment);
 
         // First check if we have a DownloadablePQ list stored
         if (time != 0) {
@@ -195,11 +194,11 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 
         if (serviceStatus == ServiceStatus.ServiceBusy) {
 
-            setSupportProgressBarVisibility(true);
-            setSupportProgressBarIndeterminateVisibility(true);
+            setProgressBarVisibility(true);
+            setProgressBarIndeterminateVisibility(true);
         } else {
-            setSupportProgressBarVisibility(false);
-            setSupportProgressBarIndeterminateVisibility(false);
+            setProgressBarVisibility(false);
+            setProgressBarIndeterminateVisibility(false);
         }
 
 
@@ -400,13 +399,13 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 
     @Override
     public void onServiceRetrievePQList(RetrievePQListResult pqListResult) {
-        PQListFragment pqList = (PQListFragment) getSupportFragmentManager().findFragmentById(R.id.pq_list_fragment);
+        PQListFragment pqList = (PQListFragment) getFragmentManager().findFragmentById(R.id.pq_list_fragment);
 
         pqList.updateList(pqListResult.pqs, pqListResult.repeatables);
 
         if (pqListResult.failure != null) {
             MyDialogFragment dialog = MyDialogFragment.newInstance("Failed", pqListResult.failure.toString());
-            dialog.show(getSupportFragmentManager(), "dialog");
+            dialog.show(getFragmentManager(), "dialog");
         }
 
         checkActionBar();
@@ -418,9 +417,9 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 
         ProgressBoxFragment box = getProgressBoxFragment();
 
-        setSupportProgressBarVisibility(true);
+        setProgressBarVisibility(true);
         int a = (Window.PROGRESS_END - Window.PROGRESS_START) / 100 * progressInfo.percent;
-        setSupportProgress(a);
+        setProgress(a);
         checkActionBar();
 
         box.setText(progressInfo.htmlMessage);
@@ -431,7 +430,7 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
         if (serviceStatus != calculateServiceStatus()) {
             serviceStatus = calculateServiceStatus();
 
-            supportInvalidateOptionsMenu();
+            invalidateOptionsMenu();
 
             if (serviceStatus != ServiceStatus.ServiceBusy)
                 hideProgressBoxFragment();
@@ -448,13 +447,13 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
 
 
     private ProgressBoxFragment getProgressBoxFragment() {
-        ProgressBoxFragment box = (ProgressBoxFragment) getSupportFragmentManager().findFragmentByTag("robtag");
+        ProgressBoxFragment box = (ProgressBoxFragment) getFragmentManager().findFragmentByTag("robtag");
 
         if (box != null)
             return box;
 
         // Fragment is not currently up. Add it
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         box = new ProgressBoxFragment();
         fragmentTransaction.add(R.id.fragment_content, box, "robtag");
@@ -464,13 +463,13 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
     }
 
     private void hideProgressBoxFragment() {
-        ProgressBoxFragment box = (ProgressBoxFragment) getSupportFragmentManager().findFragmentByTag("robtag");
+        ProgressBoxFragment box = (ProgressBoxFragment) getFragmentManager().findFragmentByTag("robtag");
 
         if (box == null)
             return;
 
         // Fragment is up, need to remove it
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.remove(box);
         fragmentTransaction.commit();
@@ -501,7 +500,7 @@ public class Main extends SherlockFragmentActivity implements PQClickedListener,
                                          int notificationId, File fileNameDownloaded) {
 
         MyDialogFragment dialog = MyDialogFragment.newInstance(title, message, fileNameDownloaded);
-        dialog.show(getSupportFragmentManager(), "dialog");
+        dialog.show(getFragmentManager(), "dialog");
 
         checkActionBar();
 

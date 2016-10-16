@@ -24,9 +24,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.MenuItem;
+import android.preference.PreferenceActivity;
+import android.view.MenuItem;
 
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
@@ -34,13 +33,13 @@ import org.pquery.util.Util;
 
 import java.util.List;
 
-public class PreferencesFromXml extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
+public class PreferencesFromXml extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         String action = getIntent().getAction();
 

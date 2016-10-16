@@ -244,13 +244,13 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
             // Days of week
             DaysToGenerateFilter daysToGenerateFilter = Prefs.getDaysToGenerateFilter(cxt);
 
-            if (daysToGenerateFilter.dayOfWeek[0]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$0", "on");
-            if (daysToGenerateFilter.dayOfWeek[1]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$1", "on");
-            if (daysToGenerateFilter.dayOfWeek[2]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$2", "on");
-            if (daysToGenerateFilter.dayOfWeek[3]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$3", "on");
-            if (daysToGenerateFilter.dayOfWeek[4]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$4", "on");
-            if (daysToGenerateFilter.dayOfWeek[5]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$5", "on");
-            if (daysToGenerateFilter.dayOfWeek[6]) loginFormExtra.setValueChecked("ctl00$ContentBody$cbDays$6", "on");
+            if (daysToGenerateFilter.dayOfWeek[0]) loginFormExtra.enableCheckbox("ctl00$ContentBody$cbDays$0");
+            if (daysToGenerateFilter.dayOfWeek[1]) loginFormExtra.enableCheckbox("ctl00$ContentBody$cbDays$1");
+            if (daysToGenerateFilter.dayOfWeek[2]) loginFormExtra.enableCheckbox("ctl00$ContentBody$cbDays$2");
+            if (daysToGenerateFilter.dayOfWeek[3]) loginFormExtra.enableCheckbox("ctl00$ContentBody$cbDays$3");
+            if (daysToGenerateFilter.dayOfWeek[4]) loginFormExtra.enableCheckbox("ctl00$ContentBody$cbDays$4");
+            if (daysToGenerateFilter.dayOfWeek[5]) loginFormExtra.enableCheckbox("ctl00$ContentBody$cbDays$5");
+            if (daysToGenerateFilter.dayOfWeek[6]) loginFormExtra.enableCheckbox("ctl00$ContentBody$cbDays$6");
 
 
             // 1 = Uncheck the day of the week after the query runs
@@ -276,7 +276,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
                 loginFormExtra.setValueChecked("ctl00$ContentBody$Type", "rbTypeSelect");
 
                 for (CacheType cache : cacheTypeList) {
-                    loginFormExtra.setValueChecked("ctl00$ContentBody$cbTaxonomy$" + cache.ordinal(), "on");
+                    loginFormExtra.enableCheckbox("ctl00$ContentBody$cbTaxonomy$" + cache.ordinal());
                 }
             }
 
@@ -290,7 +290,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
                 loginFormExtra.setValueChecked("ctl00$ContentBody$Container", "rbContainerSelect");
 
                 for (ContainerType container : containerTypeList) {
-                    loginFormExtra.setValueChecked("ctl00$ContentBody$cbContainers$" + container.ordinal(), "on");
+                    loginFormExtra.enableCheckbox("ctl00$ContentBody$cbContainers$" + container.ordinal());
                 }
             }
 
@@ -298,29 +298,29 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
 
             // I haven't found yet
             if (checkBoxesFilter.notFound)
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbOptions$0", "on");
+                loginFormExtra.enableCheckbox("ctl00$ContentBody$cbOptions$0");
 
             // Is Active
             if (checkBoxesFilter.enabled)
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbOptions$13", "on");
+                loginFormExtra.enableCheckbox("ctl00$ContentBody$cbOptions$13");
 
             // Not on ignore list
             if (checkBoxesFilter.notOnIgnore)
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbOptions$6", "on");
+                loginFormExtra.enableCheckbox("ctl00$ContentBody$cbOptions$6");
 
             // Has a travel bug
             if (checkBoxesFilter.travelBug)
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbOptions$10", "on");
+                loginFormExtra.enableCheckbox("ctl00$ContentBody$cbOptions$10");
 
             // Not on ignore list
             if (checkBoxesFilter.found7days)
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbOptions$8", "on");
+                loginFormExtra.enableCheckbox("ctl00$ContentBody$cbOptions$8");
 
             if (checkBoxesFilter.idontown)
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbOptions$2", "on");
+                loginFormExtra.enableCheckbox("ctl00$ContentBody$cbOptions$2");
 
             if (checkBoxesFilter.notBeenFound)
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbOptions$9", "on");
+                loginFormExtra.enableCheckbox("ctl00$ContentBody$cbOptions$9");
 
             OneToFiveFilter difficultyFilter = Prefs.getDifficultyFilter(cxt);
             if (difficultyFilter.isAll()) {
@@ -328,7 +328,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
                 loginFormExtra.setValueChecked("ctl00$ContentBody$ddDifficulty", ">=");
                 loginFormExtra.setValueChecked("ctl00$ContentBody$ddDifficultyScore", "1");
             } else {
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbDifficulty", "on");
+                loginFormExtra.enableCheckbox("ctl00$ContentBody$cbDifficulty");
                 loginFormExtra.setValueChecked("ctl00$ContentBody$ddDifficulty", difficultyFilter.up ? ">=" : "<=");
                 loginFormExtra.setValueChecked("ctl00$ContentBody$ddDifficultyScore", "" + difficultyFilter.value);
             }
@@ -339,7 +339,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
                 loginFormExtra.setValueChecked("ctl00$ContentBody$ddTerrain", ">=");
                 loginFormExtra.setValueChecked("ctl00$ContentBody$ddTerrainScore", "1");
             } else {
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbTerrain", "on");
+                loginFormExtra.enableCheckbox("ctl00$ContentBody$cbTerrain");
                 loginFormExtra.setValueChecked("ctl00$ContentBody$ddTerrain", terrainFilter.up ? ">=" : "<=");
                 loginFormExtra.setValueChecked("ctl00$ContentBody$ddTerrainScore", "" + terrainFilter.value);
             }
@@ -459,7 +459,7 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
             //loginFormExtra.setValueChecked("ctl00$ContentBody$ddlAltEmails", "b@bigbob.org.uk"));
             loginFormExtra.setValueChecked("ctl00$ContentBody$ddFormats", "GPX");
 
-            loginFormExtra.setValueChecked("ctl00$ContentBody$cbIncludePQNameInFileName", "on");
+            loginFormExtra.enableCheckbox("ctl00$ContentBody$cbIncludePQNameInFileName");
             //loginFormExtra.checkValue("ctl00$ContentBody$btnSubmit", "Submit Information");
 
             // delete the other form submit

@@ -2,6 +2,7 @@ package org.pquery.webdriver.parser;
 
 import android.util.Pair;
 
+import net.htmlparser.jericho.FormControl;
 import net.htmlparser.jericho.FormControlType;
 import net.htmlparser.jericho.FormField;
 import net.htmlparser.jericho.FormFields;
@@ -11,6 +12,7 @@ import java.util.List;
 
 /**
  * Utility class to help putting values into a HTML form
+ * And verify that we have actually changed it
  */
 public class FormFieldsExtra {
 
@@ -20,6 +22,31 @@ public class FormFieldsExtra {
         this.form = wrappedForm;
     }
 
+    /**
+     * Enable a checkbox. Verifies that everything is as expected. Expects that checkbox
+     * will have a value="xx" that will be used when enabled
+     *
+     * @param name name of checkbox
+     * @throws ParseException
+     */
+    public void enableCheckbox(String name) throws ParseException {
+
+        if (form.get(name) == null)
+            throw new ParseException(name + " missing");
+
+        FormControl control = form.get(name).getFormControl();
+
+        if (control.getFormControlType() != FormControlType.CHECKBOX)
+            throw new ParseException(name + " not a checkbox");
+
+        if (control.getPredefinedValue() == null)
+            throw new ParseException(name + " checkbox has no value");
+
+        boolean success = control.setValue(control.getPredefinedValue());
+
+        if (!success)
+            throw new ParseException(name);
+    }
 
     public void setValueChecked(String name, String value) throws ParseException {
 
@@ -44,25 +71,9 @@ public class FormFieldsExtra {
         return;
     }
 
-    public void setValue(String name, String value) throws ParseException {
-        if (form.get(name) == null)
-            throw new ParseException(name);
-        form.setValue(name, value);
-    }
-
     public void deleteValue(String name) {
         form.remove(form.get(name));
     }
-
-    //    if (type == FormControlType.SUBMIT) {
-    //        form.setValue(name, value);
-    //        form.a
-    //        for (String predef : field.getPredefinedValues()) {
-    //            if (predef.equals(value))
-    //                success = true;
-    //        }
-    //    } else {
-
 
     public List<Pair<String,String>> toNameValuePairs() {
 

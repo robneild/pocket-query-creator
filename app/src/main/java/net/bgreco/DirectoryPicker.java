@@ -1,5 +1,6 @@
 package net.bgreco;
 
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockListActivity;
 
 import org.pquery.R;
 import org.pquery.util.FileComparator;
@@ -44,7 +44,7 @@ import java.util.List;
  * THE SOFTWARE.
  */
 
-public class DirectoryPicker extends SherlockListActivity {
+public class DirectoryPicker extends ListActivity {
 
     public static final String START_DIR = "startDir";
     public static final String ONLY_DIRS = "onlyDirs";

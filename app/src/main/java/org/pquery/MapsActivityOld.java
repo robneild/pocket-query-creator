@@ -30,12 +30,12 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.FloatMath;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.GestureDetector.OnDoubleTapListener;
 
-import com.actionbarsherlock.app.SherlockMapActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
@@ -47,7 +47,7 @@ import android.view.GestureDetector;
  * Show map to select centre of pocket query
  * Using old Maps V1 API
  */
-public class MapsActivityOld extends SherlockMapActivity
+public class MapsActivityOld extends MapActivity
 {
     /** Pulled out of prefs when activity created */
     private float radiusInKm;
@@ -60,7 +60,7 @@ public class MapsActivityOld extends SherlockMapActivity
      */
     private GeoPoint point;
 
-    class MapOverlay extends com.google.android.maps.Overlay implements GestureDetector.OnGestureListener, OnDoubleTapListener {
+    class MapOverlay extends Overlay implements GestureDetector.OnGestureListener, OnDoubleTapListener {
 
         private GestureDetector gesturedetector;
 
@@ -168,7 +168,7 @@ public class MapsActivityOld extends SherlockMapActivity
     {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.map_activity_old);
 
@@ -216,4 +216,5 @@ public class MapsActivityOld extends SherlockMapActivity
         }
         return true;
     }
+
 }
