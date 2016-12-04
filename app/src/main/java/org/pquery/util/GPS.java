@@ -3,8 +3,6 @@ package org.pquery.util;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.LocationListener;
-import android.location.LocationManager;
 
 import com.gisgraphy.gishraphoid.GeoNamesGeocoder;
 import com.gisgraphy.gishraphoid.GisgraphyGeocoder;
@@ -16,24 +14,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class GPS {
-
-    /**
-     * Subscribe to all location providers
-     */
-    public static void requestLocationUpdates(LocationManager locationManager, LocationListener listener) {
-
-        Logger.d("start gps");
-        List<String> providers = locationManager.getAllProviders();
-
-        for (String provider : providers) {
-            locationManager.requestLocationUpdates(provider, 2000, 5, listener);
-        }
-    }
-
-    public static void stopLocationUpdate(LocationManager locationManager, LocationListener listener) {
-        Logger.d("stop gps");
-        locationManager.removeUpdates(listener);
-    }
 
     public static String getLocality(Context cxt, double lat, double lon) {
 

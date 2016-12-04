@@ -8,9 +8,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputFilter;
@@ -32,6 +34,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -47,10 +50,14 @@ import org.pquery.filter.CountryList;
 import org.pquery.filter.DaysToGenerateFilter;
 import org.pquery.filter.OneToFiveFilter;
 import org.pquery.service.PQService;
-import org.pquery.util.GPS;
+import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 
 import java.util.ArrayList;
+
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
  * Handle adding filters
@@ -64,6 +71,9 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
 
     private LocationManager locationManager;
     private Location gpsLocation;
+
+    private boolean askedForPermissions;
+    private int[] permissionsGiven;
 
     /**
      * Add icons to the top toolbar
@@ -560,13 +570,13 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
     @Override
     public void onResume() {
         super.onResume();
-        GPS.requestLocationUpdates(locationManager, this);
+        startGps();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        GPS.stopLocationUpdate(locationManager, this);
+        stopGps();
     }
 
 
@@ -742,6 +752,97 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
 
 
     // Control GPS
+
+
+    private void startGps() {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+
+            // Before android 6. Just ask for best location fix
+
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+
+            String provider = locationManager.getBestProvider(criteria, true);
+            locationManager.requestLocationUpdates(provider, 2000, 5, this);
+
+        } else {
+
+            // Android 6 and above
+
+            // Check if already have all permissions
+            if (checkSelfPermission(ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED ||
+                    checkSelfPermission(ACCESS_FINE_LOCATION)== PERMISSION_GRANTED) {
+
+                askedForPermissions = true;
+                permissionsGiven = new int[] {PERMISSION_GRANTED,PERMISSION_GRANTED };
+            }
+
+            // Only ask for permissions once or would repeatidly just get permission
+            // dialog popping up
+            if (askedForPermissions) {
+
+                // Check if have received the 'async' permission response
+                // (this could take some time to received as pops up dialog)
+                if (permissionsGiven != null && permissionsGiven.length > 1) {
+                    Criteria criteria = new Criteria();
+
+                    if (permissionsGiven[1] == PERMISSION_GRANTED) {
+                        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                    } else if (permissionsGiven[0] == PERMISSION_GRANTED) {
+                        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+                    } else {
+                        // No permissions
+                        // Not much we can do here. I think 'getBestProvider' will return null below
+                    }
+
+                    String provider = locationManager.getBestProvider(criteria, true);
+                    if  (provider != null) {
+                        locationManager.requestLocationUpdates(provider, 2000, 5, this);
+                    }
+                } else {
+
+                    // Must be waiting for reponse to 'ask permission' dialog
+                }
+
+            } else {
+
+                askedForPermissions = true;
+
+                // Ask for permissions
+                if (checkSelfPermission(ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED ||
+                        checkSelfPermission(ACCESS_FINE_LOCATION) != PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION}, 0);
+                }
+
+            }
+        }
+
+    }
+
+    private void stopGps() {
+        Logger.d("stop gps");
+        try {
+            locationManager.removeUpdates(this);
+        } catch (SecurityException e) {
+            Logger.d("failed to remove updates; " + e);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        permissionsGiven = grantResults;
+        startGps();
+    }
+
+
+
+
+
+
+
+
+
 
 
     public void onLocationChanged(Location gpsLocation) {

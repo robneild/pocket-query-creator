@@ -5,15 +5,23 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import org.pquery.util.GPS;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
+
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
 public class AutoSetNameDialog extends DialogFragment implements LocationListener {
 
@@ -77,7 +85,7 @@ public class AutoSetNameDialog extends DialogFragment implements LocationListene
             lookupLocationTask.execute(new LocationFix[]{okLocation});
         } else {
             // No GPS fix
-            GPS.requestLocationUpdates(locationManager, this);
+            requestGps();
         }
 
         setStyle(STYLE_NO_FRAME, 0);
@@ -109,7 +117,7 @@ public class AutoSetNameDialog extends DialogFragment implements LocationListene
     public void onDestroy() {
         super.onDestroy();
         lookupLocationTask.cancel(true);
-        GPS.stopLocationUpdate(locationManager, this);
+        stopGps();
     }
 
 
@@ -122,6 +130,9 @@ public class AutoSetNameDialog extends DialogFragment implements LocationListene
             this.lon = lon;
         }
     }
+
+
+
 
     private class LookupLocationTask extends AsyncTask<LocationFix, Void, String> {
 
@@ -138,6 +149,53 @@ public class AutoSetNameDialog extends DialogFragment implements LocationListene
         protected String doInBackground(LocationFix... params) {
             String locality = GPS.getLocality(getActivity(), params[0].lat, params[0].lon);
             return locality;
+        }
+    }
+
+
+
+    private void requestGps() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {           // API 23 and above
+
+            if (checkSelfPermission(this.getContext(), ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED ||
+                    checkSelfPermission(this.getContext(), ACCESS_FINE_LOCATION) != PERMISSION_GRANTED) {
+                requestPermissions(new String[]{ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION}, 0);
+            }
+        } else {
+            onRequestPermissionsResult(0, null, new int[]{PERMISSION_GRANTED,PERMISSION_GRANTED});
+        }
+    }
+
+    private void stopGps() {
+        Logger.d("stop gps");
+        try {
+            locationManager.removeUpdates(this);
+        } catch (SecurityException e) {
+            Logger.d("failed to remove updates; " + e);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 0:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Criteria criteria = new Criteria();
+                    criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+
+                    String provider = locationManager.getBestProvider(criteria, true);
+                    locationManager.requestLocationUpdates(provider, 2000, 5, this);
+                }
+
+                if (grantResults.length > 1 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+                    Criteria criteria = new Criteria();
+                    criteria.setAccuracy(Criteria.ACCURACY_FINE);
+
+                    String provider = locationManager.getBestProvider(criteria, true);
+                    locationManager.requestLocationUpdates(provider, 2000, 5, this);
+                }
         }
     }
 
@@ -162,7 +220,7 @@ public class AutoSetNameDialog extends DialogFragment implements LocationListene
                 // stop GPS and start ASync task
 
                 okLocation = new LocationFix(gpsSearch.getLatitude(), gpsSearch.getLongitude());
-                GPS.stopLocationUpdate(locationManager, this);
+                stopGps();
                 lookupLocationTask.execute(new LocationFix[]{okLocation});
             }
         }

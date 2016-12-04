@@ -75,13 +75,28 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
 
     private void startGPS() {
         Logger.d("Turning GPS on");
-        GPS.requestLocationUpdates(locationManager, this);
+
+        // Assume we have already asked for, and possibly received location permission
+        // Just swallow any problems
+
+        List<String> providers = locationManager.getAllProviders();
+        for (String provider: providers) {
+            try {
+                locationManager.requestLocationUpdates(provider, 2000, 5, this);
+            } catch (SecurityException e) {
+                Logger.d("SecurityException; " + e);
+            }
+        }
         gpsOn = true;
     }
 
     private void stopGPS() {
         Logger.d("Turning GPS off");
-        GPS.stopLocationUpdate(locationManager, this);
+        try {
+            locationManager.removeUpdates(this);
+        } catch (SecurityException e) {
+            Logger.d("failed to remove updates; " + e);
+        }
         gpsOn = false;
     }
 
@@ -475,6 +490,13 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
         return nameValuePairs;
 
     }
+
+
+
+
+
+
+
 
     @Override
     public void onLocationChanged(Location location) {
