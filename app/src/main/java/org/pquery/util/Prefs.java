@@ -101,7 +101,7 @@ public class Prefs {
     }
 
     public static String getUserSpecifiedDownloadDir(Context cxt) {
-        return PreferenceManager.getDefaultSharedPreferences(cxt).getString(USER_DOWNLOAD_DIR, Util.getDefaultDownloadDirectory());
+        return PreferenceManager.getDefaultSharedPreferences(cxt).getString(USER_DOWNLOAD_DIR, Util.getDefaultDownloadDirectory(cxt));
     }
 
     public static boolean isDefaultDownloadDir(Context cxt) {

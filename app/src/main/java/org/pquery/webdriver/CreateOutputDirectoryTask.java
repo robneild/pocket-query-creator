@@ -44,7 +44,7 @@ public class CreateOutputDirectoryTask extends RetriableTask<File> {
         // This will usually be sdcard/Downloads but the user can
         // override this in preferences
 
-        String dir = Util.getDefaultDownloadDirectory();
+        String dir = Util.getDefaultDownloadDirectory(cxt);
         if (!Prefs.isDefaultDownloadDir(cxt))
             dir = Prefs.getUserSpecifiedDownloadDir(cxt);
 

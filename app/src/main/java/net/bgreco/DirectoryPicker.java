@@ -3,6 +3,7 @@ package net.bgreco;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +22,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
  * Copyright (C) 2011 by Brad Greco <brad@bgreco.net>
@@ -46,10 +50,14 @@ import java.util.List;
 
 public class DirectoryPicker extends ListActivity {
 
+    // Keys used to store in extra
+
     public static final String START_DIR = "startDir";
     public static final String ONLY_DIRS = "onlyDirs";
     public static final String SHOW_HIDDEN = "showHidden";
     public static final String CHOSEN_DIRECTORY = "chosenDir";
+    public static final String ASKED_PERM = "askedPerm";
+
     public static final int PICK_DIRECTORY = 43522432;
     public static final int PICK_CANCELLED = 43522433;
 
@@ -57,17 +65,23 @@ public class DirectoryPicker extends ListActivity {
     private boolean showHidden = false;
     private boolean onlyDirs = true;
 
+    /** Remember so only ask for permissions once. And not keep repeating on rotation etc. */
+    private boolean askedForPermissions;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
 
-        dir = new File("/");        // ROB getExternalStorageDirectory();
+        // Open at root. Maybe not ideal ?
+        dir = new File("/");
 
         if (extras != null) {
             String preferredStartDir = extras.getString(START_DIR);
             showHidden = extras.getBoolean(SHOW_HIDDEN, false);
             onlyDirs = extras.getBoolean(ONLY_DIRS, true);
+            askedForPermissions = extras.getBoolean(ASKED_PERM, false);
+
             if (preferredStartDir != null) {
                 File startDir = new File(preferredStartDir);
                 if (startDir.isDirectory()) {
@@ -76,7 +90,21 @@ public class DirectoryPicker extends ListActivity {
             }
         }
 
+        // Restore if rotation etc.
+        if (savedInstanceState != null) {
+            askedForPermissions = savedInstanceState.getBoolean(ASKED_PERM);
+        }
+
+
         setContentView(R.layout.directory_chooser_list);
+
+        // Android 6 permissions
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M  && !askedForPermissions) {
+            askedForPermissions = true;
+            if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+                requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE}, 0);
+            }
+        }
 
         // Make current directory visible in ActionBar at top
         setTitle(dir.getAbsolutePath());
@@ -131,7 +159,8 @@ public class DirectoryPicker extends ListActivity {
         setListAdapter(new ArrayAdapter<String>(this, R.layout.directory_chooser_list_item, R.id.fdrowtext, names));
 
 
-        // Go down a directory when selected
+        // Go down a directory when selected by launching new activity
+        // Pass parameters down (in intent)
         lv.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (!files.get(position).isDirectory())
@@ -141,9 +170,17 @@ public class DirectoryPicker extends ListActivity {
                 intent.putExtra(DirectoryPicker.START_DIR, path);
                 intent.putExtra(DirectoryPicker.SHOW_HIDDEN, showHidden);
                 intent.putExtra(DirectoryPicker.ONLY_DIRS, onlyDirs);
+                intent.putExtra(DirectoryPicker.ASKED_PERM, askedForPermissions);
                 startActivityForResult(intent, PICK_DIRECTORY);
             }
         });
+    }
+
+    /** Called before rotate etc */
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(DirectoryPicker.ASKED_PERM, askedForPermissions);
     }
 
     /**
@@ -169,7 +206,7 @@ public class DirectoryPicker extends ListActivity {
         result.putExtra(CHOSEN_DIRECTORY, path);
         setResult(RESULT_OK, result);
 
-        // ROB
+
         Prefs.saveUserSpecifiedDownloadDir(this, path);
 
         finish();

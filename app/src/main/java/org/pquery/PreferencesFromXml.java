@@ -91,7 +91,7 @@ public class PreferencesFromXml extends PreferenceActivity implements OnSharedPr
             userDownload.setSummary(Prefs.getUserSpecifiedDownloadDir(this));
         Preference defaultDownload = findPreference(Prefs.DEFAULT_DOWNLOAD_DIR);
         if (defaultDownload != null)
-            defaultDownload.setSummary(String.format(getResources().getString(R.string.summary_default_download_dir_preference), Util.getDefaultDownloadDirectory()));
+            defaultDownload.setSummary(String.format(getResources().getString(R.string.summary_default_download_dir_preference), Util.getDefaultDownloadDirectory(this)));
 
 
         if (getPreferenceScreen() != null)

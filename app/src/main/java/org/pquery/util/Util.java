@@ -1,11 +1,13 @@
 package org.pquery.util;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Environment;
 
 import java.io.BufferedReader;
@@ -86,9 +88,21 @@ public class Util {
         return ret;
     }
 
-    public static String getDefaultDownloadDirectory() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
-                + "Download";
+    public static String getDefaultDownloadDirectory(Context cxt) {
+
+        String dir;
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+            // Old behaviour that I am not changing
+            dir = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Download";
+        } else {
+            // New android 6
+            // Default to the (pretty rubbish) directory we will always be able to write to
+            // without asking for more permissions
+           dir = cxt.getFilesDir().getAbsolutePath();
+        }
+
+        return dir;
     }
 
     /**

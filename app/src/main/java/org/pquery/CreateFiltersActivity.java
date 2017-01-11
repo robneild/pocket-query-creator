@@ -54,13 +54,16 @@ import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
- * Handle adding filters
+ * Show page of options available for creating a pocket query
+ * e.g. name, location, type, radius etc.
  */
 public class CreateFiltersActivity extends ListActivity implements LocationListener {
 
@@ -72,8 +75,12 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
     private LocationManager locationManager;
     private Location gpsLocation;
 
-    private boolean askedForPermissions;
-    private int[] permissionsGiven;
+    /** Remember if asked for file permissions...so don't repeatedly ask e.g. on rotation */
+    private boolean filePermissionsAsked;
+
+    /** Remember if asked for gps permssions */
+    private boolean gpsPermissionsAsked;
+    private int[] gpsPermissionsGiven;
 
     /**
      * Add icons to the top toolbar
@@ -571,6 +578,7 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
     public void onResume() {
         super.onResume();
         startGps();
+        askFilePermissions();
     }
 
     @Override
@@ -751,6 +759,24 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
     }
 
 
+    private void askFilePermissions() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            if (!Prefs.isDefaultDownloadDir(this) && Prefs.getDownload(this)) {
+
+                if (!filePermissionsAsked) {
+                    filePermissionsAsked = true;
+
+                    if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE}, 1);
+                    }
+                }
+            }
+        }
+    }
+
+
+
     // Control GPS
 
 
@@ -760,56 +786,67 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
 
             // Before android 6. Just ask for best location fix
 
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_FINE);
-
-            String provider = locationManager.getBestProvider(criteria, true);
-            locationManager.requestLocationUpdates(provider, 2000, 5, this);
+            List<String> providers = locationManager.getAllProviders();
+            for (String provider: providers) {
+                locationManager.requestLocationUpdates(provider, 2000, 5, this);
+            }
 
         } else {
 
-            // Android 6 and above
+            // Android 6 and above so have to worry about asking for permissions
 
             // Check if already have all permissions
             if (checkSelfPermission(ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED ||
                     checkSelfPermission(ACCESS_FINE_LOCATION)== PERMISSION_GRANTED) {
 
-                askedForPermissions = true;
-                permissionsGiven = new int[] {PERMISSION_GRANTED,PERMISSION_GRANTED };
+                gpsPermissionsAsked = true;
+                gpsPermissionsGiven = new int[] {PERMISSION_GRANTED,PERMISSION_GRANTED };
             }
 
-            // Only ask for permissions once or would repeatidly just get permission
+            // Only ask for permissions once or would repeatedly just get permission
             // dialog popping up
-            if (askedForPermissions) {
+            if (gpsPermissionsAsked) {
+
+                // OK we have already asked, have we received yet
 
                 // Check if have received the 'async' permission response
                 // (this could take some time to received as pops up dialog)
-                if (permissionsGiven != null && permissionsGiven.length > 1) {
+                if (gpsPermissionsGiven != null && gpsPermissionsGiven.length > 1) {
                     Criteria criteria = new Criteria();
 
-                    if (permissionsGiven[1] == PERMISSION_GRANTED) {
+                    if (gpsPermissionsGiven[1] == PERMISSION_GRANTED) {
                         criteria.setAccuracy(Criteria.ACCURACY_FINE);
-                    } else if (permissionsGiven[0] == PERMISSION_GRANTED) {
-                        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-                    } else {
-                        // No permissions
-                        // Not much we can do here. I think 'getBestProvider' will return null below
+
+                        String provider = locationManager.getBestProvider(criteria, true);
+                        if  (provider != null) {
+                            locationManager.requestLocationUpdates(provider, 2000, 5, this);
+                        }
                     }
 
-                    String provider = locationManager.getBestProvider(criteria, true);
-                    if  (provider != null) {
-                        locationManager.requestLocationUpdates(provider, 2000, 5, this);
+                    if (gpsPermissionsGiven[0] == PERMISSION_GRANTED) {
+                        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+
+                        String provider = locationManager.getBestProvider(criteria, true);
+                        if  (provider != null) {
+                            locationManager.requestLocationUpdates(provider, 2000, 5, this);
+                        }
                     }
+
+                    // else
+                    // No permissions
+                    // Not much we can do here. I think 'getBestProvider' will return null below
+
+
                 } else {
 
-                    // Must be waiting for reponse to 'ask permission' dialog
+                    // Must be waiting for response to 'ask permission' dialog
                 }
 
             } else {
+                // Not asked yet, so ask for permissions
 
-                askedForPermissions = true;
+                gpsPermissionsAsked = true;
 
-                // Ask for permissions
                 if (checkSelfPermission(ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED ||
                         checkSelfPermission(ACCESS_FINE_LOCATION) != PERMISSION_GRANTED) {
                     requestPermissions(new String[]{ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION}, 0);
@@ -829,9 +866,10 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
         }
     }
 
+    /** Called asynchronously in response to our permissions request */
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        permissionsGiven = grantResults;
+        gpsPermissionsGiven = grantResults;
         startGps();
     }
 
@@ -868,20 +906,5 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
 
     public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
     }
-
-
-//    private CountryList readCountries() {
-//        List<Country> ret = new ArrayList<Country>();
-//
-//        String [] countryNames = getResources().getStringArray(R.array.country_names);
-//        String [] countryCodes = getResources().getStringArray(R.array.country_codes);
-//        TypedArray countryFlags = getResources().obtainTypedArray(R.array.country_flags);
-//
-//        for (int i=0; i<countryNames.length; i++) {
-//            Log.i("rob", ""+i + " " + countryNames[i] + " " + countryCodes[i] + " " + countryFlags.getString(i) + " " + countryFlags.getResourceId(i, -1));
-//            ret.add(new Country(countryNames[i], countryCodes[i], getResources().getDrawable(countryFlags.getResourceId(i, -1))));
-//        }
-//        return ret;
-//    }
 
 }

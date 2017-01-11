@@ -33,7 +33,7 @@ public class StockPreferenceFragment extends PreferenceFragment {
             userDownload.setSummary(Prefs.getUserSpecifiedDownloadDir(getActivity()));
         Preference defaultDownload = findPreference(Prefs.DEFAULT_DOWNLOAD_DIR);
         if (defaultDownload != null)
-            defaultDownload.setSummary("Output to default 'Download' directory (" + Util.getDefaultDownloadDirectory() + ")");
+            defaultDownload.setSummary("Output to default 'Download' directory (" + Util.getDefaultDownloadDirectory(this.getActivity()) + ")");
     }
 
     @Override
