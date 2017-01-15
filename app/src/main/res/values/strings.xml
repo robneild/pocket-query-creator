@@ -263,6 +263,13 @@
     <string name="created_ok">Created ok</string>
     <string name="will_try_again">Will try again in %d seconds</string>
 
+    <string name="file_permission_denied">You denied access to your files so location is limited. To change this you may have to go to Setting > Apps > Pocket Query Creator > Permissions</string>
+
+    <string name="unable_to_create_file">Unable to write to your chosen download location. Change location in preferences or you may have to manually give this app permissions by going to Setting > Apps > Pocket Query Creator > Permissions</string>
+
+    <string name="location_denied">Not all location permissions were granted. To grant them you may have to go to Setting > Apps > Pocket Query Creator > Permissions</string>
+
+
     <string name="filter_countries">Countries</string>
 
     <string-array name="country_names">

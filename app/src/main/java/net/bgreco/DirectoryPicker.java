@@ -3,6 +3,7 @@ package net.bgreco;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -64,6 +65,7 @@ public class DirectoryPicker extends ListActivity {
     private File dir;
     private boolean showHidden = false;
     private boolean onlyDirs = true;
+    private String preferredStartDir;
 
     /** Remember so only ask for permissions once. And not keep repeating on rotation etc. */
     private boolean askedForPermissions;
@@ -73,21 +75,12 @@ public class DirectoryPicker extends ListActivity {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
 
-        // Open at root. Maybe not ideal ?
-        dir = new File("/");
 
         if (extras != null) {
-            String preferredStartDir = extras.getString(START_DIR);
+            preferredStartDir = extras.getString(START_DIR);
             showHidden = extras.getBoolean(SHOW_HIDDEN, false);
             onlyDirs = extras.getBoolean(ONLY_DIRS, true);
             askedForPermissions = extras.getBoolean(ASKED_PERM, false);
-
-            if (preferredStartDir != null) {
-                File startDir = new File(preferredStartDir);
-                if (startDir.isDirectory()) {
-                    dir = startDir;
-                }
-            }
         }
 
         // Restore if rotation etc.
@@ -96,15 +89,61 @@ public class DirectoryPicker extends ListActivity {
         }
 
 
-        setContentView(R.layout.directory_chooser_list);
+        if (preferredStartDir != null) {
+            buildChildDir();
+        } else {
 
-        // Android 6 permissions
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M  && !askedForPermissions) {
-            askedForPermissions = true;
-            if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
-                requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE}, 0);
+            // Android 6 permissions
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!askedForPermissions) {
+                    askedForPermissions = true;
+                    if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE}, 0);
+                    } else {
+                        buildFullPermissions();        // already have full permissions
+                    }
+                } else {
+                    // Must be waiting to get permissions back ???
+                    // Don't do anything
+                }
+
+            // old, pre 6 behaviour
+            } else {
+                buildFullPermissions();    // full permissions
             }
         }
+    }
+
+    /**
+     * Start directory listing at root
+     */
+    private void buildFullPermissions() {
+        dir = new File("/");
+
+        _build();
+    }
+
+    /***
+     * Have to start directory listing in our 'local' directory
+     */
+    private void buildLimitedPermissions() {
+        dir = new File(this.getFilesDir().getAbsolutePath());
+
+        _build();
+    }
+
+    /**
+     * Don't worry too much about permissions as this is a child directory that user
+     * is decending into
+     */
+    private void buildChildDir() {
+        dir = new File(preferredStartDir);
+        _build();
+    }
+
+    private void _build() {
+
+        setContentView(R.layout.directory_chooser_list);
 
         // Make current directory visible in ActionBar at top
         setTitle(dir.getAbsolutePath());
@@ -176,6 +215,21 @@ public class DirectoryPicker extends ListActivity {
         });
     }
 
+
+    /** Called asynchronously in response to our permissions request */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (grantResults != null && grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
+            buildFullPermissions();
+        } else {
+
+            Toast toast = Toast.makeText(this, R.string.file_permission_denied, Toast.LENGTH_LONG);
+            toast.show();
+
+            buildLimitedPermissions();
+        }
+    }
+
     /** Called before rotate etc */
     @Override
     public void onSaveInstanceState (Bundle outState) {
@@ -183,9 +237,6 @@ public class DirectoryPicker extends ListActivity {
         outState.putBoolean(DirectoryPicker.ASKED_PERM, askedForPermissions);
     }
 
-    /**
-     * Directory was clicked. Go down a directory
-     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_DIRECTORY && resultCode == RESULT_OK) {

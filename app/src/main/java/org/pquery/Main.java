@@ -24,6 +24,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
@@ -54,7 +55,13 @@ import org.pquery.webdriver.ProgressInfo;
 import java.io.File;
 import java.util.Date;
 
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 public class Main extends Activity implements PQClickedListener, PQServiceListener, ProgressBoxFragmentListener {
+
+    private static final int CREATE_REQUEST_CODE = 1;
+    private static final int DOWNLOAD_REQUEST_CODE = 2;
 
     private boolean doDialog;
     private boolean onSaveInstanceStateCalled;
@@ -249,7 +256,24 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
                 if (serviceStatus != ServiceStatus.Connected)
                     return true;
 
-                startActivity(new Intent(this, CreateFiltersActivity.class));
+                // Check if can create files in configured location, before going to next activity
+                if (canCreateFile()) {
+                    startActivity(new Intent(this, CreateFiltersActivity.class));
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE}, CREATE_REQUEST_CODE);
+
+                            // Waiting for permission response
+                            // Silently return false for now
+                            return true;
+                        }
+                    }
+
+                    // Unable to output to file. Don't move to next activity
+                    Toast toast = Toast.makeText(this, R.string.unable_to_create_file, Toast.LENGTH_LONG);
+                    toast.show();
+                }
                 break;
             case R.string.get_pq_list:
                 if (Prefs.getUsername(this).length() == 0 || Prefs.getPassword(this).length() == 0) {
@@ -277,6 +301,10 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
 
         return true;
     }
+
+
+
+
 
     private boolean isServiceBound;
 
@@ -327,9 +355,17 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
         checkActionBar();
     }
 
+
+    // Constructed when a pocket query to download is clicked upon
+
     private class PopupBar implements ActionMode.Callback {
+
         private DownloadablePQ pq;
 
+        /**
+         * Called when a downloadable pocket query (in the list) is clicked upon
+         * @param pq details about item selected
+         */
         public PopupBar(DownloadablePQ pq) {
             this.pq = pq;
         }
@@ -347,12 +383,29 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
             return false;
         }
 
+        /** A pocket query was selected and "download" on the menu clicked */
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            Intent intent = new Intent(getApplicationContext(), PQService.class);
-            intent.putExtra("operation", PQService.OPERATION_DOWNLOAD);
-            intent.putExtra("pq", (Parcelable) pq);
-            startService(intent);
+            if (canCreateFile()) {
+                Intent intent = new Intent(getApplicationContext(), PQService.class);
+                intent.putExtra("operation", PQService.OPERATION_DOWNLOAD);
+                intent.putExtra("pq", (Parcelable) pq);
+                startService(intent);
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE}, DOWNLOAD_REQUEST_CODE);
+                        // Waiting for permission response
+                        // Silently return false for now
+                        mode.finish();
+                        return true;
+                    }
+                }
+
+                // Unable to output to file. Don't move to next activity
+                Toast toast = Toast.makeText(Main.this, R.string.unable_to_create_file, Toast.LENGTH_LONG);
+                toast.show();
+            }
 
             mode.finish();
             return true;
@@ -365,6 +418,7 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
     }
 
     ActionMode actionMode;
+    DownloadablePQ actionModePq;
 
     /**
      * The fragment listing the DownloadablePQ has been clicked on
@@ -380,8 +434,10 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
             actionMode.finish();
         } else {
             // Open top bar to allow selection for DownloadablePQ download
-            if (serviceStatus == ServiceStatus.Connected)
+            if (serviceStatus == ServiceStatus.Connected) {
                 actionMode = startActionMode(new PopupBar(pq));
+                actionModePq = pq;
+            }
         }
     }
 
@@ -507,5 +563,63 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(notificationId);
     }
 
+
+    /**
+     * Called asynchronously by OS in response to our permissions request
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
+        if (canCreateFile()) {
+            if (requestCode == CREATE_REQUEST_CODE) {
+                startActivity(new Intent(this, CreateFiltersActivity.class));
+            }
+            if (requestCode == DOWNLOAD_REQUEST_CODE) {
+                Intent intent = new Intent(getApplicationContext(), PQService.class);
+                intent.putExtra("operation", PQService.OPERATION_DOWNLOAD);
+                intent.putExtra("pq", (Parcelable) actionModePq);
+                startService(intent);
+            }
+        } else {
+            // Unable to output to file. This should block moving on to next activity
+            Toast toast = Toast.makeText(this, R.string.unable_to_create_file, Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+    }
+
+
+
+    /**
+     * Check if can write to the configured (or default) output directory
+     * @return true if can write file now (if false. Possible could be true later if permissions given)
+     */
+    private boolean canCreateFile() {
+
+        if (!Prefs.getDownload(this)) {
+            return true;        // aren't going to download PQ so don't worry
+        }
+
+        // Build output file
+        String dir = Util.getDefaultDownloadDirectory(this);
+        if (!Prefs.isDefaultDownloadDir(this)) {
+            dir = Prefs.getUserSpecifiedDownloadDir(this);
+        }
+        File outputDirectory = new File(dir);
+
+        // Check exists
+        if (outputDirectory.mkdirs() || outputDirectory.isDirectory()) {
+
+            boolean b = outputDirectory.canWrite();
+
+            if (b) {
+                // All good. Can silently return true;
+                return true;
+            }
+        }
+
+        // Unable to write to file now
+        return false;
+    }
 
 }

@@ -34,6 +34,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -53,6 +54,7 @@ import org.pquery.service.PQService;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -578,7 +580,6 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
     public void onResume() {
         super.onResume();
         startGps();
-        askFilePermissions();
     }
 
     @Override
@@ -759,22 +760,6 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
     }
 
 
-    private void askFilePermissions() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-            if (!Prefs.isDefaultDownloadDir(this) && Prefs.getDownload(this)) {
-
-                if (!filePermissionsAsked) {
-                    filePermissionsAsked = true;
-
-                    if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE}, 1);
-                    }
-                }
-            }
-        }
-    }
-
 
 
     // Control GPS
@@ -869,6 +854,14 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
     /** Called asynchronously in response to our permissions request */
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
+        // Show warning if don't have all permissions
+        // Not the end of the world, as the user can proceed by selecting point on map
+        if ((grantResults[0] != PERMISSION_GRANTED) || (grantResults[1]) != PERMISSION_GRANTED) {
+            Toast toast = Toast.makeText(this, R.string.location_denied, Toast.LENGTH_LONG);
+            toast.show();
+        }
+
         gpsPermissionsGiven = grantResults;
         startGps();
     }
