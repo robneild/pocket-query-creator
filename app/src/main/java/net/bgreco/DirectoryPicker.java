@@ -180,19 +180,39 @@ public class DirectoryPicker extends ListActivity {
         ListView lv = getListView();
         lv.setTextFilterEnabled(true);
 
-        if (!dir.canRead()) {
-            // User has gone into directory that we can't read
-            // We immediately close this activity to return to directory above
-            Context context = getApplicationContext();
-            Toast toast = Toast.makeText(context, R.string.could_not_read_folder, Toast.LENGTH_LONG);
-            toast.show();
-            finish();
-            return;
+
+
+
+
+        File [] listFiles;
+
+        // Special handling for "/storage/emulated" directory that we can't read. But can usually
+        // access child directories. This isn't ideal, maybe other ways? However a user wanted
+        // access to "/storage/emulated/0"
+        if (dir.getAbsolutePath().equals("/storage/emulated")) {
+            listFiles = new File[1];
+            listFiles[0] = new File("/storage/emulated/0");
+
+        } else {
+
+            if (!dir.canRead()) {
+                // User has gone into directory that we can't read
+                // We immediately close this activity to return to directory above
+
+                Context context = getApplicationContext();
+                Toast toast = Toast.makeText(context, R.string.could_not_read_folder, Toast.LENGTH_LONG);
+                toast.show();
+                finish();
+                return;
+            }
+
+            listFiles = dir.listFiles();
         }
 
 
         // We now know can read directory so get list of directories
-        final List<File> files = filter(dir.listFiles(), onlyDirs, showHidden);
+        final List<File> files = filter(listFiles, onlyDirs, showHidden);
+
         String[] names = getNamesForFiles(files);
 
         setListAdapter(new ArrayAdapter<String>(this, R.layout.directory_chooser_list_item, R.id.fdrowtext, names));
