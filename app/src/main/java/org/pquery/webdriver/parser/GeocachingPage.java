@@ -89,6 +89,10 @@ public class GeocachingPage {
             return false;
         }
 
+        if (html.indexOf("<section class=\"login\">") != -1) {
+            return false;
+        }
+
         throw new ParseException("Unable to detect login status on geocaching.com page");
     }
 

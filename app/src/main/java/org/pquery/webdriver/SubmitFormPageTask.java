@@ -40,8 +40,6 @@ public class SubmitFormPageTask extends RetriableTask<String> {
             progressReport(0, res.getString(R.string.creating), res.getString(R.string.submitting));
 
             try {
-                // https://www.geocaching.com/login/default.aspx?redir=%2fpocket%2fdefault.aspx%3f
-
                 html = IOUtils.httpPost(cxt, form, urlPath, false, cancelledListener, new Listener() {
 
                     @Override

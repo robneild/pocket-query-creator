@@ -126,8 +126,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
             // 0% - 50%
 
             try {
-                // https://www.geocaching.com/login/default.aspx?redir=%2fpocket%2fdefault.aspx%3f
-                html = IOUtils.httpGet(cxt, "/login/default.aspx?redir=" + URLEncoder.encode(urlPath), cancelledListener, new Listener() {
+                html = IOUtils.httpGet(cxt, "/account/login?returnUrl=" + URLEncoder.encode(urlPath), cancelledListener, new Listener() {
 
                     @Override
                     public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
@@ -145,11 +144,12 @@ public class RetrievePageTask extends RetriableTask<Source> {
 
             FormFieldsExtra loginFormExtra = new FormFieldsExtra(loginForm);
             try {
-                loginFormExtra.setValueChecked("ctl00$ContentBody$tbUsername", username);
-                loginFormExtra.setValueChecked("ctl00$ContentBody$tbPassword", password);
-                loginFormExtra.setValueChecked("ctl00$ContentBody$cbRememberMe", "on");
+                loginFormExtra.setValueChecked("Username", username);
+                loginFormExtra.setValueChecked("Password", password);
 
-                loginFormExtra.checkValue("ctl00$ContentBody$btnSignIn");
+                //loginFormExtra.setValueChecked("ctl00$ContentBody$cbRememberMe", "on");
+                //loginFormExtra.checkValue("ctl00$ContentBody$btnSignIn");
+
             } catch (ParseException e) {
                 throw new FailurePermanentException(res.getString(R.string.failed_login_form), e.getMessage());
             }
@@ -160,9 +160,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
             progressReport(0, res.getString(R.string.login_geocaching_com), res.getString(R.string.requesting));
 
             try {
-                // https://www.geocaching.com/login/default.aspx?redir=%2fpocket%2fdefault.aspx%3f
-
-                html = IOUtils.httpPost(cxt, nameValuePairs, "/login/default.aspx?redir=" + URLEncoder.encode(urlPath),
+                html = IOUtils.httpPost(cxt, nameValuePairs, "/account/login?returnUrl=" + URLEncoder.encode(urlPath),
                         true, cancelledListener, new Listener() {
 
                             @Override
