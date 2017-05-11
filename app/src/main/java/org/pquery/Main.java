@@ -331,7 +331,7 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
     };
 
     private void doBindService() {
-        isServiceBound = bindService(new Intent(getApplicationContext(), PQService.class), connection, BIND_AUTO_CREATE);
+        isServiceBound = bindService(new Intent(this, PQService.class), connection, BIND_AUTO_CREATE);
         Logger.d("[isServiceBound=" + isServiceBound + "]");
     }
 
@@ -387,7 +387,7 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             if (canCreateFile()) {
-                Intent intent = new Intent(getApplicationContext(), PQService.class);
+                Intent intent = new Intent(Main.this, PQService.class);
                 intent.putExtra("operation", PQService.OPERATION_DOWNLOAD);
                 intent.putExtra("pq", (Parcelable) pq);
                 startService(intent);
@@ -447,7 +447,7 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
      */
     @Override
     public void onSchedulePQ(String url) {
-        Intent intent = new Intent(getApplicationContext(), PQService.class);
+        Intent intent = new Intent(this, PQService.class);
         intent.putExtra("operation", PQService.OPERATION_REFRESH);
         intent.putExtra("url", url);
         startService(intent);
@@ -575,7 +575,7 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
                 startActivity(new Intent(this, CreateFiltersActivity.class));
             }
             if (requestCode == DOWNLOAD_REQUEST_CODE) {
-                Intent intent = new Intent(getApplicationContext(), PQService.class);
+                Intent intent = new Intent(this, PQService.class);
                 intent.putExtra("operation", PQService.OPERATION_DOWNLOAD);
                 intent.putExtra("pq", (Parcelable) actionModePq);
                 startService(intent);

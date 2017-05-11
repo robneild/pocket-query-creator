@@ -75,6 +75,7 @@ public class About extends Activity {
                 "<a href='http://openclipart.org/detail/96391/target-black-and-white-by-10binary'>target black and white</a> - openclipart.org<br/>" +
                 "<a href='https://openclipart.org/detail/182401/calendar-by-crisg-182401'>calendar</a> - openclipart.org<br/>" +
                 "<a href='https://openclipart.org/detail/4622/flagpole'>flagpole</a> - openclipart.org<br/>" +
+                "<a href='https://openclipart.org/detail/212044/symbolic-link-emblem'>symbolic link emblem</a> - openclipart.org<br/>" +
                 "<p>" +
                 "<a href='http://code.google.com/p/range-seek-bar'>range-seek-bar</a><br>" +
                 "<a href='http://www.bgreco.net/directorypicker/'>Android Directory Picker</a><br>" +

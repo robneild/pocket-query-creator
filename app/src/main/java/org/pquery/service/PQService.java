@@ -156,11 +156,11 @@ public class PQService extends Service {
 
         wakeLock = ((PowerManager) getSystemService(Context.POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PocketQuery");
         wakeLock.acquire();
-        notificationUtil.startInProgressNotification(getApplicationContext().getResources().getString(R.string.creating_pq), "", getPendingIntent());
+        notificationUtil.startInProgressNotification(getString(R.string.creating_pq), "", getPendingIntent());
 
         // Kick off background thread
 
-        createPQAsync = new CreatePQAsync(getApplicationContext(), queryStore, (LocationManager) getSystemService(LOCATION_SERVICE)) {
+        createPQAsync = new CreatePQAsync(this, queryStore, (LocationManager) getSystemService(LOCATION_SERVICE)) {
 
             @Override
             protected void onPostExecute(CreatePQResult result) {
@@ -202,9 +202,9 @@ public class PQService extends Service {
 
         wakeLock = ((PowerManager) getSystemService(Context.POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PocketQuery");
         wakeLock.acquire();
-        notificationUtil.startInProgressNotification(String.format(getApplicationContext().getResources().getString(R.string.downloading_pq), pq.name), "", getPendingIntent());
+        notificationUtil.startInProgressNotification(String.format(getString(R.string.downloading_pq), pq.name), "", getPendingIntent());
 
-        downloadPQAsync = new DownloadPQAsync(getApplicationContext(), pq) {
+        downloadPQAsync = new DownloadPQAsync(this, pq) {
 
             @Override
             protected void onPostExecute(DownloadPQResult result) {
@@ -240,7 +240,7 @@ public class PQService extends Service {
         Assert.assertNull(retrievePQListAsync);
         final String url = (String) extras.get("url");
 
-        retrievePQListAsync = new RetrievePQListAsync(getApplicationContext(), url) {
+        retrievePQListAsync = new RetrievePQListAsync(this, url) {
 
             @Override
             protected void onCancelled() {
@@ -272,7 +272,7 @@ public class PQService extends Service {
     }
 
     private PendingIntent getPendingIntent() {
-        Intent intent = new Intent(getApplicationContext(), Main.class);
+        Intent intent = new Intent(this, Main.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);

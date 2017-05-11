@@ -111,7 +111,7 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
                 intent = new Intent(this, PQService.class);
                 intent.putExtra("queryStore", bundle);
                 intent.putExtra("operation", PQService.OPERATION_CREATE);
-                getApplicationContext().startService(intent);
+                startService(intent);
                 finish();
                 return true;
             default:

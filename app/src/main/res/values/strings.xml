@@ -269,6 +269,11 @@
 
     <string name="location_denied">Not all location permissions were granted. To grant them you may have to go to Setting > Apps > Pocket Query Creator > Permissions</string>
 
+    <string name="external_storage_directory">Storage Directory</string>
+
+    <string name="external_download_directory">Download Directory</string>
+
+    <string name="application_directory">Application Directory</string>
 
     <string name="filter_countries">Countries</string>
 

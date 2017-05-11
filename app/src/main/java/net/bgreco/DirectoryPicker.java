@@ -1,19 +1,23 @@
 package net.bgreco;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Criteria;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
-
 
 import org.pquery.R;
 import org.pquery.util.FileComparator;
@@ -166,8 +170,7 @@ public class DirectoryPicker extends ListActivity {
         btnChoose.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (!dir.canWrite()) {
-                    Context context = getApplicationContext();
-                    Toast toast = Toast.makeText(context, R.string.cant_write_directory, Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(DirectoryPicker.this, R.string.cant_write_directory, Toast.LENGTH_LONG);
                     toast.show();
                     return;
                 } else {
@@ -181,17 +184,35 @@ public class DirectoryPicker extends ListActivity {
         lv.setTextFilterEnabled(true);
 
 
+        // Read directory contents
 
+        // We have to do some manual tinkering depending on directory we are in
+        // Not exactly ideal, but android has changed quite a bit on directory structure/permissions
+        // etc
 
+        final List<File> files = new ArrayList<>();
 
-        File [] listFiles;
-
-        // Special handling for "/storage/emulated" directory that we can't read. But can usually
-        // access child directories. This isn't ideal, maybe other ways? However a user wanted
-        // access to "/storage/emulated/0"
         if (dir.getAbsolutePath().equals("/storage/emulated")) {
-            listFiles = new File[1];
-            listFiles[0] = new File("/storage/emulated/0");
+            // Special handling for "/storage/emulated" directory that we can't read, but can usually
+            // access child directories. So just fake contents. This isn't ideal, maybe other ways?
+            // However a user wanted access to "/storage/emulated/0"
+
+            files.add(new File("/storage/emulated/0"));
+
+        } else if (dir.getAbsolutePath().equals("/")) {
+            // Special handling for root
+            // No longer possible to read root on android 7. So fake it's contents
+
+            // Insert 3 symbolic links (shown in blue)
+            files.add(new File(getString(R.string.application_directory)));
+            files.add(new File(getString(R.string.external_download_directory)));
+            files.add(new File(getString(R.string.external_storage_directory)));
+
+            // Hard code directories
+            files.add(new File("/mnt"));
+            files.add(new File("/sdcard"));
+            files.add(new File("/storage"));
+
 
         } else {
 
@@ -199,32 +220,71 @@ public class DirectoryPicker extends ListActivity {
                 // User has gone into directory that we can't read
                 // We immediately close this activity to return to directory above
 
-                Context context = getApplicationContext();
-                Toast toast = Toast.makeText(context, R.string.could_not_read_folder, Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(this, R.string.could_not_read_folder, Toast.LENGTH_LONG);
                 toast.show();
                 finish();
                 return;
             }
 
-            listFiles = dir.listFiles();
+            List<File> filtered = filter(dir.listFiles(), onlyDirs, showHidden);          // Read directory so get list of directories
+            files.addAll(filtered);
         }
 
 
-        // We now know can read directory so get list of directories
-        final List<File> files = filter(listFiles, onlyDirs, showHidden);
-
         String[] names = getNamesForFiles(files);
 
-        setListAdapter(new ArrayAdapter<String>(this, R.layout.directory_chooser_list_item, R.id.fdrowtext, names));
+        // Setup view of files
+        setListAdapter(new ArrayAdapter<String>(this, R.layout.directory_chooser_list_item,  R.id.fdrowtext, names) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
 
+                // Override the standard ArrayAdapter so we can manually style each line
+                // This method is called once for each item in list
+
+                String selectedName = files.get(position).getName();
+                View view =  super.getView(position, convertView, parent);
+
+                // Special styling for symbolic links at top. Different icon and blue text
+                if (selectedName.equals(getString(R.string.application_directory)) ||
+                    selectedName.equals(getString(R.string.external_download_directory)) ||
+                    selectedName.equals(getString(R.string.external_storage_directory))) {
+
+                    TextView textView = (TextView) view.findViewById(R.id.fdrowtext);
+                    textView.setTypeface(null, Typeface.ITALIC);
+                    textView.setTextColor(Color.parseColor("#6495ED"));
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+
+                    ImageView imageView = (ImageView) view.findViewById(R.id.fdrowimage);
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.rodentia_icons_emblem_symbolic_link));
+                }
+
+                return view;
+            }
+        });
+
+        // Add listener to folder list
 
         // Go down a directory when selected by launching new activity
         // Pass parameters down (in intent)
         lv.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!files.get(position).isDirectory())
+
+                File selected = files.get(position);
+
+                if (selected.getName().equals(getString(R.string.application_directory))) {
+                    selected = getFilesDir();
+                }
+                if (selected.getName().equals(getString(R.string.external_download_directory))) {
+                    selected = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                }
+                if (selected.getName().equals(getString(R.string.external_storage_directory))) {
+                    selected = Environment.getExternalStorageDirectory();
+                }
+
+                if (!selected.isDirectory())
                     return;
-                String path = files.get(position).getAbsolutePath();
+
+                String path = selected.getAbsolutePath();
                 Intent intent = new Intent(DirectoryPicker.this, DirectoryPicker.class);
                 intent.putExtra(DirectoryPicker.START_DIR, path);
                 intent.putExtra(DirectoryPicker.SHOW_HIDDEN, showHidden);

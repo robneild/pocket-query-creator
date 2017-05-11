@@ -77,10 +77,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 float radiusInKm;
 
-                if (Prefs.isMetric(getApplicationContext()))
-                    radiusInKm = Float.parseFloat(Prefs.getDefaultRadius(getApplicationContext()));
+                if (Prefs.isMetric(MapsActivity.this))
+                    radiusInKm = Float.parseFloat(Prefs.getDefaultRadius(MapsActivity.this));
                 else
-                    radiusInKm = Float.parseFloat(Prefs.getDefaultRadius(getApplicationContext())) * 1.609344f;
+                    radiusInKm = Float.parseFloat(Prefs.getDefaultRadius(MapsActivity.this)) * 1.609344f;
 
                 CircleOptions circleOptions = new CircleOptions()
                         .center(point)
