@@ -16,7 +16,7 @@ android {
         }
     }
     compileSdkVersion "Google Inc.:Google APIs:23"
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "org.pquery"
         minSdkVersion 14
