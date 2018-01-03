@@ -140,7 +140,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
                 throw new FailureException(res.getString(R.string.unable_to_get_login), e);
             }
             pageParser = new GeocachingPage(html);
-            FormFields loginForm = pageParser.extractForm();
+            FormFields loginForm = pageParser.extractLoginForm();
 
             FormFieldsExtra loginFormExtra = new FormFieldsExtra(loginForm);
             try {
@@ -155,7 +155,6 @@ public class RetrievePageTask extends RetriableTask<Source> {
             }
 
             List<Pair<String,String>> nameValuePairs = loginFormExtra.toNameValuePairs();
-            nameValuePairs = nameValuePairs.subList(1, nameValuePairs.size());
 
             progressReport(0, res.getString(R.string.login_geocaching_com), res.getString(R.string.requesting));
 
@@ -274,7 +273,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
             throw new FailurePermanentException("Unknown error");
 
 
-        } catch (GeocachingPage.ParseException e) {
+        } catch (ParseException e) {
             throw new FailurePermanentException(res.getString(R.string.error_parsing), e);
         }
     }

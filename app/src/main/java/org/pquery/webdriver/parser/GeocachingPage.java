@@ -6,18 +6,12 @@ import net.htmlparser.jericho.FormFields;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
+import java.util.List;
+
 public class GeocachingPage {
 
     protected String html;
     public Source parsedHtml;
-
-    public class ParseException extends Exception {
-        private static final long serialVersionUID = 2827583462232890549L;
-
-        public ParseException(String message) {
-            super(message);
-        }
-    }
 
     public GeocachingPage(String html) {
         this.html = html;
@@ -124,9 +118,25 @@ public class GeocachingPage {
     /**
      * Extract out form values on page
      */
-    public FormFields extractForm() {
+    public FormFields extractLoginForm() throws ParseException {
 
         // Do all the work
+        List<Element> loginDiv = parsedHtml.getAllElementsByClass("login");
+
+        if (loginDiv == null || loginDiv.size() != 1) {
+            throw new ParseException("Can't find login div");
+        }
+
+        FormFields formFields = loginDiv.get(0).getFormFields();
+
+        return formFields;
+    }
+
+
+    /**
+     * Extract out form values on page
+     */
+    public FormFields extractForm() throws ParseException {
 
         FormFields formFields = parsedHtml.getFormFields();
 

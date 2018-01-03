@@ -249,10 +249,11 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
      */
     public List<Pair<String,String>> fillInCreateForm(GeocachingPage page) throws FailurePermanentException {
 
-        FormFields loginForm = page.extractForm();
-
-        FormFieldsExtra loginFormExtra = new FormFieldsExtra(loginForm);
         try {
+            FormFields loginForm = page.extractForm();
+
+            FormFieldsExtra loginFormExtra = new FormFieldsExtra(loginForm);
+
             // Name of pocket query
             loginFormExtra.setValueChecked("ctl00$ContentBody$tbName", queryStore.name);
 
@@ -480,18 +481,15 @@ public class CreatePQAsync extends AsyncTask<Void, ProgressInfo, CreatePQResult>
             // delete the other form submit
             loginFormExtra.deleteValue("ctl00$ContentBody$btnDelete");
 
+            List<Pair<String,String>> nameValuePairs = loginFormExtra.toNameValuePairs();
+
+            return nameValuePairs;
+
 
         } catch (ParseException e) {
             throw new FailurePermanentException(res.getString(R.string.failed_login_form), e.getMessage());
         }
-
-        List<Pair<String,String>> nameValuePairs = loginFormExtra.toNameValuePairs();
-
-        return nameValuePairs;
-
     }
-
-
 
 
 
