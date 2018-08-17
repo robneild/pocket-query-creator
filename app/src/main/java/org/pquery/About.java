@@ -58,7 +58,7 @@ public class About extends Activity {
                 "body {font: 15px/1.3em 'Helvetica Neue','HelveticaNeue',Helvetica,sans-serif }" +
                 "</style> " +
 
-                "Written by <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>Rob Neild</a>, extended by <a href='mailto:peter.storch@gmail.com?subject=PocketQueryCreator'>Peter Storch</a> and Ondřej Kunc<p>Don't hesitate to contact us with comments or errors" +
+                "Written by <a href='mailto:s1@bigbob.org.uk?subject=PocketQueryCreator'>Rob Neild</a>, extended by Peter Storch and Ondřej Kunc<p>Don't hesitate to contact us with comments or errors" +
 
                 "<h2>Contains</h2>" +
                 "<a href='http://www.openclipart.org/detail/89059/push-pin-icon-by-jhnri4'>Push pin icon</a> - openclipart.org<br/>" +
