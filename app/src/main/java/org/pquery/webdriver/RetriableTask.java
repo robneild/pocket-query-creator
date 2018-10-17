@@ -2,9 +2,8 @@ package org.pquery.webdriver;
 
 import android.content.res.Resources;
 
-import junit.framework.Assert;
-
 import org.pquery.R;
+import org.pquery.util.Assert;
 
 public abstract class RetriableTask<T> {
 

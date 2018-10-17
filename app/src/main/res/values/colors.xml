@@ -2,4 +2,9 @@
 
 <resources>
     <drawable name="ab_bg_black">#aa000000</drawable>
+
+    <color name="colorPrimary">#E4C204</color> <!--#02874d</color>00> -->
+    <color name="colorPrimaryDark">#C3A204</color> <!--#015f36</color>-->
+    <color name="colorAccent">#FFDC04</color><!--#00ff90</color>-->
+
 </resources>

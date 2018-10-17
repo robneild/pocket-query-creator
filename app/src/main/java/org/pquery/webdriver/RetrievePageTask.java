@@ -126,7 +126,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
             // 0% - 50%
 
             try {
-                html = IOUtils.httpGet(cxt, "/account/login?returnUrl=" + URLEncoder.encode(urlPath), cancelledListener, new Listener() {
+                html = IOUtils.httpGet(cxt, "/account/signin?returnUrl=" + URLEncoder.encode(urlPath), cancelledListener, new Listener() {
 
                     @Override
                     public void update(int bytesReadSoFar, int expectedLength, int percent0to100) {
@@ -159,7 +159,7 @@ public class RetrievePageTask extends RetriableTask<Source> {
             progressReport(0, res.getString(R.string.login_geocaching_com), res.getString(R.string.requesting));
 
             try {
-                html = IOUtils.httpPost(cxt, nameValuePairs, "/account/login?returnUrl=" + URLEncoder.encode(urlPath),
+                html = IOUtils.httpPost(cxt, nameValuePairs, "/account/signin",
                         true, cancelledListener, new Listener() {
 
                             @Override

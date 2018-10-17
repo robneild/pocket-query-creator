@@ -59,32 +59,16 @@ public class GeocachingPage {
             return true;
         }
 
-        if (html.indexOf("ctl00_ContentBody_LoggedInPanel") != -1) {
-            // This is shown on the page returned by a successfully POST /login/default.aspx
-            // The page usually is a 302, with an Object moved body
+        if (html.indexOf("ctl00_uxLoginStatus_divNotSignedIn") != -1) {
+            return false;
+        }
+
+        if (html.indexOf("validation-summary-errors") != -1) {
+            return false;       // Your password is incorrect
+        }
+
+        if (html.indexOf("ctl00_uxLoginStatus_divSignedIn") != -1) {
             return true;
-        }
-
-        if (html.indexOf("ctl00_uxLoginStatus_divSignedIn") != -1)
-            // Logout link
-            return true;
-
-        if (html.indexOf("ctl00_uxLoginStatus_vsSignInWidgetForm") != -1)
-            return false;
-
-        if (html.indexOf("ctl00_ContentBody_vsSignInWidgetForm") != -1) {
-            // This is shown on the page returned by a failed POST /login/default.aspx
-            // The page usually is a 200. It shows a standard login panel with some kind of error message
-            return false;
-        }
-
-        if (html.indexOf("id=\"hlSignIn\"") != -1) {
-            // Log In Link is shown
-            return false;
-        }
-
-        if (html.indexOf("<section class=\"login\">") != -1) {
-            return false;
         }
 
         throw new ParseException("Unable to detect login status on geocaching.com page");
@@ -121,13 +105,13 @@ public class GeocachingPage {
     public FormFields extractLoginForm() throws ParseException {
 
         // Do all the work
-        List<Element> loginDiv = parsedHtml.getAllElementsByClass("login");
+        Element loginDiv = parsedHtml.getElementById("SignupSignin");
 
-        if (loginDiv == null || loginDiv.size() != 1) {
+        if (loginDiv == null) {
             throw new ParseException("Can't find login div");
         }
 
-        FormFields formFields = loginDiv.get(0).getFormFields();
+        FormFields formFields = loginDiv.getFormFields();
 
         return formFields;
     }

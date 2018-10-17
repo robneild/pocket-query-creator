@@ -27,19 +27,20 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 
+import org.pquery.util.AppCompatPreferenceActivity;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 import org.pquery.util.Util;
 
 import java.util.List;
 
-public class PreferencesFromXml extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+public class PreferencesFromXml extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String action = getIntent().getAction();
 
@@ -55,8 +56,6 @@ public class PreferencesFromXml extends PreferenceActivity implements OnSharedPr
         } else if (action != null && action.equals("PREFS_ADVANCED")) {
             addPreferencesFromResource(R.xml.advanced_preferences);
             setTitle(R.string.prefs_advanced);
-        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            addPreferencesFromResource(R.xml.preference_headers_legacy);
         }
     }
 

@@ -28,13 +28,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.SupportActionModeWrapper;
+import android.support.v7.widget.Toolbar;
 import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
-
-import junit.framework.Assert;
 
 import net.htmlparser.jericho.Config;
 
@@ -47,6 +49,7 @@ import org.pquery.fragments.ProgressBoxFragment.ProgressBoxFragmentListener;
 import org.pquery.service.PQService;
 import org.pquery.service.PQServiceListener;
 import org.pquery.service.RetrievePQListResult;
+import org.pquery.util.Assert;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 import org.pquery.util.Util;
@@ -58,7 +61,7 @@ import java.util.Date;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
-public class Main extends Activity implements PQClickedListener, PQServiceListener, ProgressBoxFragmentListener {
+public class Main extends AppCompatActivity implements PQClickedListener, PQServiceListener, ProgressBoxFragmentListener {
 
     private static final int CREATE_REQUEST_CODE = 1;
     private static final int DOWNLOAD_REQUEST_CODE = 2;
@@ -117,6 +120,10 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
         String title = getIntent().getStringExtra("title");
         if (title != null)
             doDialog = true;
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     @Override
@@ -198,7 +205,6 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-
         if (serviceStatus == ServiceStatus.ServiceBusy) {
 
             setProgressBarVisibility(true);
@@ -246,6 +252,16 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        //ProgressBoxFragment box = getProgressBoxFragment();
+        //box.setText("dddddd");
+
+       // PQListFragment pqList = (PQListFragment) getFragmentManager().findFragmentById(R.id.pq_list_fragment);
+        //pqList.updateList(null, null);
+
+
+
+       // if (0==0) return true;
 
         switch (item.getItemId()) {
             case R.string.create:
@@ -356,9 +372,22 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Constructed when a pocket query to download is clicked upon
 
-    private class PopupBar implements ActionMode.Callback {
+    private class PopupBar implements android.support.v7.view.ActionMode.Callback {
 
         private DownloadablePQ pq;
 
@@ -371,7 +400,9 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
         }
 
         @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        public boolean onCreateActionMode(android.support.v7.view.ActionMode actionMode, Menu menu) {
+            MenuInflater dfds = actionMode.getMenuInflater();
+
             menu.add("Download")
                     .setIcon(R.drawable.av_download)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -379,13 +410,13 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
         }
 
         @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        public boolean onPrepareActionMode(android.support.v7.view.ActionMode actionMode, Menu menu) {
             return false;
         }
 
         /** A pocket query was selected and "download" on the menu clicked */
         @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        public boolean onActionItemClicked(android.support.v7.view.ActionMode actionMode, MenuItem item) {
             if (canCreateFile()) {
                 Intent intent = new Intent(Main.this, PQService.class);
                 intent.putExtra("operation", PQService.OPERATION_DOWNLOAD);
@@ -397,7 +428,7 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
                         requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE}, DOWNLOAD_REQUEST_CODE);
                         // Waiting for permission response
                         // Silently return false for now
-                        mode.finish();
+                        actionMode.finish();
                         return true;
                     }
                 }
@@ -407,18 +438,30 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
                 toast.show();
             }
 
-            mode.finish();
+            actionMode.finish();
             return true;
         }
 
         @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            actionMode = null;
+        public void onDestroyActionMode(android.support.v7.view.ActionMode actionMode) {
+            int i = 10;
+            actionMode.finish();
         }
+
     }
 
-    ActionMode actionMode;
+    android.support.v7.view.ActionMode actionMode;
     DownloadablePQ actionModePq;
+
+
+
+
+
+
+
+
+
+
 
     /**
      * The fragment listing the DownloadablePQ has been clicked on
@@ -427,18 +470,20 @@ public class Main extends Activity implements PQClickedListener, PQServiceListen
     @Override
     public void onPQClicked(DownloadablePQ pq) {
 
-        if (actionMode != null) {
+        //if (actionMode != null) {
             // DownloadablePQ was clicked whilst bar was open for a previous DownloadablePQ click
             // Must manually close previous one
             // (Attempting to immediately open another bar on the new pq doesn't seem to work ?)
-            actionMode.finish();
-        } else {
+        //    actionMode.finish();
+         //   actionMode = null;
+       // } else {
+
             // Open top bar to allow selection for DownloadablePQ download
             if (serviceStatus == ServiceStatus.Connected) {
-                actionMode = startActionMode(new PopupBar(pq));
+                actionMode = startSupportActionMode(new PopupBar(pq));
                 actionModePq = pq;
             }
-        }
+        //}
     }
 
     /**

@@ -2,9 +2,10 @@ package org.pquery.filter;
 
 import android.content.res.Resources;
 
-import junit.framework.Assert;
+import com.google.android.gms.common.internal.Asserts;
 
 import org.pquery.R;
+import org.pquery.util.Assert;
 import org.pquery.util.MyColors;
 
 import java.util.Iterator;
@@ -30,7 +31,7 @@ public class CacheTypeList implements Iterable<CacheType> {
      * Used to retrieve from preferences
      */
     public CacheTypeList(String s) {
-        Assert.assertNotNull(s);
+        Asserts.checkNotNull(s);
 
         String[] cacheList = s.split(",");
 

@@ -21,19 +21,20 @@ import android.R.color;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.webkit.WebView;
 
 /**
  * Show an HTML about page
  */
-public class Help extends Activity {
+public class Help extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.about);
 
         WebView wv = (WebView) findViewById(R.id.webview1);

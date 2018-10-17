@@ -2,8 +2,6 @@ package org.pquery.util;
 
 import android.content.res.Resources;
 
-import junit.framework.Assert;
-
 import org.pquery.ContainerType;
 
 import java.util.Iterator;

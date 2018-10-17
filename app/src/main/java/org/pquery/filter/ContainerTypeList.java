@@ -2,9 +2,10 @@ package org.pquery.filter;
 
 import android.content.res.Resources;
 
-import junit.framework.Assert;
+import com.google.android.gms.common.internal.Asserts;
 
 import org.pquery.R;
+import org.pquery.util.Assert;
 import org.pquery.util.MyColors;
 
 import java.util.Iterator;

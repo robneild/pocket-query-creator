@@ -39,8 +39,6 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-import junit.framework.Assert;
-
 import org.pquery.filter.CacheType;
 import org.pquery.filter.CacheTypeList;
 import org.pquery.filter.CheckBoxesFilter;
@@ -51,6 +49,8 @@ import org.pquery.filter.CountryList;
 import org.pquery.filter.DaysToGenerateFilter;
 import org.pquery.filter.OneToFiveFilter;
 import org.pquery.service.PQService;
+import org.pquery.util.AppCompatListActivity;
+import org.pquery.util.Assert;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 
@@ -67,7 +67,7 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
  * Show page of options available for creating a pocket query
  * e.g. name, location, type, radius etc.
  */
-public class CreateFiltersActivity extends ListActivity implements LocationListener {
+public class CreateFiltersActivity extends AppCompatListActivity implements LocationListener {
 
     private QueryStore queryStore;
 
@@ -150,7 +150,7 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState != null) {
             queryStore = new QueryStore(savedInstanceState);
@@ -240,10 +240,11 @@ public class CreateFiltersActivity extends ListActivity implements LocationListe
             if (queryStore.lat == 0 && queryStore.lon == 0) {
 
                 Intent intent;
-                if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS)
+               // if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS)
                     intent = new Intent(this, MapsActivity.class);
-                else
-                    intent = new Intent(this, MapsActivityOld.class);
+
+                //else
+                //    intent = new Intent(this, MapsActivityOld.class);
 
                 // Try to open map at current location (if we have it)
                 intent.putExtra("lat", gpsLocation.getLatitude());

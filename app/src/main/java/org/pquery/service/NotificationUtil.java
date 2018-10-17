@@ -1,11 +1,13 @@
 package org.pquery.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import org.pquery.Main;
@@ -23,6 +25,22 @@ public class NotificationUtil {
     public NotificationUtil(Service cxt) {
         this.cxt = cxt;
         notifManager = (NotificationManager) cxt.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+
+            String channelId = "default";
+            CharSequence channelName = "Some Channel";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+
+            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+            //notificationChannel.enableLights(true);
+            //notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            //notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            notifManager.createNotificationChannel(notificationChannel);
+
+        }
     }
 
     public void startInProgressNotification(String title, String message, PendingIntent intent) {
@@ -31,7 +49,7 @@ public class NotificationUtil {
         int notificationId = getNextNotificationId();
 
 
-        Notification notification = new NotificationCompat.Builder(cxt)
+        Notification notification = new NotificationCompat.Builder(cxt, "default")
                 .setContentTitle(title)
                 .setContentText(message)
                 .setSmallIcon(R.drawable.status_bar2)
@@ -49,7 +67,7 @@ public class NotificationUtil {
         int notificationId = getNextNotificationId();
         PendingIntent intent = getPendingIntent(title, message, notificationId);
 
-        Notification notification = new NotificationCompat.Builder(cxt)
+        Notification notification = new NotificationCompat.Builder(cxt, "default")
                 .setContentIntent(intent)
                 .setContentTitle(title)
                 .setContentText(message)

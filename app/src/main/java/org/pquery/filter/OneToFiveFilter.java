@@ -2,9 +2,8 @@ package org.pquery.filter;
 
 import android.content.Context;
 
-import junit.framework.Assert;
-
 import org.pquery.R;
+import org.pquery.util.Assert;
 import org.pquery.util.MyColors;
 
 public class OneToFiveFilter {

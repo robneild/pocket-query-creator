@@ -10,13 +10,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 
-import junit.framework.Assert;
+import com.google.android.gms.common.internal.Asserts;
 
 import org.pquery.Main;
 import org.pquery.QueryStore;
 import org.pquery.R;
 import org.pquery.dao.DownloadablePQ;
 import org.pquery.dao.RepeatablePQ;
+import org.pquery.util.Assert;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
 import org.pquery.webdriver.ProgressInfo;
@@ -78,7 +79,7 @@ public class PQService extends Service {
             Logger.d("Cancelling createPQAsync");
             createPQAsync.cancel(true);
         } else {
-            Assert.assertTrue(false);
+            throw new RuntimeException("unexpected");
         }
     }
 

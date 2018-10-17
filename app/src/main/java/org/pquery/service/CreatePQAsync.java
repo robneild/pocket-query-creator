@@ -9,8 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Pair;
 
-import junit.framework.Assert;
-
 import net.htmlparser.jericho.FormFields;
 import net.htmlparser.jericho.Source;
 
@@ -26,6 +24,7 @@ import org.pquery.filter.Country;
 import org.pquery.filter.CountryList;
 import org.pquery.filter.DaysToGenerateFilter;
 import org.pquery.filter.OneToFiveFilter;
+import org.pquery.util.Assert;
 import org.pquery.util.GPS;
 import org.pquery.util.Logger;
 import org.pquery.util.Prefs;
